@@ -1,1 +1,24 @@
-<p>login works!</p>
+<div class="login-background">
+    <p-panel header="Inicio de Sesión" [style]="{'width': '25em'}" class="login-panel">
+        <div class="login-form">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label for="username">Email</label>
+                        <input id="username" type="text" pInputText formControlName="username" />
+                    </div>
+                    <div class="p-field">
+                        <label for="password">Contraseña</label>
+                        <input id="password" type="password" pInputText formControlName="password" />
+                    </div>
+                    <div class="p-field">
+                        <button pButton type="submit" label="Ingresar" [disabled]="!loginForm.valid"></button>
+                    </div>
+                </div>
+            </form>
+            <div class="register-link">
+                <p>¿No tienes una cuenta? <a routerLink="../register">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </p-panel>
+</div>

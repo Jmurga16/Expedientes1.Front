@@ -1,1 +1,46 @@
-<p>signup works!</p>
+<div class="register-background">
+    <p-panel header="Registro" [style]="{'max-width': '50em'}" class="register-panel">
+        <div class="register-form">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <div class="grid p-fluid">
+                    <div class="field col-12 md:col-6">
+                        <label for="firstName">Nombres</label>
+                        <input id="firstName" type="text" pInputText formControlName="firstName"
+                            placeholder="Ingrese sus nombres" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="lastName">Apellidos</label>
+                        <input id="lastName" type="text" pInputText formControlName="lastName"
+                            placeholder="Ingrese sus apellidos" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="dni">DNI</label>
+                        <input id="dni" type="text" pInputText formControlName="dni" placeholder="Ingrese su DNI" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="address">Domicilio</label>
+                        <input id="address" type="text" pInputText formControlName="address"
+                            placeholder="Ingrese su domicilio" />
+                    </div>
+                    <div class="field col-12">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" pInputText formControlName="email"
+                            placeholder="Ingrese su correo electrónico" />
+                    </div>
+                    <div class="field col-12">
+                        <label for="new-password">Contraseña</label>
+                        <input id="new-password" type="password" pInputText formControlName="password"
+                            placeholder="Ingrese su contraseña" />
+                    </div>
+                    <div class="field col-12">
+                        <button pButton type="submit" label="Registrar" [disabled]="!registerForm.valid"
+                            class="p-button"></button>
+                    </div>
+                </div>
+            </form>
+            <div class="login-link">
+                <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+            </div>
+        </div>
+    </p-panel>
+</div>

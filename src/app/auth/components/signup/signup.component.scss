@@ -1,0 +1,54 @@
+.register-background {
+    display            : flex;
+    justify-content    : center;
+    align-items        : center;
+    height             : 100vh;
+    padding            : 1rem;
+    background-image   : url('/assets/images/municipal-background.jpg');
+    background-size    : cover;
+    background-position: center;
+}
+
+.register-panel {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius   : 10px;
+    box-shadow      : 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding         : 2rem;
+}
+
+.register-form {
+    .p-field {
+        margin-bottom: 1rem;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1rem;
+
+    a {
+        color          : #007ad9;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Estilos responsivos */
+@media (min-width: 768px) {
+    .register-panel {
+        max-width: 40em !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .register-panel {
+        max-width: 50em !important;
+    }
+}
