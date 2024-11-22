@@ -1,15 +1,9 @@
-<div class="menu-layout">
-    <p-sidebar [(visible)]="sidebarVisible" [baseZIndex]="1000" position="left" [showCloseIcon]="false" [modal]="false">
-        <ul class="layout-menu">
-            <ng-container *ngFor="let item of menuData; let i = index">
-                <li>
-                    <app-menu-item [item]="item" [index]="i" [root]="true"></app-menu-item>
-                </li>
-            </ng-container>
-        </ul>
-    </p-sidebar>
+<ul class="layout-menu">
+    <ng-container *ngFor="let item of model; let i = index;">
+        <li>
+            <app-menu-item *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></app-menu-item>
 
-    <div class="content">
-        <router-outlet></router-outlet>
-    </div>
-</div>
+        </li>
+        <li *ngIf="item.separator" class="menu-separator"></li>
+    </ng-container>
+</ul>

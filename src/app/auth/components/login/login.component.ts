@@ -35,7 +35,7 @@ export class LoginComponent {
       const dto = new LoginUserDto(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value);
       this.authService.login(dto).subscribe({
         next: (response: any) => {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/admin']);
         },
         error: (error: any) => {
           Swal.fire({

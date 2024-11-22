@@ -8,19 +8,18 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {
-        path: 'user',
-        loadChildren: () => import('../../../modules/user/user.module').then(m => m.UserModule)
-      }/* ,
+        path: '',
+        redirectTo: 'user',
+        pathMatch: 'full',
+      },
       {
-        path: 'inventory',
-        loadChildren: () => import('../../../modules/inventory/inventory.module').then(m => m.InventoryModule)
-      } */,
-    ]
+        path: 'user',
+        loadChildren: () =>
+          import('../../../modules/user/user.module').then((m) => m.UserModule),
+      },
+      
+    ],
   },
-
-  {
-    path: '**', redirectTo: 'auth/login', pathMatch: 'full'
-  }
 ];
 
 @NgModule({

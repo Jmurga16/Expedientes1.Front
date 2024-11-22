@@ -9,21 +9,42 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { MenuItemComponent } from '../menu-item/menu-item.component';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { BadgeModule } from 'primeng/badge';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { RippleModule } from 'primeng/ripple';
+import { RouterModule } from '@angular/router';
+import { OverlayModule } from 'primeng/overlay';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AvatarModule } from 'primeng/avatar';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 
 @NgModule({
   declarations: [
     NavMenuComponent,
     LayoutComponent,
-    MenuItemComponent
+    MenuItemComponent,
+    TopbarComponent,
+
   ],
   imports: [
     CommonModule,
+    FormsModule,
     LayoutRoutingModule,
-    MenubarModule,
+    InputTextModule,
     SidebarModule,
+    BadgeModule,
+    RadioButtonModule,
+    InputSwitchModule,
+    RippleModule,
+    RouterModule,
+    OverlayModule,
     ButtonModule,
-    MenuModule
+    OverlayPanelModule,
+    AvatarModule
   ]
 })
 export class LayoutModule { }

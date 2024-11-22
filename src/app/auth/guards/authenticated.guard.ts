@@ -8,7 +8,7 @@ export const AuthenticatedGuard: CanActivateFn = (route, state) => {
     const router = inject(Router)
 
     if (tokenService.isAuthenticated()) {
-        return router.navigate(['home'])
+        return router.navigate(['/user/list'])
     }
     else {
         return true
