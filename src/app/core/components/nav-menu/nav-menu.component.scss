@@ -1,0 +1,13 @@
+.menu-layout {
+    display: flex;
+}
+
+p-sidebar {
+    width : 250px;
+    height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+    padding  : 1rem;
+}

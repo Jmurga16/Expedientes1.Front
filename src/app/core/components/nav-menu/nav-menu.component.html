@@ -1,1 +1,15 @@
-<p>nav-menu works!</p>
+<div class="menu-layout">
+    <p-sidebar [(visible)]="sidebarVisible" [baseZIndex]="1000" position="left" [showCloseIcon]="false" [modal]="false">
+        <ul class="layout-menu">
+            <ng-container *ngFor="let item of menuData; let i = index">
+                <li>
+                    <app-menu-item [item]="item" [index]="i" [root]="true"></app-menu-item>
+                </li>
+            </ng-container>
+        </ul>
+    </p-sidebar>
+
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

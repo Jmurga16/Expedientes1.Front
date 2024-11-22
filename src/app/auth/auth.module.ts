@@ -11,6 +11,8 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { PanelModule } from 'primeng/panel';
 import { RouterModule } from '@angular/router';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from '../core/interceptors/token.interceptor';
 
 
 @NgModule({
@@ -29,6 +31,9 @@ import { RouterModule } from '@angular/router';
     CardModule,
     PanelModule,
     RouterModule
-  ]
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+  ],
 })
 export class AuthModule { }
