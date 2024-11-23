@@ -21,7 +21,7 @@ export class UserListComponent {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private usuarioHttp: UsuarioService
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit() {
@@ -43,9 +43,11 @@ export class UserListComponent {
     this.loading = true;
     this.usuarios = []
 
-    this.usuarioHttp.get(this.request).subscribe({
-      next: (response: IPaginatedList<IUsuario>) => {
-        this.usuarios = response.items
+    console.log("get usuarios")
+    this.usuarioService.get(this.request).subscribe({
+      next: (response: any) => {
+        console.log(response)
+        this.usuarios = response
         this.totalRecords = response.totalRecords
         this.loading = false;
       },

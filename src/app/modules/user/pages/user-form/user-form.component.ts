@@ -27,6 +27,7 @@ export class UserFormComponent {
     this.userForm = this.formBuilder.group({
       idUsuario: [null],
       primerNombre: [null, [Validators.required]],
+      password: [null, [Validators.required]],
       segundoNombre: [null],
       primerApellido: [null, [Validators.required]],
       segundoApellido: [null],

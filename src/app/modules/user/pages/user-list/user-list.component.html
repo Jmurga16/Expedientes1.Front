@@ -19,18 +19,18 @@
 
         <ng-template pTemplate="header">
             <tr>
-                <th style="width: 25%;" pSortableColumn="nombre">
+                <th style="width: 25%;" pSortableColumn="name">
                     <div class="flex justify-content-between align-items-center">
                         Nombres
-                        <p-sortIcon field="nombre"></p-sortIcon>
+                        <p-sortIcon field="name"></p-sortIcon>
 
                     </div>
                 </th>
 
-                <th style="width: 25%" pSortableColumn="usuario">
+                <th style="width: 25%" pSortableColumn="username">
                     <div class="flex justify-content-between align-items-center">
                         Usuario
-                        <p-sortIcon field="usuario"></p-sortIcon>
+                        <p-sortIcon field="username"></p-sortIcon>
                     </div>
                 </th>
 
@@ -59,19 +59,19 @@
         <ng-template pTemplate="body" let-usuario>
             <tr>
                 <td>
-                    {{usuario.nombresCompletos}}
+                    {{usuario.name}} {{usuario.lastname}}
                 </td>
 
                 <td>
-                    {{usuario.cuenta}}
+                    {{usuario.username}}
                 </td>
 
                 <td>
-                    {{usuario.rol}}
+                    {{usuario.roles[0]}}
                 </td>
 
                 <td>
-                    {{usuario.estadoUsuario}}
+                    {{usuario.status}}
                 </td>
 
                 <td class="text-center">

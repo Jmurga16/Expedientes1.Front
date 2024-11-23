@@ -20,8 +20,6 @@ import { OverlayModule } from 'primeng/overlay';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AvatarModule } from 'primeng/avatar';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptor } from '../../interceptors/token.interceptor';
 
 
 @NgModule({
@@ -47,9 +45,6 @@ import { TokenInterceptor } from '../../interceptors/token.interceptor';
     ButtonModule,
     OverlayPanelModule,
     AvatarModule
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ]
 })
 export class LayoutModule { }

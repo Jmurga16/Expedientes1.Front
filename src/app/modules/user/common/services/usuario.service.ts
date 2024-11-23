@@ -19,7 +19,7 @@ export class UsuarioService {
   private _api: string;
 
   constructor(private http: HttpClient) {
-    this._api = `${environment.apiUrl}/Usuario`;
+    this._api = `${environment.apiUrl}/user`;
   }
 
   get(request: IPaginatedFilter): Observable<IPaginatedList<IUsuario>> {
