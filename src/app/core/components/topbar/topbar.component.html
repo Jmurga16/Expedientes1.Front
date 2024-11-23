@@ -1,7 +1,7 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
+    <!-- <a class="layout-topbar-logo" routerLink="">
         <img src="assets/images/logov1.png" alt="logo">
-    </a>
+    </a> -->
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
         <i class="pi pi-bars"></i>
@@ -11,48 +11,14 @@
 
     <div #topbarmenu class="layout-topbar-menu">
 
-        <span class="p-input-icon-left mb-2 float-md-right">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" #filter placeholder="Buscar " class="w-full" />
-        </span>
-
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-cog"></i>
-            <span>Settings</span>
-        </button>
-
-        <button class="p-link layout-topbar-button">
-            <i pbadge="" severity="danger" class="p-element pi pi-inbox mr-4  p-overlay-badge">
-                <p id="pr_id_24_badge" class="p-badge p-component p-badge-danger">6</p>
-            </i>
-        </button>
-
-        <button class="p-link layout-topbar-button" style="margin-right:1rem">
-            <i class="pi pi-calendar"></i>
-            <span>Calendar</span>
-        </button>
-
-
-        <p-avatar image="assets/demo/images/avatar/xuxuefeng.png" size="large" shape="circle"></p-avatar>
-        <div style="margin-left:1rem">
-            <p style="margin: 0; color: white;">
-                <span>Edwid Mexicano</span>
-            </p>
-            <p style="font-size: 12px; color: white">
-                <span>Administrador</span>
-            </p>
-        </div>
-
-
         <button class="p-link layout-topbar-button" (click)="op.toggle($event)">
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
-        <!-- <p-button (click)="toggle()" class="p-link layout-topbar-button"><i class="pi pi-ellipsis-v"></i></p-button> -->
         <p-overlayPanel #op>
-            <a [routerLink]="'../public/sign-in'">Cerrar
-                Sesión</a>
-
+            <a (click)=" logout()">
+                Cerrar Sesión
+            </a>
         </p-overlayPanel>
 
     </div>

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LayoutService } from '../../services/layout.service';
 import { MenuService } from '../../services/menu.service';
+import { TokenService } from '../../../auth/services/token.service';
 
 
 @Component({
@@ -41,7 +42,8 @@ export class MenuItemComponent implements OnInit, OnDestroy {
 
   key: string = "";
 
-  constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService) {
+  constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService,
+    private tokenService: TokenService) {
     this.menuSourceSubscription = this.menuService.menuSource$.subscribe((value: any) => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
@@ -83,7 +85,13 @@ export class MenuItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  itemClick(event: Event) {
+  itemClick(event: Event, item?: any) {
+
+    if (item.label.includes('Cerrar')) {
+      this.tokenService.logOut();
+      this.router.navigate(['auth/login']);
+    }
+
     // avoid processing disabled items
     if (this.item.disabled) {
       event.preventDefault();

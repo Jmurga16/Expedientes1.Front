@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from '../../services/layout.service';
+import { TokenService } from '../../../auth/services/token.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
@@ -16,11 +18,16 @@ export class TopbarComponent {
 
   @ViewChild('topbarmenu') menu!: ElementRef;
 
-  constructor(public layoutService: LayoutService) { }
+  constructor(public layoutService: LayoutService, private tokenService: TokenService, private router: Router) { }
 
   overlayVisible: boolean = false;
 
   toggle() {
     this.overlayVisible = !this.overlayVisible;
+  }
+
+  logout() {
+    this.tokenService.logOut();
+    this.router.navigate(['auth/login']);
   }
 }
