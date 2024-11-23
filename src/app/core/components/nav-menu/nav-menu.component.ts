@@ -23,7 +23,7 @@ export class NavMenuComponent {
         label: 'Menú',
         items: [
           { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['./home'] },
-          { label: 'Usuarios', icon: 'pi pi-fw pi-user', routerLink: ['user'] },
+          { label: 'Usuarios', icon: 'pi pi-fw pi-user', routerLink: ['user/list'] },
           { label: 'Demandas', icon: 'pi pi-fw pi-list', routerLink: ['demand'] },
           { label: 'Flujos de Trabajo', icon: 'pi pi-fw pi-share-alt', routerLink: ['workflow'] },
           { label: 'Configuración', icon: 'pi pi-fw pi-cog', routerLink: ['configuration'] },

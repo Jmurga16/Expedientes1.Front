@@ -1,1 +1,65 @@
-<p>user-form works!</p>
+<p-card header="Crear Usuario">
+    <div class="col-12">
+        <form [formGroup]="userForm" autocomplete="off">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="primerNombre">Nombres</label>
+                    <input pInputText id="primerNombre" type="text" formControlName="primerNombre"
+                        [readOnly]="readonly" />
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="primerApellido">Apellidos</label>
+                    <input pInputText id="primerApellido" type="text" formControlName="primerApellido" />
+                </div>
+            </div>
+
+            <div class="p-fluid p-formgrid grid">
+
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="telefono">DNI</label>
+                    <input pInputText id="telefono" type="text" formControlName="telefono" />
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="telefono">Domicilio</label>
+                    <input pInputText id="telefono" type="text" formControlName="telefono" />
+                </div>
+            </div>
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="correo">Correo Electrónico</label>
+                    <input pInputText id="correo" formControlName="correo" />
+                </div>
+
+                <div class="field col-12 md:col-6">
+                    <label for="new-password">Contraseña</label>
+                    <input id="new-password" type="password" pInputText formControlName="password"
+                        placeholder="Ingrese su contraseña" />
+                </div>
+
+            </div>
+
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="roles">{{userForm.controls['roles'].value?.length > 1 ? 'Roles':'Rol'}}</label>
+                    <p-multiSelect [options]="listRoles" optionLabel="nombre" formControlName="roles"
+                        placeholder="Seleccione" dataKey="idRol"></p-multiSelect>
+                </div>
+                <div class="field col-12 md:col-6">
+                    <label htmlFor="estado">Estado</label>
+                    <p-dropdown [options]="listEsadosUsuario" optionLabel="nombre" optionValue="idEstadoUsuario"
+                        placeholder="Seleccione" formControlName="idEstado"></p-dropdown>
+                </div>
+            </div>
+
+            <div class="footer">
+                <ng-content></ng-content>
+            </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p-button type="submit" label="Guardar"></p-button>
+        <p-button type="button" label="Salir" styleClass="p-button-danger"></p-button>
+    </div>
+
+</p-card>

@@ -1,1 +1,96 @@
-<p>user-list works!</p>
+<p-card header="Bandeja de Usuarios">
+
+    <div class="flex justify-content-between flex-column sm:flex-row container">
+
+        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNewUser()"></p-button>
+
+        <span class="p-input-icon-left mb-2">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" #filter (keyup)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
+                class="w-full" />
+        </span>
+    </div>
+
+    <p-table #dataTable1 [value]="usuarios" dataKey="idUsuario" [loading]="loading" [rowHover]="true" [lazy]="true"
+        [paginator]="true" (onLazyLoad)="getUsers($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-gridlines" [globalFilterFields]="['nombre','rol','usuario']" responsiveLayout="scroll">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 25%;" pSortableColumn="nombre">
+                    <div class="flex justify-content-between align-items-center">
+                        Nombres
+                        <p-sortIcon field="nombre"></p-sortIcon>
+
+                    </div>
+                </th>
+
+                <th style="width: 25%" pSortableColumn="usuario">
+                    <div class="flex justify-content-between align-items-center">
+                        Usuario
+                        <p-sortIcon field="usuario"></p-sortIcon>
+                    </div>
+                </th>
+
+                <th style="width: 25%" pSortableColumn="rol">
+                    <div class="flex justify-content-between align-items-center">
+                        Roles
+                        <p-sortIcon field="rol"></p-sortIcon>
+                    </div>
+                </th>
+
+                <th style="width: 15%" pSortableColumn="estado">
+                    <div class="flex justify-content-between align-items-center">
+                        Estado
+                        <p-sortIcon field="estado"></p-sortIcon>
+                    </div>
+                </th>
+
+                <th style="width: 10%">
+                    <div class="flex justify-content-between align-items-center">
+                        Opciones
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-usuario>
+            <tr>
+                <td>
+                    {{usuario.nombresCompletos}}
+                </td>
+
+                <td>
+                    {{usuario.cuenta}}
+                </td>
+
+                <td>
+                    {{usuario.rol}}
+                </td>
+
+                <td>
+                    {{usuario.estadoUsuario}}
+                </td>
+
+                <td class="text-center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.idUsuario)"
+                        class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">No se encontraron registros.</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="5">Cargando...</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>

@@ -14,7 +14,11 @@ const routes: Routes = [
     component: UserListComponent
   },
   {
-    path: 'form',
+    path: 'create',
+    component: UserFormComponent
+  },
+  {
+    path: 'edit?:id',
     component: UserFormComponent
   }
 ];
