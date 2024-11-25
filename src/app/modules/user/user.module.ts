@@ -24,6 +24,7 @@ import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../shared/shared.module';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -53,7 +54,8 @@ const PRIMENG_MODULES = [
     CommonModule,
     UserRoutingModule,
     ReactiveFormsModule,
-    ...PRIMENG_MODULES
+    ...PRIMENG_MODULES,
+    SharedModule
   ]
 })
 export class UserModule { }

@@ -67,15 +67,15 @@
                 </td>
 
                 <td>
-                    {{usuario.roles[0]}}
+                    {{usuario.roles[0] | role}}
                 </td>
 
                 <td>
-                    {{usuario.status}}
+                    {{usuario.status == 1 ? "Activo":"Inactivo"}}
                 </td>
 
                 <td class="text-center">
-                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.idUsuario)"
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.id)"
                         class="p-button-rounded p-button-text p-button-tbl">
                     </button>
                 </td>
