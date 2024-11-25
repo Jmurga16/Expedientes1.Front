@@ -78,6 +78,10 @@
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.id)"
                         class="p-button-rounded p-button-text p-button-tbl">
                     </button>
+
+                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteUserById(usuario.id)"
+                        class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
                 </td>
             </tr>
         </ng-template>

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../common/services/usuario.service';
 import { IUsuario } from '../../common/models/usuario.interface';
 import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -68,4 +69,40 @@ export class UserListComponent {
       relativeTo: this.activatedRoute
     });
   }
+
+  deleteUserById(id: any) {
+
+    Swal.fire({
+      title: "¿Deseas eliminar el usuario?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: "Aceptar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        this.usuarioService.delete(id).subscribe({
+          next: (response: any) => {
+            console.log(response)
+            Swal.fire({
+              title: 'Se eliminó correctamente.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            })
+            this.getUsers();
+          },
+          error: (error: any) => {
+            Swal.fire({
+              title: 'Error!',
+              text: 'No se pudo eliminar el usuario.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+          }
+        });
+      }
+    });
+
+  }
+
 }

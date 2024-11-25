@@ -1,19 +1,16 @@
 export interface IUsuarioForm {
-  idUsuario?: number,
-  idEstado: number,
-  idMotivoEstado?: number,
-  primerNombre: string,
-  segundoNombre?: string,
-  primerApellido: string,
-  segundoApellido?: string,
-  correo: string,
-  telefono: string,
-  idUsuarioAutoriza: number,
-  idTerritorio: number,
-  idEstadoRepublica: number,    
+  id?: number,
+  name: string,
+  lastname: string,
+  dni: string,
+  address?: string,
+  username?: string,
+  email: string,
+  password: string,
+  status: number,
   roles: IUsuarioFormRol[],
 }
 
 export interface IUsuarioFormRol {
-  idRol: number;
+  id: number;
 }

@@ -1,33 +1,32 @@
 <p-card header="Crear Usuario">
     <div class="col-12">
-        <form [formGroup]="userForm" autocomplete="off">
+        <form [formGroup]="userForm" autocomplete="off" (ngSubmit)="onSubmit()">
             <div class="p-fluid p-formgrid grid">
                 <div class="field col-12 md:col-6">
-                    <label htmlFor="primerNombre">Nombres</label>
-                    <input pInputText id="primerNombre" type="text" formControlName="primerNombre"
-                        [readOnly]="readonly" />
+                    <label htmlFor="name">Nombres</label>
+                    <input pInputText id="name" type="text" formControlName="name" [readOnly]="readonly" />
                 </div>
                 <div class="field col-12 md:col-6">
-                    <label htmlFor="primerApellido">Apellidos</label>
-                    <input pInputText id="primerApellido" type="text" formControlName="primerApellido" />
+                    <label htmlFor="lastname">Apellidos</label>
+                    <input pInputText id="lastname" type="text" formControlName="lastname" />
                 </div>
             </div>
 
             <div class="p-fluid p-formgrid grid">
 
                 <div class="field col-12 md:col-6">
-                    <label htmlFor="telefono">DNI</label>
-                    <input pInputText id="telefono" type="text" formControlName="telefono" />
+                    <label htmlFor="dni">DNI</label>
+                    <input pInputText id="dni" type="text" formControlName="dni" />
                 </div>
                 <div class="field col-12 md:col-6">
-                    <label htmlFor="telefono">Domicilio</label>
-                    <input pInputText id="telefono" type="text" formControlName="telefono" />
+                    <label htmlFor="address">Domicilio</label>
+                    <input pInputText id="address" type="text" formControlName="address" />
                 </div>
             </div>
             <div class="p-fluid p-formgrid grid">
                 <div class="field col-12 md:col-6">
-                    <label htmlFor="correo">Correo Electrónico</label>
-                    <input pInputText id="correo" formControlName="correo" />
+                    <label htmlFor="email">Correo Electrónico</label>
+                    <input pInputText type="email" id="email" formControlName="email" />
                 </div>
 
                 <div class="field col-12 md:col-6">
@@ -39,27 +38,27 @@
             </div>
 
             <div class="p-fluid p-formgrid grid">
+
                 <div class="field col-12 md:col-6">
                     <label htmlFor="roles">{{userForm.controls['roles'].value?.length > 1 ? 'Roles':'Rol'}}</label>
-                    <p-multiSelect [options]="listRoles" optionLabel="nombre" formControlName="roles"
-                        placeholder="Seleccione" dataKey="idRol"></p-multiSelect>
+                    <p-multiSelect [options]="listRoles" optionLabel="nombre" formControlName="roles" optionValue="id"
+                        placeholder="Seleccione" dataKey="id"></p-multiSelect>
                 </div>
+
                 <div class="field col-12 md:col-6">
                     <label htmlFor="estado">Estado</label>
-                    <p-dropdown [options]="listEsadosUsuario" optionLabel="nombre" optionValue="idEstadoUsuario"
-                        placeholder="Seleccione" formControlName="idEstado"></p-dropdown>
+                    <p-dropdown [options]="listEstadosUsuario" optionLabel="nombre" optionValue="id"
+                        placeholder="Seleccione" formControlName="status"></p-dropdown>
                 </div>
             </div>
 
             <div class="footer">
-                <ng-content></ng-content>
+                <p-button type="submit" label="Guardar"></p-button>
+                <p-button type="button" label="Salir" styleClass="p-button-danger" (onClick)="goToBack()"></p-button>
             </div>
         </form>
     </div>
 
-    <div class="footer">
-        <p-button type="submit" label="Guardar"></p-button>
-        <p-button type="button" label="Salir" styleClass="p-button-danger"></p-button>
-    </div>
+
 
 </p-card>

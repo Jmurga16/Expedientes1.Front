@@ -37,7 +37,11 @@ export class UsuarioService {
   }
 
   update(request: IUsuarioForm): Observable<IResponseForm> {
-    return this.http.put<IResponseForm>(`${this._api}`, request);
+    return this.http.put<IResponseForm>(`${this._api}/${request.id}`, request);
+  }
+
+  delete(id: any): Observable<IResponseForm> {
+    return this.http.delete<IResponseForm>(`${this._api}/${id}`);
   }
 
   /* getRoles(): Observable<IRoles[]> {
