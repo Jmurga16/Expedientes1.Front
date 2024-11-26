@@ -1,4 +1,9 @@
 export interface IUsuario {
+    id?: number;
+    username?: string;
+    roles?: any;
+    status?:number;
+
     idUsuario?: number;
     nombresCompletos?: string;
     rol?: string;

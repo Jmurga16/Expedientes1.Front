@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent {
+
   usuarios: IUsuario[] = []
   loading: boolean = true;
   request: any = { search: "", pageIndex: 1, pageSize: 10 }
@@ -79,17 +80,18 @@ export class UserListComponent {
       confirmButtonText: "Aceptar",
       cancelButtonText: "Cancelar",
     }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         this.usuarioService.delete(id).subscribe({
           next: (response: any) => {
             console.log(response)
-            Swal.fire({
-              title: 'Se eliminó correctamente.',
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.getUsers();
+            if (response.status == "OK") {
+              Swal.fire({
+                title: response.message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              })
+              this.getUsers();
+            }
           },
           error: (error: any) => {
             Swal.fire({
