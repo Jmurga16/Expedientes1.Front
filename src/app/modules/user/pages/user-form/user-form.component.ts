@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IUsuarioForm } from '../../common/models/usuario-form.interface';
 import Swal from 'sweetalert2';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
+import { AreaService } from '../../../../shared/services/area.service';
 
 @Component({
   selector: 'app-user-form',
@@ -27,6 +28,7 @@ export class UserFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private usuarioService: UsuarioService,
+    private areaService: AreaService,
     private router: Router
 
   ) {
@@ -58,6 +60,7 @@ export class UserFormComponent implements OnInit {
 
     this.getRoles()
     this.getEstadosUsuario()
+    this.getAreas()
   }
 
   getUser() {
@@ -71,6 +74,17 @@ export class UserFormComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  getAreas() {
+
+    console.log("get areas")
+    this.areaService.getAreas().subscribe({
+      next: (response: any) => {
+        console.log(response)
+                
       }
     });
   }
