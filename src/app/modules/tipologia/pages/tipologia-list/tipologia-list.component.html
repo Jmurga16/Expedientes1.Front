@@ -1,8 +1,8 @@
-<p-card header="Bandeja de Usuarios">
+<p-card header="Bandeja de Tipología">
 
     <div class="flex justify-content-between flex-column sm:flex-row container">
 
-        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNewUser()"></p-button>
+        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="openModalForm()"></p-button>
 
         <span class="p-input-icon-left mb-2">
             <i class="pi pi-search"></i>
@@ -11,40 +11,30 @@
         </span>
     </div>
 
-    <p-table #dataTable1 [value]="usuarios" dataKey="idUsuario" [loading]="loading" [rowHover]="true" [lazy]="true"
-        (onLazyLoad)="getUsers($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
+    <p-table #dataTable1 [value]="datatable" dataKey="idUsuario" [loading]="loading" [rowHover]="true" [lazy]="true"
+        (onLazyLoad)="getDatatable($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
         [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-        styleClass="p-datatable-gridlines" [globalFilterFields]="['nombre','rol','usuario']" responsiveLayout="scroll">
+        styleClass="p-datatable-gridlines"
+        responsiveLayout="scroll">
 
         <ng-template pTemplate="header">
             <tr>
                 <th style="width: 25%;">
                     <div class="flex justify-content-between align-items-center">
-                        Nombres
-                        <!-- <p-sortIcon field="name"></p-sortIcon> -->
-
+                        Nombre
                     </div>
                 </th>
 
                 <th style="width: 25%">
                     <div class="flex justify-content-between align-items-center">
-                        Usuario
-                        <!-- <p-sortIcon field="username"></p-sortIcon> -->
-                    </div>
-                </th>
-
-                <th style="width: 25%">
-                    <div class="flex justify-content-between align-items-center">
-                        Roles
-                        <!-- <p-sortIcon field="rol"></p-sortIcon> -->
+                        Descripción
                     </div>
                 </th>
 
                 <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Estado
-                        <!-- <p-sortIcon field="estado"></p-sortIcon> -->
                     </div>
                 </th>
 
@@ -56,31 +46,27 @@
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-usuario>
+        <ng-template pTemplate="body" let-tipologia>
             <tr>
                 <td>
-                    {{usuario.name}} {{usuario.lastname}}
+                    {{tipologia.nombre}}
                 </td>
 
                 <td>
-                    {{usuario.username}}
+                    {{tipologia.descripcion}}
                 </td>
 
                 <td>
-                    {{usuario.roles[0] | role}}
-                </td>
-
-                <td>
-                    {{usuario.status == 1 ? "Activo":"Inactivo"}}
+                    {{tipologia.estado == 1 ? "Activo":"Inactivo"}}
                 </td>
 
                 <td class="text-center">
-                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.id)"
-                        class="p-button-rounded p-button-text p-button-tbl">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="openModalForm(tipologia.id)"
+                        pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
                     </button>
 
-                    <button pButton pRipple type="button" icon="pi pi-trash" *ngIf="usuario.id!=1"
-                        (click)="deleteUserById(usuario.id)" class="p-button-rounded p-button-text p-button-tbl">
+                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteById(tipologia.id)"
+                        pTooltip="Eliminar" class="p-button-rounded p-button-text p-button-tbl">
                     </button>
                 </td>
             </tr>
