@@ -1,8 +1,8 @@
-export interface ITipologia {
+export interface ISubtipologia {
     id?: number;
     nombre?: string;
-    descripcion?: any;
-    estado?: number;
+    idTipologia?: number;
+    estadoUsuario?: string;
 }
 
 

@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from '../../../../../environments/environment.development';
 import { HttpParamsUtility } from '../../../../core/utils/HttpParamsUtility';
-import { ITipologia } from '../models/tipologia.interface';
+import { ISubtipologia } from '../models/subtipologia.interface';
 import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
 import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filter.interface';
-import { ITipologiaForm } from '../models/tipologia-form.interface';
+import { ISubtipologiaForm } from '../models/subtipologia-form.interface';
 import { IResponseForm } from '../../../../core/models/generic/response-form.interface';
 
 
@@ -14,33 +14,32 @@ import { IResponseForm } from '../../../../core/models/generic/response-form.int
 @Injectable({
   providedIn: 'root',
 })
-export class TipologiaService {
+export class SubtipologiaService {
   private _api: string;
 
   constructor(private http: HttpClient) {
-    this._api = `${environment.apiUrl}/tipologia`;
+    this._api = `${environment.apiUrl}/subtipologia`;
   }
 
-  get(request: IPaginatedFilter): Observable<IPaginatedList<ITipologia>> {
+  get(request: IPaginatedFilter): Observable<IPaginatedList<ISubtipologia>> {
     const params = HttpParamsUtility.buildHttpParams(request);
 
-    return this.http.get<IPaginatedList<ITipologia>>(`${this._api}`, { params });
+    return this.http.get<IPaginatedList<ISubtipologia>>(`${this._api}`, { params });
   }
 
-  getActives(): Observable<IPaginatedList<ITipologia>> {
-    
-    return this.http.get<IPaginatedList<ITipologia>>(`${this._api}/activos`);
+  getByIdTipologia(idTipologia: number): Observable<ISubtipologia[]> {
+    return this.http.get<ISubtipologia[]>(`${this._api}/tipologia/${idTipologia}`);
   }
 
-  getById(id: number): Observable<ITipologia> {
-    return this.http.get<ITipologia>(`${this._api}/${id}`);
+  getById(id: number): Observable<ISubtipologia> {
+    return this.http.get<ISubtipologia>(`${this._api}/${id}`);
   }
 
-  create(request: ITipologiaForm): Observable<IResponseForm> {
+  create(request: ISubtipologiaForm): Observable<IResponseForm> {
     return this.http.post<IResponseForm>(`${this._api}`, request);
   }
 
-  update(request: ITipologiaForm): Observable<IResponseForm> {
+  update(request: ISubtipologiaForm): Observable<IResponseForm> {
     return this.http.put<IResponseForm>(`${this._api}/${request.id}`, request);
   }
 

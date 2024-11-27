@@ -14,7 +14,7 @@ const routes: Routes = [
     component: TipologiaListComponent
   },
   {
-    path: 'subtipologia/:id',
+    path: 'subtipologia/list',
     component: SubtipologiaListComponent
   },
 ];
