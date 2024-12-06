@@ -1,0 +1,28 @@
+<form [formGroup]="form">
+    <div class="col-12">
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12" *ngIf="id!=null">
+                <label htmlFor="id">Código</label>
+                <input pInputText id="id" type="text" formControlName="id" readonly />
+            </div>
+            <div class="field col-12 md:col-12">
+                <label htmlFor="nombre">Nombre</label>
+                <input pInputText id="nombre" type="text" formControlName="nombre" />
+            </div>
+        </div>
+
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 md:col-12" *ngIf="id">
+                <label htmlFor="estado">Estatus</label>
+                <p-dropdown [options]="listEstado" optionLabel="nombre" optionValue="value" placeholder="Seleccione"
+                    formControlName="estado"></p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <p-button type="button" label="Cancelar" styleClass="p-button-secondary" (click)="closeModal()"></p-button>
+            <p-button type="submit" label="Guardar" (onClick)="id ? update() : create()"
+                [disabled]="disabledForm"></p-button>
+        </div>
+    </div>
+</form>

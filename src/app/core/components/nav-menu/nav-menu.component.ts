@@ -25,11 +25,12 @@ export class NavMenuComponent {
         items: [
           { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['./home'] },
           { label: 'Usuarios', icon: 'pi pi-fw pi-user', routerLink: ['user/list'] },
-          { label: 'Tipología', icon: 'pi pi-fw pi-cog', routerLink: ['tipologia/list'] },
-          { label: 'SubTipología', icon: 'pi pi-fw pi-cog', routerLink: ['tipologia/subtipologia/list'] },
+          { label: 'Tipología', icon: 'pi pi-fw pi-th-large', routerLink: ['tipologia/list'] },
+          { label: 'SubTipología', icon: 'pi pi-fw pi-table', routerLink: ['tipologia/subtipologia/list'] },
+          { label: 'Area', icon: 'pi pi-fw pi-map', routerLink: ['area/list'] },
           { label: 'Demandas', icon: 'pi pi-fw pi-list', routerLink: ['demand'] },
           { label: 'Flujos de Trabajo', icon: 'pi pi-fw pi-share-alt', routerLink: ['workflow'] },
-          { label: 'Configuración', icon: 'pi pi-fw pi-cog', routerLink: ['configuration'] },
+          //{ label: 'Configuración', icon: 'pi pi-fw pi-cog', routerLink: ['configuration'] },
           { label: 'Cerrar Sesión', icon: 'pi pi-fw pi-sign-out', routerLink: ['/auth/login'] },
         ]
       },
