@@ -32,6 +32,10 @@ export class UsuarioService {
     return this.http.get<IUsuario>(`${this._api}/${id}`);
   }
 
+  getByEmail(email: string): Observable<IUsuario> {
+    return this.http.get<IUsuario>(`${this._api}/email/${email}`);
+  }
+
   create(request: IUsuarioForm): Observable<IResponseForm> {
     return this.http.post<IResponseForm>(`${this._api}`, request);
   }

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IUsuarioForm } from '../../common/models/usuario-form.interface';
 import Swal from 'sweetalert2';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
-import { AreaService } from '../../../../shared/services/area.service';
+import { AreaService } from '../../../area/common/services/area.service';
 
 @Component({
   selector: 'app-user-form',
@@ -20,6 +20,8 @@ export class UserFormComponent implements OnInit {
 
   listRoles: any[] = [];
   listEstadosUsuario: any[] = []
+  listArea: any = []
+
   userForm: FormGroup;
   idUsuario: any
 
@@ -44,6 +46,7 @@ export class UserFormComponent implements OnInit {
       password: [null, [Validators.required, upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
       username: [{ disabled: true, value: null }, [Validators.required, Validators.email]],
       status: [1],
+      idArea: [null],
       roles: [null, [Validators.required]]
     });
 
@@ -64,8 +67,6 @@ export class UserFormComponent implements OnInit {
   }
 
   getUser() {
-
-    console.log("get usuario")
     this.usuarioService.getById(this.idUsuario).subscribe({
       next: (response: any) => {
         console.log(response)
@@ -79,12 +80,9 @@ export class UserFormComponent implements OnInit {
   }
 
   getAreas() {
-
-    console.log("get areas")
-    this.areaService.getAreas().subscribe({
+    this.areaService.getActives().subscribe({
       next: (response: any) => {
-        console.log(response)
-                
+        this.listArea = response;
       }
     });
   }
@@ -96,6 +94,21 @@ export class UserFormComponent implements OnInit {
       { id: "ROLE_AREA", nombre: "Referente Area" },
       { id: "ROLE_COLAB", nombre: "Colaborador" }
     ]
+  }
+
+  haveArea(): boolean {
+    let roles = this.userForm.controls['roles'].value;
+
+    if (roles == null) {
+      return false;
+    }
+    else if (roles.includes('ROLE_AREA') || roles.includes('ROLE_COLAB')) {
+      return true;
+    }
+    else {
+      return false;
+    }
+
   }
 
   getEstadosUsuario() {
@@ -191,6 +204,8 @@ export class UserFormComponent implements OnInit {
       message = "El campo Contraseña es requerido."
     } else if (request.roles == null || request.roles.length == 0) {
       message = "El campo Rol es requerido."
+    } else if ((request.roles.includes('ROLE_AREA') || request.roles.includes('ROLE_COLAB')) && request.idArea == null) {
+      message = "El campo Área es requerido."
     }
 
 

@@ -7,6 +7,9 @@ const TOKEN_KEY = 'AuthToken';
 })
 export class TokenService {
 
+  private readonly payloadEmail = "email"
+  private readonly payloadRol = "roles"
+
   constructor() { }
 
   public setToken(token: string): void {
@@ -57,5 +60,26 @@ export class TokenService {
     return Date.now() < exp;
 
   }
+
+  getDataJWT(campo: string): string {
+    const token = this.getToken()
+
+    if (!token) {
+      return ''
+    }
+
+    var dataToken = JSON.parse(atob(token.split('.')[1]));
+
+    return dataToken[campo]
+  }
+
+  getEmail() {
+    return this.getDataJWT("email");
+  }
+
+  getRoles(): string {
+    return this.getDataJWT(this.payloadRol);
+  }
+
 
 }

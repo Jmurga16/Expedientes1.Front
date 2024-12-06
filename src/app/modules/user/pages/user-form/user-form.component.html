@@ -45,6 +45,12 @@
                         placeholder="Seleccione" dataKey="id"></p-multiSelect>
                 </div>
 
+                <div class="field col-12 md:col-6" *ngIf="haveArea()">
+                    <label htmlFor="estado">Área</label>
+                    <p-dropdown [options]="listArea" optionLabel="nombre" optionValue="id" placeholder="Seleccione"
+                        formControlName="idArea"></p-dropdown>
+                </div>
+
                 <div class="field col-12 md:col-6">
                     <label htmlFor="estado">Estado</label>
                     <p-dropdown [options]="listEstadosUsuario" optionLabel="nombre" optionValue="id"
