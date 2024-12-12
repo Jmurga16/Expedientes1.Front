@@ -1,3 +1,4 @@
 export const environment = {
-    apiUrl: "http://localhost:8080"
+    production: true,
+    apiUrl: "https://expedientes-api-a2guhadgg9gsapdn.eastus2-01.azurewebsites.net"
 };
