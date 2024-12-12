@@ -1,4 +1,4 @@
-<p-card header="Bandeja de Tipología">
+<p-card header="Bandeja de Área">
 
     <div class="flex justify-content-between flex-column sm:flex-row container">
 
@@ -11,7 +11,7 @@
         </span>
     </div>
 
-    <p-table #dataTable1 [value]="datatable" dataKey="idUsuario" [loading]="loading" [rowHover]="true" [lazy]="true"
+    <p-table #dataTable1 [value]="datatable" dataKey="id" [loading]="loading" [rowHover]="true" [lazy]="true"
         (onLazyLoad)="getDatatable($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
         [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
