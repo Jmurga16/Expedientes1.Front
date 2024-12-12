@@ -31,6 +31,16 @@ const routes: Routes = [
           import('../../../modules/area/area.module').then((m) => m.AreaModule),
       },
       {
+        path: 'workflow',
+        loadChildren: () =>
+          import('../../../modules/workflow/workflow.module').then((m) => m.WorkflowModule),
+      },
+      {
+        path: 'demanda',
+        loadChildren: () =>
+          import('../../../modules/demanda/demanda.module').then((m) => m.DemandaModule),
+      },
+      {
         path: 'home',
         component: HomeComponent
       },
