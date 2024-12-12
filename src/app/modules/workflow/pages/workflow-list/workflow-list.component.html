@@ -1,1 +1,97 @@
-<p>workflow-list works!</p>
+<p-card [header]="headerTitle">
+
+    <div class="flex justify-content-between flex-column sm:flex-row container">
+
+        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNew()"></p-button>
+
+        <span class="p-input-icon-left mb-2">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" #filter (keyup)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
+                class="w-full" />
+        </span>
+    </div>
+
+    <p-table #dataTable1 [value]="datatable" dataKey="id" [loading]="loading" [rowHover]="true" [lazy]="true"
+        (onLazyLoad)="getDatatable($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Nombre
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Tipo de Demanda
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Tipología
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Subtipología
+                    </div>
+                </th>
+                <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Estado
+                    </div>
+                </th>
+                <th style="width: 10%">
+                    <div class="flex justify-content-between align-items-center">
+                        Opciones
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-workflow>
+            <tr>
+                <td>
+                    {{workflow.nombre}}
+                </td>
+                <td>
+                    {{workflow.tipo}}
+                </td>
+                <td>
+                    {{workflow.tipologia}}
+                </td>
+                <td>
+                    {{workflow.subtipologia}}
+                </td>
+
+                <td>
+                    {{workflow.estado == 1 ? "Activo":"Inactivo"}}
+                </td>
+
+                <td class="text-center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEdit(workflow.id)"
+                        pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
+
+                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteById(workflow.id)"
+                        pTooltip="Eliminar" class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6">No se encontraron registros.</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="6">Cargando...</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>

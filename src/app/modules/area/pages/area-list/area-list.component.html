@@ -40,22 +40,22 @@
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-tipologia>
+        <ng-template pTemplate="body" let-area>
             <tr>
                 <td>
-                    {{tipologia.nombre}}
+                    {{area.nombre}}
                 </td>
 
                 <td>
-                    {{tipologia.estado == 1 ? "Activo":"Inactivo"}}
+                    {{area.estado == 1 ? "Activo":"Inactivo"}}
                 </td>
 
                 <td class="text-center">
-                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="openModalForm(tipologia.id)"
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="openModalForm(area.id)"
                         pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
                     </button>
 
-                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteById(tipologia.id)"
+                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteById(area.id)"
                         pTooltip="Eliminar" class="p-button-rounded p-button-text p-button-tbl">
                     </button>
                 </td>

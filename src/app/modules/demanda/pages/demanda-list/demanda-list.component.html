@@ -1,1 +1,112 @@
-<p>demanda-list works!</p>
+<p-card [header]="headerTitle">
+
+    <div class="flex justify-content-between flex-column sm:flex-row container">
+
+        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNew()"></p-button>
+
+        <span class="p-input-icon-left mb-2">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" #filter (keyup)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
+                class="w-full" />
+        </span>
+    </div>
+
+    <p-table #dataTable1 [value]="datatable" dataKey="id" [loading]="loading" [rowHover]="true" [lazy]="true"
+        (onLazyLoad)="getDatatable($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        styleClass="p-datatable-gridlines" responsiveLayout="scroll">
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Demandante
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        DNI
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Caratula
+                    </div>
+                </th>
+                <th style="width: 15%;">
+                    <div class="flex justify-content-between align-items-center">
+                        Descripción
+                    </div>
+                </th>
+                <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Secretaría
+                    </div>
+                </th>
+                <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Estado
+                    </div>
+                </th>
+                <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Situación
+                    </div>
+                </th>
+                <th style="width: 10%">
+                    <div class="flex justify-content-between align-items-center">
+                        Opciones
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-demanda>
+            <tr>
+                <td>
+                    {{demanda.demandante}}
+                </td>
+                <td>
+                    {{demanda.dni}}
+                </td>
+                <td>
+                    {{demanda.caratula}}
+                </td>
+                <td>
+                    {{demanda.descripcion}}
+                </td>
+                <td>
+                    {{demanda.secretaria}}
+                </td>
+                <td>
+                    {{demanda.estado == 1 ? "Activo":"Inactivo"}}
+                </td>
+                <td>
+                    {{demanda.situacion}}
+                </td>
+
+                <td class="text-center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEdit(demanda.id)"
+                        pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
+
+                    <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteById(demanda.id)"
+                        pTooltip="Eliminar" class="p-button-rounded p-button-text p-button-tbl">
+                    </button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="8">No se encontraron registros.</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="8">Cargando...</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>
