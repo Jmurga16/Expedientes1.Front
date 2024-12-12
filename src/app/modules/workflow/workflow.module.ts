@@ -44,6 +44,7 @@ const PRIMENG_MODULES = [
   TooltipModule,
   TreeTableModule,
   TreeModule,
+  InputTextareaModule
 ];
 
 @NgModule({
