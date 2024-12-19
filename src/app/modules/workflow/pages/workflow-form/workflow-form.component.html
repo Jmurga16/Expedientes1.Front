@@ -1,21 +1,20 @@
 <p-card [header]="headerTitle">
     <div class="col-12">
         <form [formGroup]="workflowForm" autocomplete="off" (ngSubmit)="onSubmit()">
+            
             <div class="p-fluid p-formgrid grid">
-
                 <div class="field col-12 md:col-6">
                     <label htmlFor="name">Nombre</label>
                     <input pInputText id="name" type="text" formControlName="name" [readOnly]="readonly" />
                 </div>
                 <div class="field col-12 md:col-6">
                     <label htmlFor="estado">Tipo de Demanda</label>
-                    <p-dropdown [options]="listEstadosWorkflow" optionLabel="nombre" optionValue="id"
-                        placeholder="Seleccione" formControlName="status"></p-dropdown>
+                    <p-dropdown [options]="listTipoDemanda" optionLabel="nombre" optionValue="id"
+                        placeholder="Seleccione" formControlName="idTipoDemanda"></p-dropdown>
                 </div>
             </div>
 
             <div class="p-fluid p-formgrid grid">
-
                 <div class="field col-12 md:col-6">
                     <label htmlFor="estado">Tipología</label>
                     <p-dropdown [options]="listTipologia" optionLabel="nombre" optionValue="id"
@@ -28,6 +27,7 @@
                         placeholder="Seleccione" formControlName="idSubtipologia"></p-dropdown>
                 </div>
             </div>
+
             <div class="p-fluid p-formgrid grid">
                 <div class="field col-12 md:col-12">
                     <label htmlFor="descripcion">Descripción</label>
@@ -35,6 +35,8 @@
                 </div>
             </div>
 
+
+            <app-bpmn></app-bpmn>
 
 
             <div class="footer">

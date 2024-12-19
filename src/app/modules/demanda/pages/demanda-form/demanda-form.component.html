@@ -1,1 +1,98 @@
-<p>demanda-form works!</p>
+<p-card [header]="headerTitle">
+    <div class="col-12">
+        <form [formGroup]="demandaForm" autocomplete="off" (ngSubmit)="onSubmit()">
+
+            <div class="div">
+                <h5>Información Personal</h5>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="name">Nombres</label>
+                        <input pInputText id="name" type="text" formControlName="name" [readOnly]="true" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="lastname">Apellidos</label>
+                        <input pInputText id="lastname" type="text" formControlName="lastname" [readOnly]="true" />
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="dni">DNI</label>
+                        <input pInputText id="dni" type="text" formControlName="dni" [readOnly]="true" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="address">Domicilio</label>
+                        <input pInputText id="address" type="text" formControlName="address" [readOnly]="true" />
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <label htmlFor="email">Correo Electrónico</label>
+                        <input pInputText type="email" id="email" formControlName="email" [readOnly]="true" />
+                    </div>
+                </div>
+            </div>
+
+            <p-divider type="solid">
+            </p-divider>
+
+            <div class="div">
+                <h5>Información Demanda</h5>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="name">Nombre</label>
+                        <input pInputText id="name" type="text" formControlName="name" [readOnly]="readonly" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="estado">Tipo de Demanda</label>
+                        <p-dropdown [options]="listTipoDemanda" optionLabel="nombre" optionValue="id"
+                            placeholder="Seleccione" formControlName="idTipoDemanda"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="estado">Tipología</label>
+                        <p-dropdown [options]="listTipologia" optionLabel="nombre" optionValue="id"
+                            (onChange)="getSubtipologia($event.value)" placeholder="Seleccione"
+                            formControlName="idTipologia"></p-dropdown>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="estado">Subtipología</label>
+                        <p-dropdown [options]="listSubtipologia" optionLabel="nombre" optionValue="id"
+                            placeholder="Seleccione" formControlName="idSubtipologia"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <label htmlFor="descripcion">Descripción</label>
+                        <textarea pInputTextarea id="descripcion" formControlName="descripcion" rows="3"
+                            [readOnly]="true"></textarea>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="domicilio">Domicilio</label>
+                        <input pInputText id="domicilio" type="text" formControlName="domicilio" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="estado">Estado</label>
+                        <p-dropdown [options]="listEstadosDemanda" optionLabel="nombre" optionValue="id"
+                            placeholder="Seleccione" formControlName="estado"></p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p-button type="submit" label="Guardar"></p-button>
+                <p-button type="button" label="Salir" styleClass="p-button-danger" (onClick)="goToBack()"></p-button>
+            </div>
+        </form>
+    </div>
+
+</p-card>

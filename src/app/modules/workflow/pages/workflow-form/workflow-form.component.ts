@@ -8,6 +8,7 @@ import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } fro
 import { AreaService } from '../../../area/common/services/area.service';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
+import { DataService } from '../../../../shared/services/data.service';
 
 @Component({
   selector: 'app-workflow-form',
@@ -40,25 +41,20 @@ export class WorkflowFormComponent {
     private areaService: AreaService,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
+    private dataService: DataService,
     private router: Router
 
   ) {
 
     this.workflowForm = this.formBuilder.group({
       id: [null],
-      name: [null, [Validators.required]],
-      lastname: [null, [Validators.required]],
-      dni: [null, [Validators.required]],
-      address: [null],
-
-      email: [null, [Validators.required, Validators.email]],
-      password: [null, [Validators.required, upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
-      workflowname: [{ disabled: true, value: null }, [Validators.required, Validators.email]],
-      status: [1],
-      idArea: [null],
+      nombre: [null, [Validators.required]],
+      idTipoDemanda: [null],
       idTipologia: [null],
       idSubtipologia: [null],
-      roles: [null, [Validators.required]]
+      descripcion: [null],
+      bpmn: [null],
+      estado: [1]
     });
 
   }
@@ -76,6 +72,7 @@ export class WorkflowFormComponent {
     this.getEstadosWorkflow()
     this.getAreas()
     this.getTipologia();
+    this.getTipoDemanda();
   }
 
   getWorkflow() {
@@ -95,6 +92,14 @@ export class WorkflowFormComponent {
     this.areaService.getActives().subscribe({
       next: (response: any) => {
         this.listArea = response;
+      }
+    });
+  }
+
+  getTipoDemanda() {
+    this.dataService.getTipoDemanda().subscribe({
+      next: (response: any) => {
+        this.listTipoDemanda = response;
       }
     });
   }

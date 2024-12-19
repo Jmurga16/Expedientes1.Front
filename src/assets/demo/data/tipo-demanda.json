@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "codigo": "PT",
+        "nombre": "Petición"
+    },
+    {
+        "id": 2,
+        "codigo": "QJ",
+        "nombre": "Queja"
+    },
+    {
+        "id": 3,
+        "codigo": "SG",
+        "nombre": "Sugerencia"
+    },
+    {
+        "id": 4,
+        "codigo": "RC",
+        "nombre": "Reclamo"
+    }
+]

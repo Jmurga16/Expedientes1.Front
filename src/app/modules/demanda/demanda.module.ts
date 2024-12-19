@@ -20,6 +20,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
 import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
+import { DividerModule } from 'primeng/divider';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
@@ -44,6 +45,7 @@ const PRIMENG_MODULES = [
   TooltipModule,
   TreeTableModule,
   TreeModule,
+  DividerModule 
 ];
 
 @NgModule({
