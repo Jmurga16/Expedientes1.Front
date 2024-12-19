@@ -84,6 +84,9 @@ export class WorkflowFormComponent {
       },
       error: () => {
         this.loading = false;
+      },
+      complete: () => {
+        this.getSubtipologia(this.workflowForm.controls["idTipologia"].value)
       }
     });
   }
@@ -223,22 +226,14 @@ export class WorkflowFormComponent {
 
     let message: string = "";
 
-    if (request.name == null || request.name == "") {
-      message = "El campo Nombres es requerido."
-    } else if (request.lastname == null || request.lastname == "") {
-      message = "El campo Apellidos es requerido."
-    } else if (request.dni == null || request.dni == "") {
-      message = "El campo DNI es requerido."
-    } else if (request.address == null || request.address == "") {
-      message = "El campo Domicilio es requerido."
-    } else if (request.email == null || request.email == "") {
-      message = "El campo Correo Electrónico es requerido."
-    } else if (request.password == null || request.password == "") {
-      message = "El campo Contraseña es requerido."
-    } else if (request.roles == null || request.roles.length == 0) {
-      message = "El campo Rol es requerido."
-    } else if ((request.roles.includes('ROLE_AREA') || request.roles.includes('ROLE_COLAB')) && request.idArea == null) {
-      message = "El campo Área es requerido."
+    if (request.nombre == null || request.nombre == "") {
+      message = "El campo Nombre es requerido."
+    } else if (request.idTipoDemanda == null || request.idTipoDemanda == "") {
+      message = "El campo Tipo de demanda es requerido."
+    } else if (request.idTipologia == null || request.idTipologia == "") {
+      message = "El campo Tipologia es requerido."
+    } else if (request.idSubtipologia == null || request.idSubtipologia == "") {
+      message = "El campo Subtipologia es requerido."
     }
 
 
