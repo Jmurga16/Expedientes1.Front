@@ -1,7 +1,7 @@
 <p-card [header]="headerTitle">
     <div class="col-12">
-        <form [formGroup]="demandaForm" autocomplete="off" (ngSubmit)="onSubmit()">
 
+        <form [formGroup]="userForm">
             <div class="div">
                 <h5>Información Personal</h5>
 
@@ -34,17 +34,19 @@
                     </div>
                 </div>
             </div>
+        </form>
 
-            <p-divider type="solid">
-            </p-divider>
+        <p-divider type="solid">
+        </p-divider>
 
+        <form [formGroup]="demandaForm" autocomplete="off" (ngSubmit)="onSubmit()">
             <div class="div">
                 <h5>Información Demanda</h5>
 
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <label htmlFor="name">Nombre</label>
-                        <input pInputText id="name" type="text" formControlName="name" [readOnly]="readonly" />
+                        <label htmlFor="caratula">Caratula</label>
+                        <input pInputText id="caratula" type="text" formControlName="caratula" [readOnly]="true" />
                     </div>
                     <div class="field col-12 md:col-6">
                         <label htmlFor="estado">Tipo de Demanda</label>
@@ -70,7 +72,7 @@
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-12">
                         <label htmlFor="descripcion">Descripción</label>
-                        <textarea pInputTextarea id="descripcion" formControlName="descripcion" rows="3"
+                        <textarea pInputTextarea id="descripcion" formControlName="descripcion" rows="4"
                             [readOnly]="true"></textarea>
                     </div>
                 </div>

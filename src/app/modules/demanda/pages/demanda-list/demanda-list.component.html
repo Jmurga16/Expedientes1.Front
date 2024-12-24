@@ -39,21 +39,21 @@
                         Descripción
                     </div>
                 </th>
-                <th style="width: 15%">
+                <!-- <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Secretaría
                     </div>
-                </th>
+                </th> -->
                 <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Estado
                     </div>
                 </th>
-                <th style="width: 15%">
+                <!-- <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Situación
                     </div>
-                </th>
+                </th> -->
                 <th style="width: 10%">
                     <div class="flex justify-content-between align-items-center">
                         Opciones
@@ -76,15 +76,15 @@
                 <td>
                     {{demanda.descripcion}}
                 </td>
-                <td>
+                <!-- <td>
                     {{demanda.secretaria}}
-                </td>
+                </td> -->
                 <td>
                     {{demanda.estado == 1 ? "Activo":"Inactivo"}}
                 </td>
-                <td>
+                <!-- <td>
                     {{demanda.situacion}}
-                </td>
+                </td> -->
 
                 <td class="text-center">
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEdit(demanda.id)"

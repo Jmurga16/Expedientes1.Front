@@ -9,6 +9,8 @@ import { AreaService } from '../../../area/common/services/area.service';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
 import { DataService } from '../../../../shared/services/data.service';
+import { UsuarioService } from '../../../user/common/services/usuario.service';
+import { TokenService } from '../../../../auth/services/token.service';
 
 @Component({
   selector: 'app-demanda-form',
@@ -16,6 +18,7 @@ import { DataService } from '../../../../shared/services/data.service';
   styleUrl: './demanda-form.component.scss'
 })
 export class DemandaFormComponent {
+
   headerTitle: string = "Gestión de Demandas"
   readonly: boolean = false;
   isEdit: boolean = false;
@@ -30,6 +33,8 @@ export class DemandaFormComponent {
   listSubtipologia: any[] = []
 
   demandaForm: FormGroup;
+  userForm: FormGroup;
+
   idDemanda: any
 
 
@@ -41,18 +46,25 @@ export class DemandaFormComponent {
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
+    private usuarioService: UsuarioService,
+    private tokenService: TokenService,
     private router: Router
 
   ) {
 
-    this.demandaForm = this.formBuilder.group({
+    this.userForm = this.formBuilder.group({
       id: [null],
-
       name: [null],
       lastname: [null],
       dni: [null],
       address: [null],
       email: [null],
+    });
+
+    this.demandaForm = this.formBuilder.group({
+      id: [null],
+      caratula: [null],
+      idUsuario: [null],
 
       idTipoDemanda: [null],
       idTipologia: [null],
@@ -68,18 +80,36 @@ export class DemandaFormComponent {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      this.idDemanda = params['id']; // Obtén el ID de la ruta
+      this.idDemanda = params['id'];
       console.log('Demanda ID:', this.idDemanda);
       if (this.idDemanda) {
         this.getDemanda();
       }
     });
 
+    this.getUser();
     this.getRoles()
     this.getEstadosDemanda()
     this.getAreas()
     this.getTipologia();
     this.getTipoDemanda();
+  }
+
+  getUser() {
+    let email = this.tokenService.getEmail()
+
+    this.usuarioService.getByEmail(email).subscribe({
+      next: (response: any) => {
+        console.log(response)
+        this.userForm.patchValue(response);
+        this.demandaForm.controls["idUsuario"].setValue(response.id)
+
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 
   getDemanda() {
@@ -91,6 +121,9 @@ export class DemandaFormComponent {
       },
       error: () => {
         this.loading = false;
+      },
+      complete: () => {
+        this.getSubtipologia(this.demandaForm.controls["idTipologia"].value)
       }
     });
   }
@@ -119,10 +152,21 @@ export class DemandaFormComponent {
     });
   }
 
-  getSubtipologia(idTipologia: number) {
+  async getSubtipologia(idTipologia: number) {
+
+    this.setDescripcion(idTipologia)
+
     this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
       next: (response: any) => {
         this.listSubtipologia = response;
+      }
+    });
+  }
+
+  setDescripcion(idTipologia: number) {
+    this.listTipologia.forEach(element => {
+      if (element.id == idTipologia) {
+        this.demandaForm.controls["descripcion"].setValue(element.descripcion)
       }
     });
   }
@@ -230,22 +274,14 @@ export class DemandaFormComponent {
 
     let message: string = "";
 
-    if (request.name == null || request.name == "") {
-      message = "El campo Nombres es requerido."
-    } else if (request.lastname == null || request.lastname == "") {
-      message = "El campo Apellidos es requerido."
-    } else if (request.dni == null || request.dni == "") {
-      message = "El campo DNI es requerido."
-    } else if (request.address == null || request.address == "") {
+    if (request.idTipoDemanda == null || request.idTipoDemanda == "") {
+      message = "El campo Tipo de Demanda es requerido."
+    } else if (request.idTipologia == null || request.idTipologia == "") {
+      message = "El campo Tipologia es requerido."
+    } else if (request.idSubtipologia == null || request.idSubtipologia == "") {
+      message = "El campo Subtipologia es requerido."
+    } else if (request.domicilio == null || request.domicilio == "") {
       message = "El campo Domicilio es requerido."
-    } else if (request.email == null || request.email == "") {
-      message = "El campo Correo Electrónico es requerido."
-    } else if (request.password == null || request.password == "") {
-      message = "El campo Contraseña es requerido."
-    } else if (request.roles == null || request.roles.length == 0) {
-      message = "El campo Rol es requerido."
-    } else if ((request.roles.includes('ROLE_AREA') || request.roles.includes('ROLE_COLAB')) && request.idArea == null) {
-      message = "El campo Área es requerido."
     }
 
 
