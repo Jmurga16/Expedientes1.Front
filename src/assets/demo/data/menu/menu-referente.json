@@ -1,0 +1,35 @@
+[
+    {
+        "label": "Menú",
+        "items": [
+            {
+                "label": "Home",
+                "icon": "pi pi-fw pi-home",
+                "routerLink": [
+                    "./home"
+                ]
+            },
+            {
+                "label": "Demandas",
+                "icon": "pi pi-fw pi-list",
+                "routerLink": [
+                    "demanda/list"
+                ]
+            },
+            {
+                "label": "Flujos de Trabajo",
+                "icon": "pi pi-fw pi-share-alt",
+                "routerLink": [
+                    "workflow/list"
+                ]
+            },
+            {
+                "label": "Cerrar Sesión",
+                "icon": "pi pi-fw pi-sign-out",
+                "routerLink": [
+                    "/auth/login"
+                ]
+            }
+        ]
+    }
+]

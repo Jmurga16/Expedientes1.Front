@@ -77,8 +77,30 @@ export class TokenService {
     return this.getDataJWT("email");
   }
 
-  getRoles(): string {
+  getRoles(): any {
     return this.getDataJWT(this.payloadRol);
+  }
+
+  getCurrentRol(): string {
+    
+    let roles = this.getRoles()    
+    let currentRol = ""
+
+    roles.forEach((element: any) => {
+      if (element.includes("ROLE_ADMIN")) {
+        currentRol = "administrador";
+      }
+      else if (element.includes("ROLE_AREA")) {
+        currentRol = "referente";
+      }
+      else if (element.includes("ROLE_COLAB")) {
+        currentRol = "colaborador";
+      }
+      else if (element.includes("ROLE_USER")) {
+        currentRol = "usuario";
+      }
+    });
+    return currentRol;
   }
 
 

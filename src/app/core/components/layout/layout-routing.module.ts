@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout.component';
 import { HomeComponent } from '../../../shared/components/home/home.component';
+import { AdminGuard } from '../../../auth/guards/admin.guard';
 /* import { DiagramComponent } from '../../../shared/components/diagram/diagram.component';
 import { BpmnComponent } from '../../../shared/components/bpmn/bpmn.component';
  */
@@ -19,6 +20,7 @@ const routes: Routes = [
         path: 'user',
         loadChildren: () =>
           import('../../../modules/user/user.module').then((m) => m.UserModule),
+        canActivate: [AdminGuard]
       },
       {
         path: 'tipologia',
