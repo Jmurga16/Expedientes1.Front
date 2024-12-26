@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AreaService } from '../../services/area.service';
+import { IAreaForm } from '../../models/area-form.interface';
 
 @Component({
   selector: 'app-area-form-modal',
@@ -9,13 +10,13 @@ import { AreaService } from '../../services/area.service';
   styleUrl: './area-form-modal.component.scss'
 })
 export class AreaFormModalComponent {
+  
   id: any
   form: FormGroup
   listEstado = [
     { value: 1, nombre: "Activo" },
     { value: 0, nombre: "Inactivo" }
   ]
-
 
   get disabledForm(): boolean {
     return this.form.invalid;
@@ -40,7 +41,7 @@ export class AreaFormModalComponent {
 
   ngOnInit(): void {
     if (this.id) {
-      this.getData(this.id);
+      this.getData();
     }
   }
 
@@ -48,7 +49,7 @@ export class AreaFormModalComponent {
     this.dialogRef.close();
   }
 
-  getData(id: any) {
+  getData() {
     this.areaService.getById(this.id).subscribe({
       next: (response) => {
         this.form.patchValue(response);
@@ -57,7 +58,7 @@ export class AreaFormModalComponent {
   }
 
   create() {
-    let request = this.form.value as any;
+    let request = this.form.value as IAreaForm;
 
     if (request) {
       this.areaService.create(request).subscribe({
@@ -69,7 +70,7 @@ export class AreaFormModalComponent {
   }
 
   update() {
-    let request = this.form.value as any;
+    let request = this.form.value as IAreaForm;
 
     if (request) {
       this.areaService.update(request).subscribe({

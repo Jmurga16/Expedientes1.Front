@@ -4,7 +4,6 @@ export interface IArea {
     estado?: number;
 }
 
-
 export interface IAreaListRequest {
     filtro: string,
     pagina: number,

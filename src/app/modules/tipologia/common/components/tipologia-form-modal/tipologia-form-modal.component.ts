@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TipologiaService } from '../../services/tipologia.service';
+import { ITipologiaForm } from '../../models/tipologia-form.interface';
 
 @Component({
   selector: 'app-tipologia-form-modal',
@@ -42,7 +43,7 @@ export class TipologiaFormModalComponent {
 
   ngOnInit(): void {
     if (this.id) {
-      this.getData(this.id);
+      this.getData();
     }
   }
 
@@ -50,19 +51,17 @@ export class TipologiaFormModalComponent {
     this.dialogRef.close();
   }
 
-  getData(id: any) {
+  getData() {
 
     this.tipologiaService.getById(this.id).subscribe({
       next: (response) => {
         this.form.patchValue(response);
       }
     });
-
-
   }
 
   create() {
-    let request = this.form.value as any;
+    let request = this.form.value as ITipologiaForm;
 
     if (request) {
       this.tipologiaService.create(request).subscribe({
@@ -74,7 +73,7 @@ export class TipologiaFormModalComponent {
   }
 
   update() {
-    let request = this.form.value as any;
+    let request = this.form.value as ITipologiaForm;
 
     if (request) {
       this.tipologiaService.update(request).subscribe({

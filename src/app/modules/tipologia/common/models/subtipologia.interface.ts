@@ -5,7 +5,6 @@ export interface ISubtipologia {
     estadoUsuario?: string;
 }
 
-
 export interface ITipologiaListRequest {
     filtro: string,
     pagina: number,

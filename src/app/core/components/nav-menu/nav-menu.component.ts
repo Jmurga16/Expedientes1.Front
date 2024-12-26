@@ -30,7 +30,6 @@ export class NavMenuComponent implements OnInit {
 
     this.menuService.getMenuByRol(currentRol).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.model = response;
         this.loading = false;
       },

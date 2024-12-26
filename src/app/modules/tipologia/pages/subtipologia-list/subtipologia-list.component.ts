@@ -1,12 +1,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import Swal from 'sweetalert2';
+import { FormControl } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import Swal from 'sweetalert2';
 import { ISubtipologia } from '../../common/models/subtipologia.interface';
 import { SubtipologiaService } from '../../common/services/subtipologia.service';
 import { SubtipologiaFormModalComponent } from '../../common/components/subtipologia-form-modal/subtipologia-form-modal.component';
 import { TipologiaService } from '../../common/services/tipologia.service';
-import { FormControl } from '@angular/forms';
 
 
 @Component({

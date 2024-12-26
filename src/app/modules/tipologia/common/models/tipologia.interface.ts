@@ -5,7 +5,6 @@ export interface ITipologia {
     estado?: number;
 }
 
-
 export interface ITipologiaListRequest {
     filtro: string,
     pagina: number,

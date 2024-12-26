@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../common/services/usuario.service';
 import { IUsuario } from '../../common/models/usuario.interface';
-import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
 import Swal from 'sweetalert2';
 
 
@@ -45,7 +44,6 @@ export class UserListComponent {
     this.loading = true;
     this.usuarios = []
 
-    console.log("get usuarios")
     this.usuarioService.get(this.request).subscribe({
       next: (response: any) => {
         console.log(response)

@@ -9,9 +9,6 @@ import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filt
 import { IUsuarioForm } from '../models/usuario-form.interface';
 import { IResponseForm } from '../../../../core/models/generic/response-form.interface';
 
-
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -47,13 +44,5 @@ export class UsuarioService {
   delete(id: any): Observable<IResponseForm> {
     return this.http.delete<IResponseForm>(`${this._api}/${id}`);
   }
-
-  /* getRoles(): Observable<IRoles[]> {
-    return this.http.get<IRoles[]>(`${this._api}/listar-rol`);
-  }
-
-  getUserByRol(codigo: string): Observable<IUsuarioByRol[]> {
-    return this.http.get<IUsuarioByRol[]>(`${this._api}/listar-por-rol/${codigo}`);
-  } */
 
 }

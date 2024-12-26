@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TipologiaService } from '../../services/tipologia.service';
 import { SubtipologiaService } from '../../services/subtipologia.service';
+import { ISubtipologiaForm } from '../../models/subtipologia-form.interface';
 
 
 @Component({
@@ -47,7 +48,7 @@ export class SubtipologiaFormModalComponent {
 
   ngOnInit(): void {
     if (this.id) {
-      this.getData(this.id);
+      this.getData();
     }
   }
 
@@ -55,7 +56,7 @@ export class SubtipologiaFormModalComponent {
     this.dialogRef.close();
   }
 
-  getData(id: any) {
+  getData() {
 
     this.subtipologiaService.getById(this.id).subscribe({
       next: (response) => {
@@ -65,7 +66,7 @@ export class SubtipologiaFormModalComponent {
   }
 
   create() {
-    let request = this.form.value as any;
+    let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
       this.subtipologiaService.create(request).subscribe({
@@ -77,7 +78,7 @@ export class SubtipologiaFormModalComponent {
   }
 
   update() {
-    let request = this.form.value as any;
+    let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
       this.subtipologiaService.update(request).subscribe({

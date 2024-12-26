@@ -19,6 +19,11 @@
 
         <ng-template pTemplate="header">
             <tr>
+                <!-- <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Fecha Apertura
+                    </div>
+                </th> -->
                 <th style="width: 15%;">
                     <div class="flex justify-content-between align-items-center">
                         Demandante
@@ -44,6 +49,11 @@
                         Secretaría
                     </div>
                 </th> -->
+                <!-- <th style="width: 15%">
+                    <div class="flex justify-content-between align-items-center">
+                        Ultima acción
+                    </div>
+                </th> -->
                 <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Estado
@@ -64,6 +74,9 @@
 
         <ng-template pTemplate="body" let-demanda>
             <tr>
+                <!-- <td>
+                    {{demanda.fechaApertura}}
+                </td> -->
                 <td>
                     {{demanda.demandante}}
                 </td>
@@ -78,6 +91,9 @@
                 </td>
                 <!-- <td>
                     {{demanda.secretaria}}
+                </td> -->
+                <!-- <td>
+                    {{demanda.ultimaAccion}}
                 </td> -->
                 <td>
                     {{demanda.estado == 1 ? "Activo":"Inactivo"}}

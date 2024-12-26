@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -23,31 +23,25 @@ export class LoginComponent {
     });
   }
 
-  ngOnInit(): void {
-
-  }
-
   onSubmit() {
 
     if (this.loginForm.valid) {
 
       const dto = new LoginUserDto(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value);
       this.authService.login(dto).subscribe({
-        next: (response: any) => {
+        next: () => {
           this.router.navigate(['/admin']);
         },
-        error: (error: any) => {
+        error: () => {
           Swal.fire({
             title: 'Error!',
-            text: 'Credenciales Incorrectas ',
+            text: 'Credenciales Incorrectas',
             icon: 'error',
             confirmButtonText: 'Cool'
           })
         }
       });
-
     }
   }
-
 
 }

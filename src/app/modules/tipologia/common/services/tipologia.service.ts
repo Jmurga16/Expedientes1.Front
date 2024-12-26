@@ -3,12 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from '../../../../../environments/environment.development';
 import { HttpParamsUtility } from '../../../../core/utils/HttpParamsUtility';
-import { ITipologia } from '../models/tipologia.interface';
 import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
 import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filter.interface';
-import { ITipologiaForm } from '../models/tipologia-form.interface';
 import { IResponseForm } from '../../../../core/models/generic/response-form.interface';
-
+import { ITipologia } from '../models/tipologia.interface';
+import { ITipologiaForm } from '../models/tipologia-form.interface';
 
 
 @Injectable({
