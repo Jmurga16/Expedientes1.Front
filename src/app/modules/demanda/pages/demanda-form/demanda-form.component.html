@@ -46,10 +46,11 @@
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-6">
                         <label htmlFor="caratula">Caratula</label>
-                        <input pInputText id="caratula" type="text" formControlName="caratula" [readOnly]="true" />
+                        <input pInputText id="caratula" type="text" formControlName="caratula"
+                            placeholder="Se autocompletará al grabar" [readOnly]="true" />
                     </div>
                     <div class="field col-12 md:col-6">
-                        <label htmlFor="estado">Tipo de Demanda</label>
+                        <label htmlFor="idTipoDemanda">Tipo de Demanda</label>
                         <p-dropdown [options]="listTipoDemanda" optionLabel="nombre" optionValue="id"
                             placeholder="Seleccione" formControlName="idTipoDemanda"></p-dropdown>
                     </div>
@@ -57,13 +58,13 @@
 
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <label htmlFor="estado">Tipología</label>
+                        <label htmlFor="idTipologia">Tipología</label>
                         <p-dropdown [options]="listTipologia" optionLabel="nombre" optionValue="id"
                             (onChange)="getSubtipologia($event.value)" placeholder="Seleccione"
                             formControlName="idTipologia"></p-dropdown>
                     </div>
                     <div class="field col-12 md:col-6">
-                        <label htmlFor="estado">Subtipología</label>
+                        <label htmlFor="idSubtipologia">Subtipología</label>
                         <p-dropdown [options]="listSubtipologia" optionLabel="nombre" optionValue="id"
                             placeholder="Seleccione" formControlName="idSubtipologia"></p-dropdown>
                     </div>

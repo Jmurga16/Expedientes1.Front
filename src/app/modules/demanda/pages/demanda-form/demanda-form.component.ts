@@ -4,7 +4,6 @@ import { DemandaService } from '../../common/services/demanda.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IDemandaForm } from '../../common/models/demanda-form.interface';
 import Swal from 'sweetalert2';
-import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
 import { AreaService } from '../../../area/common/services/area.service';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
@@ -36,7 +35,6 @@ export class DemandaFormComponent {
   userForm: FormGroup;
 
   idDemanda: any
-
 
   constructor(
     private formBuilder: FormBuilder,
@@ -88,7 +86,6 @@ export class DemandaFormComponent {
     });
 
     this.getUser();
-    this.getRoles()
     this.getEstadosDemanda()
     this.getAreas()
     this.getTipologia();
@@ -171,35 +168,12 @@ export class DemandaFormComponent {
     });
   }
 
-  getRoles() {
-    this.listRoles = [
-      { id: "ROLE_ADMIN", nombre: "Administrador" },
-      { id: "ROLE_USER", nombre: "Demanda" },
-      { id: "ROLE_AREA", nombre: "Referente Area" },
-      { id: "ROLE_COLAB", nombre: "Colaborador" }
-    ]
-  }
-
-  haveArea(): boolean {
-    let roles = this.demandaForm.controls['roles'].value;
-
-    if (roles == null) {
-      return false;
-    }
-    else if (roles.includes('ROLE_AREA') || roles.includes('ROLE_COLAB')) {
-      return true;
-    }
-    else {
-      return false;
-    }
-
-  }
-
   getEstadosDemanda() {
-    this.listEstadosDemanda = [
-      { id: 0, nombre: "Inactivo" },
-      { id: 1, nombre: "Activo" }
-    ]
+    this.dataService.getEstadosStep().subscribe({
+      next: (response: any) => {
+        this.listEstadosDemanda = response;
+      }
+    });
   }
 
   goToBack() {
