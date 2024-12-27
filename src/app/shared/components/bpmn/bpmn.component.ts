@@ -7,17 +7,12 @@ import { Component } from '@angular/core';
 })
 export class BpmnComponent {
   title = 'bpmn-js-angular';
-  //diagramUrl = 'https://cdn.statically.io/gh/bpmn-io/bpmn-js-examples/dfceecba/starter/diagram.bpmn';
-  diagramUrl = 'assets/demo/diagram.bpmn';
+  diagramUrl = 'assets/demo/base.bpmn';
   importError?: Error;
 
   handleImported(event: any) {
 
-    const {
-      type,
-      error,
-      warnings
-    } = event;
+    const { type, error, warnings } = event;
 
     if (type === 'success') {
       console.log(`Rendered diagram (%s warnings)`, warnings.length);

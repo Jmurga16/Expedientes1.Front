@@ -1,17 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-  SimpleChanges,
-  EventEmitter
-} from '@angular/core';
-
+import { AfterContentInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -26,22 +13,12 @@ import type { ImportDoneEvent, ImportXMLResult } from 'bpmn-js/lib/BaseViewer';
  * bpmn-modeler - bootstraps a full-fledged BPMN editor
  */
 import BpmnJS from 'bpmn-js/lib/Modeler';
-
 import { from, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-diagram',
-  template: `
-    <div #ref class="diagram-container"></div>
-  `,
-  styles: [
-    `
-      .diagram-container {
-        height: 100%;
-        width: 100%;
-      }
-    `
-  ]
+  templateUrl: './diagram.component.html',
+  styleUrl: './diagram.component.scss'
 })
 
 export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy, OnInit {
@@ -97,10 +74,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
           });
         },
         (err) => {
-          /* this.importDone.emit({
+          this.importDone.emit({
             type: 'error',
             error: err
-          }); */
+          });
         }
       )
     );
@@ -108,6 +85,39 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   private importDiagram(xml: string): Observable<ImportXMLResult> {
     return from(this.bpmnJS.importXML(xml));
+  }
+
+  exportDiagram(): void {
+
+    console.log("export")
+
+    this.bpmnJS.saveXML({ format: true }).then(
+      (result) => {
+        const xml = result?.xml;
+        if (xml) {
+          this.downloadFile('diagram.bpmn', xml, 'application/xml');
+        } else {
+          console.error('No se pudo generar el XML del diagrama.');
+        }
+      },
+      (err) => {
+        console.error('Error al exportar el diagrama como XML:', err);
+      }
+    );
+  }
+
+  downloadFile(filename: string, data: string | Blob, type: string): void {
+    const blob = typeof data === 'string' ? new Blob([data], { type }) : data; // Crear un Blob si es string
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 
 }
