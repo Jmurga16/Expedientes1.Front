@@ -21,6 +21,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
 import { DividerModule } from 'primeng/divider';
+import { FileUploadModule } from 'primeng/fileupload';
+
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
@@ -45,7 +47,8 @@ const PRIMENG_MODULES = [
   TooltipModule,
   TreeTableModule,
   TreeModule,
-  DividerModule 
+  DividerModule,
+  FileUploadModule 
 ];
 
 @NgModule({
@@ -57,6 +60,7 @@ const PRIMENG_MODULES = [
     CommonModule,
     DemandaRoutingModule,
     ReactiveFormsModule,
+    FileUploadModule,
     ...PRIMENG_MODULES,
     SharedModule
   ]

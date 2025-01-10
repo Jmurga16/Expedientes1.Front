@@ -12,7 +12,7 @@ export interface MenuChangeEvent {
 })
 export class MenuService {
 
-    private jsonUrl = 'assets/demo/data/';
+    private jsonUrl = '/assets/demo/data/';
 
     constructor(private httpClient: HttpClient) {
 

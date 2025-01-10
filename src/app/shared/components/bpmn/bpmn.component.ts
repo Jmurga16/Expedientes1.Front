@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class BpmnComponent {
   title = 'bpmn-js-angular';
-  diagramUrl = 'assets/demo/base.bpmn';
+  diagramUrl = '/assets/demo/base.bpmn';
   importError?: Error;
 
   handleImported(event: any) {

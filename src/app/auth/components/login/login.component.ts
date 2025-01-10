@@ -37,7 +37,7 @@ export class LoginComponent {
             title: 'Error!',
             text: 'Credenciales Incorrectas',
             icon: 'error',
-            confirmButtonText: 'Cool'
+            confirmButtonText: 'Aceptar'
           })
         }
       });

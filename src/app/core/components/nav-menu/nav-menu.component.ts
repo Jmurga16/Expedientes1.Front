@@ -30,13 +30,85 @@ export class NavMenuComponent implements OnInit {
 
     this.menuService.getMenuByRol(currentRol).subscribe({
       next: (response: any) => {
-        this.model = response;
+
+        console.log(response)
+        if (response) {
+          this.model = response;
+        }
+        
         this.loading = false;
       },
       error: () => {
+        this.getMenuAdmin()
         this.loading = false;
+
       }
     });
   }
 
+  getMenuAdmin() {
+    this.model = [
+      {
+        "label": "Menú",
+        "items": [
+          {
+            "label": "Home",
+            "icon": "pi pi-fw pi-home",
+            "routerLink": [
+              "./home"
+            ]
+          },
+          {
+            "label": "Usuarios",
+            "icon": "pi pi-fw pi-user",
+            "routerLink": [
+              "user/list"
+            ]
+          },
+          {
+            "label": "Tipología",
+            "icon": "pi pi-fw pi-th-large",
+            "routerLink": [
+              "tipologia/list"
+            ]
+          },
+          {
+            "label": "SubTipología",
+            "icon": "pi pi-fw pi-table",
+            "routerLink": [
+              "tipologia/subtipologia/list"
+            ]
+          },
+          {
+            "label": "Area",
+            "icon": "pi pi-fw pi-map",
+            "routerLink": [
+              "area/list"
+            ]
+          },
+          {
+            "label": "Demandas",
+            "icon": "pi pi-fw pi-list",
+            "routerLink": [
+              "demanda/list"
+            ]
+          },
+          {
+            "label": "Flujos de Trabajo",
+            "icon": "pi pi-fw pi-share-alt",
+            "routerLink": [
+              "workflow/list"
+            ]
+          },
+          {
+            "label": "Cerrar Sesión",
+            "icon": "pi pi-fw pi-sign-out",
+            "routerLink": [
+              "/auth/login"
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }

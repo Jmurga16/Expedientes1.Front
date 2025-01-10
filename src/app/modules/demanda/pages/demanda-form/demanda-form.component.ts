@@ -10,6 +10,7 @@ import { SubtipologiaService } from '../../../tipologia/common/services/subtipol
 import { DataService } from '../../../../shared/services/data.service';
 import { UsuarioService } from '../../../user/common/services/usuario.service';
 import { TokenService } from '../../../../auth/services/token.service';
+import { FileService } from '../../../../shared/services/file.service';
 
 @Component({
   selector: 'app-demanda-form',
@@ -44,6 +45,7 @@ export class DemandaFormComponent {
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
+    private fileService: FileService,
     private usuarioService: UsuarioService,
     private tokenService: TokenService,
     private router: Router
@@ -71,6 +73,7 @@ export class DemandaFormComponent {
 
       domicilio: [null],
       prioridad: [null],
+      rutaImagen: [null],
       estado: [1]
     });
 
@@ -270,4 +273,21 @@ export class DemandaFormComponent {
 
     return message == ""
   }
+
+  onUpload(event: any) {
+    const file = event.files[0];
+    const container = "demanda-imagen"
+
+    if (file) {
+      this.fileService.uploadFileUnique(file, container).subscribe({
+        next: (response: any) => {
+          console.log('Archivo subido:', response);
+          const fileUrl = response.fileUrl; // URL devuelta por el backend
+          this.demandaForm.patchValue({ rutaImagen: fileUrl });
+        },
+        error: (err) => console.error('Error al subir archivo:', err),
+      });
+    }
+  }
+
 }
