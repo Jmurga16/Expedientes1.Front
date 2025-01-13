@@ -14,6 +14,7 @@ import type { ImportDoneEvent, ImportXMLResult } from 'bpmn-js/lib/BaseViewer';
  */
 import BpmnJS from 'bpmn-js/lib/Modeler';
 import { from, Observable, Subscription } from 'rxjs';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-diagram',
@@ -26,10 +27,16 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   @ViewChild('ref', { static: true }) private el: ElementRef | undefined;
   @Input() url?: string;
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
+  @Output() urlUpdated = new EventEmitter<string>();
+  @Output() fileBPMN = new EventEmitter<File>();
+
 
   private bpmnJS: BpmnJS = new BpmnJS();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private fileService: FileService
+  ) {
     this.bpmnJS.on<ImportDoneEvent>('import.done', ({ error }) => {
       if (!error) {
         this.bpmnJS.get<Canvas>('canvas').zoom('fit-viewport');
@@ -50,7 +57,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   ngOnChanges(changes: any) {
-    // re-import whenever the url changes
     if (changes.url) {
       this.loadUrl(changes.url.currentValue);
     }
@@ -84,18 +90,22 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   private importDiagram(xml: string): Observable<ImportXMLResult> {
+
+    const eventBus = this.bpmnJS.get('eventBus') as any; // Aserción de tipo
+    eventBus.on('commandStack.changed', () => {
+      console.log('Cambio detectado en el diagrama');
+      this.updateDiagramFile();
+    });
+
     return from(this.bpmnJS.importXML(xml));
   }
 
   exportDiagram(): void {
-
-    console.log("export")
-
     this.bpmnJS.saveXML({ format: true }).then(
       (result) => {
         const xml = result?.xml;
         if (xml) {
-          this.downloadFile('diagram.bpmn', xml, 'application/xml');
+          this.fileService.downloadFile('diagram.bpmn', xml, 'application/xml');
         } else {
           console.error('No se pudo generar el XML del diagrama.');
         }
@@ -106,18 +116,52 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     );
   }
 
-  downloadFile(filename: string, data: string | Blob, type: string): void {
-    const blob = typeof data === 'string' ? new Blob([data], { type }) : data; // Crear un Blob si es string
-    const url = window.URL.createObjectURL(blob);
+  uploadDiagram() {
+    this.bpmnJS.saveXML({ format: true }).then(
+      (result) => {
+        const xml = result?.xml;
+        if (xml) {
+          this.onUpload(xml);
+        } else {
+          console.error('No se pudo generar el XML del diagrama.');
+        }
+      },
+      (err) => {
+        console.error('Error al exportar el diagrama como XML:', err);
+      }
+    );
+  }
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
+  onUpload(xml: string) {
+    const file = new File([xml], 'diagram.bpmn', { type: 'application/xml' });
+    const container = "workflow-bpmn"
 
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    if (file) {
+      this.fileService.uploadFileUnique(file, container).subscribe({
+        next: (response: any) => {
+          console.log('Archivo subido:', response);
+          this.updateUrl(response.fileUrl)
+        },
+        error: (err) => console.error('Error al subir archivo:', err),
+      });
+    }
+  }
+
+  updateUrl(newUrl: string): void {
+    this.url = newUrl;
+    this.urlUpdated.emit(this.url);
+  }
+
+  updateDiagramFile() {
+    this.bpmnJS.saveXML({ format: true }).then(
+      (result) => {
+        const xml = result?.xml;
+        if (xml) {          
+          const file = new File([xml], 'diagram.bpmn', { type: 'application/xml' });
+          this.fileBPMN.emit(file);          
+        }
+      }
+    );
   }
 
 }

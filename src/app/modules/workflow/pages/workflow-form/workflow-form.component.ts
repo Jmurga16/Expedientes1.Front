@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkflowService } from '../../common/services/workflow.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { AreaService } from '../../../area/common/services/area.service';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
 import { DataService } from '../../../../shared/services/data.service';
+import { FileService } from '../../../../shared/services/file.service';
 
 @Component({
   selector: 'app-workflow-form',
@@ -33,6 +34,9 @@ export class WorkflowFormComponent {
   workflowForm: FormGroup;
   idWorkflow: any
 
+  //@Input() urlBPMN?: string;
+  diagramUrl: string = '/assets/demo/base.bpmn';
+  fileBPMN: any
 
   constructor(
     private formBuilder: FormBuilder,
@@ -42,6 +46,7 @@ export class WorkflowFormComponent {
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
+    private fileService: FileService,
     private router: Router
 
   ) {
@@ -80,6 +85,7 @@ export class WorkflowFormComponent {
       next: (response: any) => {
         console.log(response)
         this.workflowForm.patchValue(response);
+        this.diagramUrl = response.bpmn
         this.loading = false;
       },
       error: () => {
@@ -173,52 +179,57 @@ export class WorkflowFormComponent {
 
     if (this.validateForm(request) && this.workflowForm.valid) {
 
-      if (this.idWorkflow) {
-        this.workflowService.update(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-      }
-      else {
-        this.workflowService.create(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-      }
+      this.generateUrlBPMN()
+
+    }
+  }
+
+  onSave(request: any) {
+    if (this.idWorkflow) {
+      this.workflowService.update(request).subscribe({
+        next: (response: any) => {
+          console.log(response)
+          Swal.fire({
+            title: 'Éxito.',
+            text: response.message,
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          })
+          this.goToBack();
+        },
+        error: (error: any) => {
+          console.error(error)
+          Swal.fire({
+            title: 'Error!',
+            text: error.error.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+        }
+      });
+    }
+    else {
+      this.workflowService.create(request).subscribe({
+        next: (response: any) => {
+          console.log(response)
+          Swal.fire({
+            title: 'Éxito.',
+            text: response.message,
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          })
+          this.goToBack();
+        },
+        error: (error: any) => {
+          console.error(error)
+          Swal.fire({
+            title: 'Error!',
+            text: error.error.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+        }
+      });
     }
   }
 
@@ -247,5 +258,33 @@ export class WorkflowFormComponent {
     }
 
     return message == ""
+  }
+
+  onDiagramUrlChange(newUrl: string): void {
+    this.diagramUrl = newUrl;
+    console.log('URL del diagrama actualizada:', this.diagramUrl);
+  }
+
+  onDiagramFileChange(file: File): void {
+    this.fileBPMN = file;
+    console.log('Archivo del diagrama actualizada:', this.fileBPMN);
+  }
+
+  generateUrlBPMN() {
+    const container = "workflow-bpmn"
+
+    if (this.fileBPMN) {
+      this.fileService.uploadFileUnique(this.fileBPMN, container).subscribe({
+        next: (response: any) => {
+          console.log('Archivo subido:', response);
+          this.workflowForm.controls["bpmn"].setValue(response.fileUrl)
+        },
+        error: (err) => console.error('Error al subir archivo:', err),
+        complete: () => {
+
+          this.onSave(this.workflowForm.value)
+        }
+      });
+    }
   }
 }

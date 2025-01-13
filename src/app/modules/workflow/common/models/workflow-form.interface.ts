@@ -1,14 +1,12 @@
 export interface IWorkflowForm {
   id?: number,
-  name: string,
-  lastname: string,
-  dni: string,
-  address?: string,
-  username?: string,
-  email: string,
-  password: string,
-  status: number,
-  roles: IDiagramForm[],
+  nombre: string,
+  idTipoDemanda: number,
+  idTipologia: number,
+  idSubtipologia: number,
+  descripcion?: string,
+  bpmn?: string
+  estado?: number
 }
 
 export interface IDiagramForm {

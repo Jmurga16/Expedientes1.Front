@@ -100,4 +100,11 @@ export class DemandaListComponent {
     });
 
   }
+
+  goToDiagram(id: any) {
+    this.router.navigate(['../edit', id], {
+      relativeTo: this.activatedRoute
+    });
+  }
+  
 }

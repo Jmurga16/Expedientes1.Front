@@ -35,4 +35,26 @@ export class FileService {
         return this.http.post(`${this._api}/${containerName}`, formData);
     }
 
+    uploadBlob(file: Blob, containerName: string): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return this.http.post(`${this._api}/${containerName}`, formData);
+    }
+
+    downloadFile(filename: string, data: string | Blob, type: string): void {
+        const blob = typeof data === 'string' ? new Blob([data], { type }) : data;
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
+
 }

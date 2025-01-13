@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-bpmn',
@@ -6,8 +6,12 @@ import { Component } from '@angular/core';
   styleUrl: './bpmn.component.scss'
 })
 export class BpmnComponent {
+
   title = 'bpmn-js-angular';
-  diagramUrl = '/assets/demo/base.bpmn';
+  @Input() urlBPMN!: string;
+  @Output() urlChange = new EventEmitter<string>()
+  @Output() fileChange = new EventEmitter<File>()
+
   importError?: Error;
 
   handleImported(event: any) {
@@ -23,6 +27,15 @@ export class BpmnComponent {
     }
 
     this.importError = error;
+  }
+
+  onUrlUpdated(newUrl: string): void {
+    this.urlBPMN = newUrl;
+    this.urlChange.emit(this.urlBPMN);
+  }
+
+  onChangeDiagram(file: File): void {
+    this.fileChange.emit(file);
   }
 
 }

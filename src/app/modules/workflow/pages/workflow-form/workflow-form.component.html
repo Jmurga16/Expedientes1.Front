@@ -36,7 +36,8 @@
             </div>
 
 
-            <app-bpmn></app-bpmn>
+            <app-bpmn [urlBPMN]="diagramUrl" (urlChange)="onDiagramUrlChange($event)"
+                (fileChange)="onDiagramFileChange($event)"></app-bpmn>
 
 
             <div class="footer">

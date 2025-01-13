@@ -4,6 +4,7 @@ import { RolePipe } from './pipes/role.pipe';
 import { DialogService } from 'primeng/dynamicdialog';
 import { BpmnComponent } from './components/bpmn/bpmn.component';
 import { DiagramComponent } from './components/diagram/diagram.component';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
     declarations: [
@@ -13,6 +14,7 @@ import { DiagramComponent } from './components/diagram/diagram.component';
     ],
     imports: [
         CommonModule,
+        ButtonModule
     ],
     exports: [
         RolePipe,
