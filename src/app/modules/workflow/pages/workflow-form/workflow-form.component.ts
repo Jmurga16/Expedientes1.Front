@@ -271,10 +271,19 @@ export class WorkflowFormComponent {
   }
 
   generateUrlBPMN() {
-    const container = "workflow-bpmn"
+    let nameFile: string = ""
+    const container: string = "workflow-bpmn"
+
+    nameFile = nameFile + this.workflowForm.controls["idTipoDemanda"].value.toString();
+    nameFile = nameFile + this.workflowForm.controls["idTipologia"].value.toString();
+    nameFile = nameFile + this.workflowForm.controls["idSubtipologia"].value.toString();
+
+    nameFile = nameFile + "_" + this.fileBPMN.name
+
+    const file = new File([this.fileBPMN], nameFile, { type: this.fileBPMN.type });
 
     if (this.fileBPMN) {
-      this.fileService.uploadFileUnique(this.fileBPMN, container).subscribe({
+      this.fileService.uploadFile(file, container).subscribe({
         next: (response: any) => {
           console.log('Archivo subido:', response);
           this.workflowForm.controls["bpmn"].setValue(response.fileUrl)

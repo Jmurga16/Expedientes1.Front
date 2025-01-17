@@ -38,6 +38,12 @@ export class DemandaListComponent {
 
   getDatatable(event?: any) {
 
+    if (event) {
+      //this.request.pageSize = event.rows
+      //this.request.pageIndex = (event.first / this.request.pageSize) + 1
+      this.request.search = event.globalFilter
+    }
+
     this.loading = true;
     this.datatable = []
 
@@ -102,7 +108,7 @@ export class DemandaListComponent {
   }
 
   goToDiagram(id: any) {
-    this.router.navigate(['../edit', id], {
+    this.router.navigate(['../diagram', id], {
       relativeTo: this.activatedRoute
     });
   }

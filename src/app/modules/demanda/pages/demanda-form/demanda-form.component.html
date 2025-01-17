@@ -92,10 +92,18 @@
 
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-12">
-                        <p-fileUpload mode="basic" name="file" customUpload="true" (uploadHandler)="onUpload($event)"
-                            accept="image/*" maxFileSize="1000000" [auto]="true" chooseLabel="Seleccionar Archivo"
-                            uploadLabel="Subir" cancelLabel="Cancelar"></p-fileUpload>
-                    </div>                    
+                        <label htmlFor="informacionAdicional">Información Adicional</label>
+                        <textarea pInputTextarea id="informacionAdicional" formControlName="informacionAdicional"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12 md:col-12">
+                        <p-fileUpload mode="basic" name="file" customUpload="true"
+                            (uploadHandler)="onUploadImage($event)" accept="image/*" maxFileSize="1000000" [auto]="true"
+                            chooseLabel="Seleccionar Archivo" uploadLabel="Subir" cancelLabel="Cancelar"></p-fileUpload>
+                    </div>
                     <input type="hidden" formControlName="rutaImagen" />
                 </div>
 

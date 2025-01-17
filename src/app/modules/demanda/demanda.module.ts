@@ -28,6 +28,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import { DemandaListComponent } from './pages/demanda-list/demanda-list.component';
 import { DemandaFormComponent } from './pages/demanda-form/demanda-form.component';
+import { DemandaWorkflowComponent } from './pages/demanda-workflow/demanda-workflow.component';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -54,7 +55,8 @@ const PRIMENG_MODULES = [
 @NgModule({
   declarations: [
     DemandaListComponent,
-    DemandaFormComponent
+    DemandaFormComponent,
+    DemandaWorkflowComponent
   ],
   imports: [
     CommonModule,

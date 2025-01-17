@@ -94,6 +94,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     const eventBus = this.bpmnJS.get('eventBus') as any; // Aserción de tipo
     eventBus.on('commandStack.changed', () => {
       console.log('Cambio detectado en el diagrama');
+      console.log(this.bpmnJS);
       this.updateDiagramFile();
     });
 

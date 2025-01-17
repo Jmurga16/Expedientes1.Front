@@ -74,6 +74,11 @@ export class DemandaFormComponent {
       domicilio: [null],
       prioridad: [null],
       rutaImagen: [null],
+
+      informacionAdicional: [null],
+      paso: ['Inicio'],
+      urlBpmn: ['/assets/demo/base.bpmn'],
+
       estado: [1]
     });
 
@@ -274,7 +279,7 @@ export class DemandaFormComponent {
     return message == ""
   }
 
-  onUpload(event: any) {
+  onUploadImage(event: any) {
     const file = event.files[0];
     const container = "demanda-imagen"
 
@@ -282,7 +287,7 @@ export class DemandaFormComponent {
       this.fileService.uploadFileUnique(file, container).subscribe({
         next: (response: any) => {
           console.log('Archivo subido:', response);
-          const fileUrl = response.fileUrl; // URL devuelta por el backend
+          const fileUrl = response.fileUrl;
           this.demandaForm.patchValue({ rutaImagen: fileUrl });
         },
         error: (err) => console.error('Error al subir archivo:', err),
