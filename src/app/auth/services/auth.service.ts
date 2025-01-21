@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { JwtTokenDto } from '../models/jwt-token-dto';
 import { CreateUserDto } from '../models/create-user-dto';
 import { LoginUserDto } from '../models/login-user-dto';

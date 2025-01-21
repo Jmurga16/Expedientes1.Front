@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { HttpParamsUtility } from '../../../../core/utils/HttpParamsUtility';
 import { IUsuario } from '../models/usuario.interface';
 import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
