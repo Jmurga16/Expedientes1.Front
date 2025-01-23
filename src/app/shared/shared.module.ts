@@ -5,12 +5,14 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { BpmnComponent } from './components/bpmn/bpmn.component';
 import { DiagramComponent } from './components/diagram/diagram.component';
 import { ButtonModule } from 'primeng/button';
+import { StepTaskPipe } from './pipes/step-task.pipe';
 
 @NgModule({
     declarations: [
         RolePipe,
         BpmnComponent,
         DiagramComponent,
+        StepTaskPipe
     ],
     imports: [
         CommonModule,
@@ -18,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
     ],
     exports: [
         RolePipe,
+        StepTaskPipe,
         BpmnComponent,
         DiagramComponent,
     ],

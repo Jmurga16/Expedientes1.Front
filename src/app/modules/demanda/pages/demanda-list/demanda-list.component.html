@@ -87,7 +87,7 @@
                     {{demanda.caratula}}
                 </td>
                 <td>
-                    {{demanda.descripcion}}
+                    {{demanda.informacionAdicional}}
                 </td>
                 <!-- <td>
                     {{demanda.secretaria}}
@@ -96,7 +96,7 @@
                     {{demanda.ultimaAccion}}
                 </td> -->
                 <td>
-                    {{demanda.estado == 1 ? "Activo":"Inactivo"}}
+                    {{demanda.estado | steptask}}
                 </td>
                 <!-- <td>
                     {{demanda.situacion}}

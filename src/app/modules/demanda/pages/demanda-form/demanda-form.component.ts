@@ -85,6 +85,13 @@ export class DemandaFormComponent {
   }
 
   ngOnInit(): void {
+
+    this.getUser();
+    this.getEstadosDemanda()
+    this.getAreas()
+    this.getTipologia();
+    this.getTipoDemanda();
+
     this.activatedRoute.params.subscribe(params => {
       this.idDemanda = params['id'];
       console.log('Demanda ID:', this.idDemanda);
@@ -93,11 +100,6 @@ export class DemandaFormComponent {
       }
     });
 
-    this.getUser();
-    this.getEstadosDemanda()
-    this.getAreas()
-    this.getTipologia();
-    this.getTipoDemanda();
   }
 
   getUser() {
@@ -158,7 +160,7 @@ export class DemandaFormComponent {
   }
 
   async getSubtipologia(idTipologia: number) {
-
+    
     this.setDescripcion(idTipologia)
 
     this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
