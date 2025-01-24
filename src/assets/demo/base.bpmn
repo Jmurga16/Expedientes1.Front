@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
-  <collaboration id="sid-c0e745ff-361e-4afb-8c8d-2a1fc32b1424">
-    <participant id="sid-87F4C1D6-25E1-4A45-9DA7-AD945993D06F" name="Area A" processRef="sid-C3803939-0872-457F-8336-EAE484DC4A04" />
-  </collaboration>
-  <process id="sid-C3803939-0872-457F-8336-EAE484DC4A04" name="Customer" processType="None" isClosed="false" isExecutable="false">
-    <extensionElements />
-    <laneSet id="sid-b167d0d7-e761-4636-9200-76b7f0e8e83a">
-      <lane id="sid-57E4FE0D-18E4-478D-BC5D-B15164E93254">
-        <flowNodeRef>sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138</flowNodeRef>
-      </lane>
-    </laneSet>
-    <startEvent id="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138" name="Inicio" />
-  </process>
-  <bpmndi:BPMNDiagram id="sid-74620812-92c4-44e5-949c-aa47393d3830">
-    <bpmndi:BPMNPlane id="sid-cdcae759-2af7-4a6d-bd02-53f3352a731d" bpmnElement="sid-c0e745ff-361e-4afb-8c8d-2a1fc32b1424">
-      <bpmndi:BPMNShape id="sid-87F4C1D6-25E1-4A45-9DA7-AD945993D06F_gui" bpmnElement="sid-87F4C1D6-25E1-4A45-9DA7-AD945993D06F" isHorizontal="true">
-        <omgdc:Bounds x="83" y="105" width="933" height="250" />
-        <bpmndi:BPMNLabel labelStyle="sid-84cb49fd-2f7c-44fb-8950-83c3fa153d3b">
-          <omgdc:Bounds x="47.49999999999999" y="170.42857360839844" width="12.000000000000014" height="59.142852783203125" />
-        </bpmndi:BPMNLabel>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_05dkzg5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="18.1.1">
+  <bpmn:collaboration id="Collaboration_0ion0p8">
+    <bpmn:participant id="Participant_1yernty" name="newWorkflow" processRef="Process_1ym6t5g" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1ym6t5g" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1ywb2vw">
+      <bpmn:lane id="Lane_0qe5roj" name="Intendencia">
+        <bpmn:flowNodeRef>StartEvent_1qwbotu</bpmn:flowNodeRef>
+      </bpmn:lane>      
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_1qwbotu" name="Inicio" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0ion0p8">
+      <bpmndi:BPMNShape id="Participant_1yernty_di" bpmnElement="Participant_1yernty" isHorizontal="true">
+        <dc:Bounds x="156" y="62" width="600" height="125" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="sid-57E4FE0D-18E4-478D-BC5D-B15164E93254_gui" bpmnElement="sid-57E4FE0D-18E4-478D-BC5D-B15164E93254" isHorizontal="true">
-        <omgdc:Bounds x="113" y="105" width="903" height="250" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_0l6sgn0_di" bpmnElement="sid-D7F237E8-56D0-4283-A3CE-4F0EFE446138">
-        <omgdc:Bounds x="187" y="192" width="36" height="36" />
+      <bpmndi:BPMNShape id="Lane_0qe5roj_di" bpmnElement="Lane_0qe5roj" isHorizontal="true">
+        <dc:Bounds x="186" y="62" width="570" height="125" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>      
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1qwbotu">
+        <dc:Bounds x="262" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="192" y="229" width="26" height="14" />
+          <dc:Bounds x="267" y="145" width="26" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
-    <bpmndi:BPMNLabelStyle id="sid-e0502d32-f8d1-41cf-9c4a-cbb49fecf581">
-      <omgdc:Font name="Arial" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" />
-    </bpmndi:BPMNLabelStyle>
-    <bpmndi:BPMNLabelStyle id="sid-84cb49fd-2f7c-44fb-8950-83c3fa153d3b">
-      <omgdc:Font name="Arial" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" />
-    </bpmndi:BPMNLabelStyle>
   </bpmndi:BPMNDiagram>
-</definitions>
+</bpmn:definitions>

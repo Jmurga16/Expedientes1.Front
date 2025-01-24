@@ -1,7 +1,19 @@
-<div #ref class="diagram-container"></div>
+<div style="padding-top: 1rem;" *ngIf="isWorkflow">
+    <div class="flex align-items-center gap-2">
+        <label for="idArea" class="flex-shrink-0" style="width: 100px;">Área</label>
+        <p-dropdown [options]="listArea" optionLabel="nombre" optionValue="id" placeholder="Seleccione área"
+            [formControl]="idArea" class="flex-grow-1"></p-dropdown>
+    </div>
+    <div class="mt-2">
+        <p-button type="button" (click)="addAreaToWorkflow()">Agregar área</p-button>
+    </div>
+</div>
+
+
+<div #ref class="diagram-container" id="bpmn-container"></div>
 
 <div style="padding-top: 1rem;">
     <p-button type="button" (click)="exportDiagram()">Descargar BPMN</p-button>
-
-    <!-- <p-button type="button" (click)="uploadDiagram()">Subir BPMN</p-button> -->
+   
+   <!--  <p-button type="button" (click)="addLaneTest()">Update 2</p-button> -->
 </div>

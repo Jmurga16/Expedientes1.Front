@@ -2,3 +2,13 @@
     height: 100%;
     width : 100%;
 }
+
+::ng-deep .djs-palette {
+    right: 10px;
+    left: auto;
+    top: 20px;
+  }
+  
+  ::ng-deep .djs-palette .entry {
+    margin-right: 0;
+  }

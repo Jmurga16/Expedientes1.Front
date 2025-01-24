@@ -6,6 +6,8 @@ import { BpmnComponent } from './components/bpmn/bpmn.component';
 import { DiagramComponent } from './components/diagram/diagram.component';
 import { ButtonModule } from 'primeng/button';
 import { StepTaskPipe } from './pipes/step-task.pipe';
+import { DropdownModule } from 'primeng/dropdown';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -16,7 +18,9 @@ import { StepTaskPipe } from './pipes/step-task.pipe';
     ],
     imports: [
         CommonModule,
-        ButtonModule
+        ButtonModule,
+        DropdownModule,
+        ReactiveFormsModule
     ],
     exports: [
         RolePipe,
