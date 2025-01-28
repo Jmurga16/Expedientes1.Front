@@ -30,14 +30,17 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   @ViewChild('ref', { static: true }) private el: ElementRef | undefined;
   @Input() url?: string;
+  @Input() idDemanda: any
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
   @Output() urlUpdated = new EventEmitter<string>();
   @Output() fileBPMN = new EventEmitter<File>();
+  @Output() pasos = new EventEmitter<any>();
 
   nameWorkflow: string = "newWorkflow"
   xmlLocal: any
   isWorkflow: boolean = true
   listArea: any;
+  listTask: any[] = [];
 
   idArea = new FormControl()
 
@@ -66,6 +69,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       this.loadUrl(this.url);
     }
     this.getAreas()
+    console.log("this.idDemanda")
+    console.log(this.idDemanda)
   }
 
   ngOnChanges(changes: any) {
@@ -116,6 +121,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       console.log(this.bpmnJS);
       this.updateDiagramFile();
     });
+
+    if (this.idDemanda) {
+      this.getTasks()
+    }
+
 
     return from(this.bpmnJS.importXML(xml));
   }
@@ -376,7 +386,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       this.actualBound = updateBoundParticipant
       return xmlNew
     }
-    
+
     return xml;
   }
 
@@ -432,5 +442,49 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.bpmnJS.importXML(updatedXmlWithShape);
 
   }
+
+  getTasks(): void {
+    console.clear()
+    // Obtén las definiciones del diagrama
+    const definitions = this.bpmnJS.getDefinitions();
+    console.log("definitions")
+    console.log(definitions)
+    if (!definitions || !definitions.rootElements) {
+      console.error('No se pudieron obtener las definiciones del diagrama.');
+      return;
+    }
+
+    // Filtra los elementos que son procesos
+    const processes = definitions.rootElements.filter((el: any) => el.$type === 'bpmn:Process');
+
+    if (processes.length === 0) {
+      console.error('No se encontraron procesos en el diagrama.');
+      return;
+    }
+
+    // Itera sobre los procesos y busca elementos de tipo Task
+    const tasks: any[] = [];
+    processes.forEach((process: any) => {
+      if (process.flowElements) {
+        const processTasks = process.flowElements.filter(
+          (element: any) => element.$type === 'bpmn:Task'
+        );
+        tasks.push(...processTasks);
+      }
+    });
+
+    tasks.forEach(element => {
+      this.listTask.push(element.name)
+    });
+
+    /* console.log("diagram.component")
+    console.log('Tareas encontradas:', tasks);
+    console.log('Nombre de Tareas', this.listTask) */
+
+    this.pasos.emit(this.listTask);
+
+
+  }
+
 
 }

@@ -9,8 +9,10 @@ export class BpmnComponent {
 
   title = 'bpmn-js-angular';
   @Input() urlBPMN!: string;
+  @Input() idDemanda: any
   @Output() urlChange = new EventEmitter<string>()
   @Output() fileChange = new EventEmitter<File>()
+  @Output() pasos = new EventEmitter<any>()
 
   importError?: Error;
 
@@ -36,6 +38,13 @@ export class BpmnComponent {
 
   onChangeDiagram(file: File): void {
     this.fileChange.emit(file);
+  }
+
+  listPasos(event: any){
+    /* console.log("bpmn.component")
+    console.log("listPasos")
+    console.log(event) */
+    this.pasos.emit(event);
   }
 
 }

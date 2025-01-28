@@ -1,1 +1,20 @@
-<app-bpmn [urlBPMN]="diagramUrl" *ngIf="diagramUrl!=''"></app-bpmn>
+<form [formGroup]="demandaForm" autocomplete="off" (ngSubmit)="onSubmit()">
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-12 md:col-4">
+            <label htmlFor="paso">Paso</label>
+            <p-dropdown [options]="listTask" optionLabel="nombre" optionValue="id" placeholder="Seleccione"
+                formControlName="paso"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label htmlFor="estado">Estado</label>
+            <p-dropdown [options]="listEstadosDemanda" optionLabel="nombre" optionValue="id" placeholder="Seleccione"
+                formControlName="estado"></p-dropdown>
+        </div>
+
+        <div class="btn-custom">
+            <p-button type="submit" label="Guardar"></p-button>
+        </div>
+    </div>
+</form>
+
+<app-bpmn [urlBPMN]="diagramUrl" *ngIf="diagramUrl!=''" [idDemanda]="idDemanda" (pasos)="listPasos($event)"></app-bpmn>

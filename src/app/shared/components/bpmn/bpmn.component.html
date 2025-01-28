@@ -1,8 +1,9 @@
 <h3>BPMN</h3>
 
 <div class="diagram-parent">
-    <app-diagram [url]="urlBPMN" (importDone)="handleImported($event)"
-        (urlUpdated)="onUrlUpdated($event)" (fileBPMN)="onChangeDiagram($event)"></app-diagram>
+    <app-diagram [url]="urlBPMN" [idDemanda]="idDemanda" (importDone)="handleImported($event)"
+        (urlUpdated)="onUrlUpdated($event)" (fileBPMN)="onChangeDiagram($event)"
+        (pasos)="listPasos($event)"></app-diagram>
 
     <div class="import-error" *ngIf="importError">
         <strong>Falló el diagrama: </strong>
