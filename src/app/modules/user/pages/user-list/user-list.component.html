@@ -2,13 +2,13 @@
 
     <div class="flex justify-content-between flex-column sm:flex-row container">
 
-        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNewUser()"></p-button>
+        <p-button type="button" class="mb-2" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNewUser()"></p-button>
 
-        <span class="p-input-icon-left mb-2">
+        <!-- <span class="p-input-icon-left mb-2">
             <i class="pi pi-search"></i>
             <input pInputText type="text" #filter (keyup)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
                 class="w-full" />
-        </span>
+        </span> -->
     </div>
 
     <p-table #dataTable1 [value]="usuarios" dataKey="idUsuario" [loading]="loading" [rowHover]="true" [lazy]="true"

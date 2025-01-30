@@ -44,26 +44,16 @@
                         Descripción
                     </div>
                 </th>
-                <!-- <th style="width: 15%">
+                <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
-                        Secretaría
+                        Paso
                     </div>
-                </th> -->
-                <!-- <th style="width: 15%">
-                    <div class="flex justify-content-between align-items-center">
-                        Ultima acción
-                    </div>
-                </th> -->
+                </th>
                 <th style="width: 15%">
                     <div class="flex justify-content-between align-items-center">
                         Estado
                     </div>
                 </th>
-                <!-- <th style="width: 15%">
-                    <div class="flex justify-content-between align-items-center">
-                        Situación
-                    </div>
-                </th> -->
                 <th style="width: 10%">
                     <div class="flex justify-content-between align-items-center">
                         Opciones
@@ -89,19 +79,12 @@
                 <td>
                     {{demanda.informacionAdicional}}
                 </td>
-                <!-- <td>
-                    {{demanda.secretaria}}
-                </td> -->
-                <!-- <td>
-                    {{demanda.ultimaAccion}}
-                </td> -->
+                <td>
+                    {{demanda.paso}}
+                </td>
                 <td>
                     {{demanda.estado | steptask}}
                 </td>
-                <!-- <td>
-                    {{demanda.situacion}}
-                </td> -->
-
                 <td class="text-center">
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEdit(demanda.id)"
                         pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
