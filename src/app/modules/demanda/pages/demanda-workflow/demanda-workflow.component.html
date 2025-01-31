@@ -1,20 +1,34 @@
 <form [formGroup]="demandaForm" autocomplete="off" (ngSubmit)="onSubmit()">
     <div class="p-fluid p-formgrid grid">
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-6">
             <label htmlFor="paso">Paso</label>
             <p-dropdown [options]="listTask" optionLabel="nombre" optionValue="id" placeholder="Seleccione"
                 formControlName="paso"></p-dropdown>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-6">
             <label htmlFor="estado">Estado</label>
             <p-dropdown [options]="listEstadosDemanda" optionLabel="nombre" optionValue="id" placeholder="Seleccione"
                 formControlName="estado"></p-dropdown>
         </div>
+    </div>
 
-        <div class="btn-custom">
-            <p-button type="submit" label="Guardar"></p-button>
+    <div class="p-fluid p-formgrid grid" *ngIf="!(currentRol=='usuario')">
+        <div class="field col-12 md:col-12">
+            <label htmlFor="observaciones">Observaciones</label>
+            <textarea pInputTextarea id="observaciones" formControlName="observaciones" rows="3"></textarea>
         </div>
     </div>
+
+    <div class="p-fluid p-formgrid grid">
+        <div class="btn-custom" style="margin-right: 1rem;" *ngIf="!(currentRol=='usuario')">
+            <p-button type="submit" label="Guardar"></p-button>
+        </div>
+
+        <div class="btn-custom">
+            <p-button type="button" label="Ver Historial" severity="help" (onClick)="openModalHistorial()"></p-button>
+        </div>
+    </div>
+
 </form>
 
 <app-bpmn [urlBPMN]="diagramUrl" *ngIf="diagramUrl!=''" [idDemanda]="idDemanda" (pasos)="listPasos($event)"></app-bpmn>

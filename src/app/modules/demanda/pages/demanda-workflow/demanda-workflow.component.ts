@@ -7,6 +7,11 @@ import { IDemandaForm } from '../../common/models/demanda-form.interface';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DataService } from '../../../../shared/services/data.service';
+import { TokenService } from '../../../../auth/services/token.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { HistorialDemandaListModalComponent } from '../historial-demanda-list-modal/historial-demanda-list-modal.component';
+import { IHistorialDemandaForm } from '../../common/models/historial-demanda-form.interface';
+import { HistorialDemandaService } from '../../common/services/historial-demanda.service';
 
 @Component({
   selector: 'app-demanda-workflow',
@@ -21,7 +26,10 @@ export class DemandaWorkflowComponent {
   diagramUrl: string = ""
   listTask: any[] = []
   listEstadosDemanda: any[] = []
+  currentRol: string = ""
+  ref: DynamicDialogRef | undefined;
 
+  idUsuarioSesion: any
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -31,6 +39,9 @@ export class DemandaWorkflowComponent {
     private router: Router,
     private formBuilder: FormBuilder,
     private dataService: DataService,
+    private tokenService: TokenService,
+    private dialogService: DialogService,
+    private historialDemandaService: HistorialDemandaService,
   ) {
 
     this.demandaForm = this.formBuilder.group({
@@ -50,7 +61,7 @@ export class DemandaWorkflowComponent {
       informacionAdicional: [null],
       paso: [null],
       urlBpmn: ['/assets/demo/base.bpmn'],
-
+      observaciones: [null],
       estado: [1]
     });
 
@@ -64,6 +75,16 @@ export class DemandaWorkflowComponent {
         this.getDemanda();
       }
     });
+
+    this.currentRol = this.tokenService.getCurrentRol()
+    console.log("rol", this.currentRol)
+
+    if (this.currentRol === 'usuario') {
+      this.demandaForm.get('paso')?.disable();
+      this.demandaForm.get('estado')?.disable();
+    }
+
+    this.getUser()
     this.getEstadosDemanda()
     console.log("listTask")
     console.log(this.listTask)
@@ -122,7 +143,6 @@ export class DemandaWorkflowComponent {
     return message == ""
   }
 
-
   onSubmit() {
     console.log(this.demandaForm.value);
     let request = this.demandaForm.value as IDemandaForm;
@@ -148,6 +168,9 @@ export class DemandaWorkflowComponent {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           })
+        },
+        complete: () => {
+          this.registerOnHistorial()
         }
       });
 
@@ -158,11 +181,71 @@ export class DemandaWorkflowComponent {
     console.log("demanda-workflow")
     console.log(event)
 
+    if (!event.includes("Finalizado")) {
+      event.push("Finalizado")
+    }
+
     this.listTask = this.mapListToDropdown(event)
   }
 
   mapListToDropdown(list: string[]): any[] {
     return list.map(item => ({ id: item, nombre: item }));
   }
+
+  getUser() {
+    let email = this.tokenService.getEmail()
+
+    this.usuarioService.getByEmail(email).subscribe({
+      next: (response: any) => {
+
+        this.idUsuarioSesion = response.id
+
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  registerOnHistorial() {
+
+    let request: IHistorialDemandaForm = {
+      idUsuario: this.idUsuarioSesion,
+      idDemanda: this.demandaForm.controls["id"].value,
+      paso: this.demandaForm.controls["idTipologia"].value,
+      estado: this.demandaForm.controls["estado"].value,
+      observaciones: this.demandaForm.controls["observaciones"].value,
+    }
+
+    this.historialDemandaService.create(request).subscribe({
+      next: (response: any) => {
+        this.goToBack();
+      },
+      error: (error: any) => {
+        console.error(error)
+        Swal.fire({
+          title: 'Error!',
+          text: error.error.message,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        })
+      }
+    });
+  }
+
+  openModalHistorial() {
+    let headerModal = "Historial de Demanda"
+
+    this.ref = this.dialogService.open(HistorialDemandaListModalComponent, {
+      data: {
+        idDemanda: this.idDemanda,
+      },
+      header: headerModal,
+      width: '55rem'
+    });
+  }
+
+
 
 }

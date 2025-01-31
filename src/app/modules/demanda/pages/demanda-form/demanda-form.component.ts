@@ -11,6 +11,8 @@ import { DataService } from '../../../../shared/services/data.service';
 import { UsuarioService } from '../../../user/common/services/usuario.service';
 import { TokenService } from '../../../../auth/services/token.service';
 import { FileService } from '../../../../shared/services/file.service';
+import { HistorialDemandaService } from '../../common/services/historial-demanda.service';
+import { IHistorialDemandaForm } from '../../common/models/historial-demanda-form.interface';
 
 @Component({
   selector: 'app-demanda-form',
@@ -34,6 +36,7 @@ export class DemandaFormComponent {
 
   demandaForm: FormGroup;
   userForm: FormGroup;
+  historialDemandaForm: FormGroup;
 
   idDemanda: any
 
@@ -41,6 +44,7 @@ export class DemandaFormComponent {
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private demandaService: DemandaService,
+    private historialDemandaService: HistorialDemandaService,
     private areaService: AreaService,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
@@ -79,7 +83,17 @@ export class DemandaFormComponent {
       paso: ['Inicio'],
       urlBpmn: ['/assets/demo/base.bpmn'],
 
-      estado: [1]
+      estado: [0]
+    });
+
+    this.historialDemandaForm = this.formBuilder.group({
+      id: [null],
+      idUsuario: [null],
+      idDemanda: [null],
+      paso: ['Inicio'],
+      observaciones: [null],
+      fecha: [null],
+      estado: [0]
     });
 
   }
@@ -109,7 +123,9 @@ export class DemandaFormComponent {
       next: (response: any) => {
         console.log(response)
         this.userForm.patchValue(response);
+
         this.demandaForm.controls["idUsuario"].setValue(response.id)
+        this.historialDemandaForm.controls["idUsuario"].setValue(response.id)
 
         this.loading = false;
       },
@@ -160,7 +176,7 @@ export class DemandaFormComponent {
   }
 
   async getSubtipologia(idTipologia: number) {
-    
+
     this.setDescripcion(idTipologia)
 
     this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
@@ -238,7 +254,10 @@ export class DemandaFormComponent {
               icon: 'success',
               confirmButtonText: 'Aceptar'
             })
-            this.goToBack();
+
+            this.demandaForm.controls["id"].setValue(response.id)
+            this.historialDemandaForm.controls["idDemanda"].setValue(response.id)
+
           },
           error: (error: any) => {
             console.error(error)
@@ -248,6 +267,10 @@ export class DemandaFormComponent {
               icon: 'error',
               confirmButtonText: 'Aceptar'
             })
+          },
+          complete: () => {
+
+            this.registerOnHistorial()
           }
         });
       }
@@ -267,7 +290,6 @@ export class DemandaFormComponent {
     } else if (request.domicilio == null || request.domicilio == "") {
       message = "El campo Domicilio es requerido."
     }
-
 
     if (message != "") {
       Swal.fire({
@@ -295,6 +317,26 @@ export class DemandaFormComponent {
         error: (err) => console.error('Error al subir archivo:', err),
       });
     }
+  }
+
+  registerOnHistorial() {
+
+    let request = this.historialDemandaForm.value as IHistorialDemandaForm;
+
+    this.historialDemandaService.create(request).subscribe({
+      next: (response: any) => {
+        this.goToBack();
+      },
+      error: (error: any) => {
+        console.error(error)
+        Swal.fire({
+          title: 'Error!',
+          text: error.error.message,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        })
+      }
+    });
   }
 
 }

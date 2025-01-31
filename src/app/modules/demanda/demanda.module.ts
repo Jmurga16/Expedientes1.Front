@@ -29,6 +29,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { DemandaListComponent } from './pages/demanda-list/demanda-list.component';
 import { DemandaFormComponent } from './pages/demanda-form/demanda-form.component';
 import { DemandaWorkflowComponent } from './pages/demanda-workflow/demanda-workflow.component';
+import { HistorialDemandaListModalComponent } from './pages/historial-demanda-list-modal/historial-demanda-list-modal.component';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -56,7 +57,8 @@ const PRIMENG_MODULES = [
   declarations: [
     DemandaListComponent,
     DemandaFormComponent,
-    DemandaWorkflowComponent
+    DemandaWorkflowComponent,
+    HistorialDemandaListModalComponent
   ],
   imports: [
     CommonModule,
