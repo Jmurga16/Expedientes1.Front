@@ -19,6 +19,8 @@ import { from, Observable, Subscription } from 'rxjs';
 import { FileService } from '../../services/file.service';
 import { AreaService } from '../../../modules/area/common/services/area.service';
 import { FormControl } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { FormWorkflowService } from '../../../modules/workflow/common/services/form-workflow.service';
 
 @Component({
   selector: 'app-diagram',
@@ -49,7 +51,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   constructor(
     private http: HttpClient,
     private fileService: FileService,
-    private areaService: AreaService
+    private areaService: AreaService,
+    private formWorkflowService: FormWorkflowService,
+
   ) {
     this.bpmnJS.on<ImportDoneEvent>('import.done', ({ error }) => {
       if (!error) {
@@ -71,12 +75,20 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.getAreas()
     console.log("this.idDemanda")
     console.log(this.idDemanda)
+
+    this.formWorkflowService.nombre$.subscribe(value => {
+      this.updateWorkflowName(value)
+    });
+
   }
 
   ngOnChanges(changes: any) {
+    console.log("this.nameWorkflow")
+    console.log(this.nameWorkflow)
     if (changes.url) {
       this.loadUrl(changes.url.currentValue);
     }
+
   }
 
   ngOnDestroy(): void {
@@ -125,7 +137,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     if (this.idDemanda) {
       this.getTasks()
     }
-
 
     return from(this.bpmnJS.importXML(xml));
   }
@@ -204,6 +215,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
   importXMLUpdate() {
     this.bpmnJS.saveXML({ format: true }).then((result: any) => {
+      this.xmlLocal = result.xml
       this.bpmnJS.importXML(result.xml);
     }).catch((err: any) => {
       console.error('Error al guardar el XML:', err);
@@ -228,7 +240,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     }
 
     // Encuentra el participante en el Collaboration
-    const participant = collaboration.participants?.find((p: any) => p.name === this.nameWorkflow);
+    const participant = collaboration.participants?.find((p: any) => p.name === this.nameWorkflow || p.name == "newWorkflow");
     if (!participant) {
       console.error('No se encontró el participante con el nombre "newWorkflow".');
       return;
@@ -340,6 +352,16 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   addAreaToWorkflow() {
+    if (this.idArea.value == null) {
+      Swal.fire({
+        title: 'Error!',
+        text: "Debe seleccionar un área",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      })
+      return;
+    }
+
     let nameArea: string = ""
     let nameLane: string = ""
 
@@ -352,8 +374,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     this.addLaneToWorkflow(nameLane, nameArea)
 
+    this.listArea = this.listArea.filter((element: any) => element.id !== this.idArea.value);
 
     this.idArea.setValue(null);
+
   }
 
   addLaneToLaneSet(xml: string, laneId: string, laneName: string): string {
@@ -376,10 +400,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     this.heightActual = this.heightActual + 125
 
-    console.log(this.heightActual)
+    //console.log(this.heightActual)
 
     const updateBoundParticipant = `<dc:Bounds x="156" y="62" width="600" height="${this.heightActual}" />`
-
 
     if (xml.includes(this.actualBound)) {
       let xmlNew = xml.replace(this.actualBound, updateBoundParticipant);
@@ -389,8 +412,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     return xml;
   }
-
-
 
   addBpmnShape(xml: string, shapeId: string, elementId: string): string {
 
@@ -424,7 +445,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
 
     const updatedXmlWithParticipant = this.fixWidthHeightTitle(updatedXmlWithLane)
 
-
     // Agregar un nuevo BPMNShape
     const updatedXmlWithShape = this.addBpmnShape(
       updatedXmlWithParticipant, // XML ya actualizado con el nuevo lane
@@ -432,10 +452,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       lane
     );
 
-
-
-    console.log("updatedXmlWithShape");
-    console.log(updatedXmlWithShape);
+    /* console.log("updatedXmlWithShape");
+    console.log(updatedXmlWithShape); */
 
     this.xmlLocal = updatedXmlWithShape
 
@@ -444,7 +462,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   getTasks(): void {
-    console.clear()
+    //console.clear()
     // Obtén las definiciones del diagrama
     const definitions = this.bpmnJS.getDefinitions();
     console.log("definitions")
@@ -477,12 +495,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       this.listTask.push(element.name)
     });
 
-    /* console.log("diagram.component")
-    console.log('Tareas encontradas:', tasks);
-    console.log('Nombre de Tareas', this.listTask) */
-
     this.pasos.emit(this.listTask);
-
 
   }
 

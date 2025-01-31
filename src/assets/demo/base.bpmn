@@ -5,7 +5,7 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_1ym6t5g" isExecutable="false">
     <bpmn:laneSet id="LaneSet_1ywb2vw">
-      <bpmn:lane id="Lane_0qe5roj" name="Intendencia">
+      <bpmn:lane id="Lane_0qe5roj" name="Demandante">
         <bpmn:flowNodeRef>StartEvent_1qwbotu</bpmn:flowNodeRef>
       </bpmn:lane>      
     </bpmn:laneSet>

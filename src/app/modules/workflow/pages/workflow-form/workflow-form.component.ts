@@ -10,6 +10,7 @@ import { TipologiaService } from '../../../tipologia/common/services/tipologia.s
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
 import { DataService } from '../../../../shared/services/data.service';
 import { FileService } from '../../../../shared/services/file.service';
+import { FormWorkflowService } from '../../common/services/form-workflow.service';
 
 @Component({
   selector: 'app-workflow-form',
@@ -47,6 +48,7 @@ export class WorkflowFormComponent {
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
     private fileService: FileService,
+    private formWorkflowService: FormWorkflowService,
     private router: Router
 
   ) {
@@ -60,6 +62,10 @@ export class WorkflowFormComponent {
       descripcion: [null],
       bpmn: [null],
       estado: [1]
+    });
+
+    this.workflowForm.get('nombre')?.valueChanges.subscribe(value => {
+      this.formWorkflowService.setNombre(value);
     });
 
   }
