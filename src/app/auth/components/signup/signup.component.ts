@@ -5,6 +5,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../shared/directives/password-validator.directive';
+import { LoadingService } from '../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -14,9 +16,11 @@ import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } fro
 export class SignupComponent {
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
     private authService: AuthService,
-    private router: Router
+    private loadingService: LoadingService,
   ) {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
@@ -33,27 +37,30 @@ export class SignupComponent {
 
     if (this.registerForm.valid) {
 
-      this.authService.register(request).subscribe({
-        next: (response: any) => {
-          console.log(response)
-          Swal.fire({
-            title: 'Éxito.',
-            text: response.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          })
-          this.router.navigate(['/auth/login']);
-        },
-        error: (error: any) => {
-          console.error(error)
-          Swal.fire({
-            title: 'Error!',
-            text: error.error.message,
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        }
-      });
+      this.loadingService.show();
+      
+      this.authService.register(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response: any) => {
+            Swal.fire({
+              title: 'Éxito.',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            })
+            this.router.navigate(['/auth/login']);
+          },
+          error: (error: any) => {
+            console.error(error)
+            Swal.fire({
+              title: 'Error!',
+              text: error.error.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+          }
+        });
     }
   }
 

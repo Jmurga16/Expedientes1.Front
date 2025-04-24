@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LoginUserDto } from '../../models/login-user-dto';
 import Swal from 'sweetalert2'
+import { LoadingService } from '../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +17,10 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private authService: AuthService,
-    private router: Router) {
+    private loadingService: LoadingService
+  ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -27,20 +31,24 @@ export class LoginComponent {
 
     if (this.loginForm.valid) {
 
+      this.loadingService.show();
+      
       const dto = new LoginUserDto(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value);
-      this.authService.login(dto).subscribe({
-        next: () => {
-          this.router.navigate(['/admin']);
-        },
-        error: () => {
-          Swal.fire({
-            title: 'Error!',
-            text: 'Credenciales Incorrectas',
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        }
-      });
+      this.authService.login(dto)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/admin']);
+          },
+          error: () => {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Credenciales Incorrectas',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
     }
   }
 

@@ -13,6 +13,8 @@ import { TokenService } from '../../../../auth/services/token.service';
 import { FileService } from '../../../../shared/services/file.service';
 import { HistorialDemandaService } from '../../common/services/historial-demanda.service';
 import { IHistorialDemandaForm } from '../../common/models/historial-demanda-form.interface';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-demanda-form',
@@ -43,6 +45,7 @@ export class DemandaFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private demandaService: DemandaService,
     private historialDemandaService: HistorialDemandaService,
     private areaService: AreaService,
@@ -52,8 +55,7 @@ export class DemandaFormComponent {
     private fileService: FileService,
     private usuarioService: UsuarioService,
     private tokenService: TokenService,
-    private router: Router
-
+    private loadingService: LoadingService,
   ) {
 
     this.userForm = this.formBuilder.group({
@@ -220,59 +222,63 @@ export class DemandaFormComponent {
     let request = this.demandaForm.value as IDemandaForm;
 
     if (this.validateForm(request) && this.demandaForm.valid) {
-
+      this.loadingService.show();
       if (this.idDemanda) {
-        this.demandaService.update(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
+        this.demandaService.update(request)
+          .pipe(finalize(() => this.loadingService.hide()))
+          .subscribe({
+            next: (response: any) => {
+              console.log(response)
+              Swal.fire({
+                title: 'Éxito.',
+                text: response.message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              })
+              this.goToBack();
+            },
+            error: (error: any) => {
+              console.error(error)
+              Swal.fire({
+                title: 'Error!',
+                text: error.error.message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              })
+            }
+          });
       }
       else {
-        this.demandaService.create(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
+        this.demandaService.create(request)
+          .pipe(finalize(() => this.loadingService.hide()))
+          .subscribe({
+            next: (response: any) => {
+              console.log(response)
+              Swal.fire({
+                title: 'Éxito.',
+                text: response.message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              })
 
-            this.demandaForm.controls["id"].setValue(response.id)
-            this.historialDemandaForm.controls["idDemanda"].setValue(response.id)
+              this.demandaForm.controls["id"].setValue(response.id)
+              this.historialDemandaForm.controls["idDemanda"].setValue(response.id)
 
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          },
-          complete: () => {
+            },
+            error: (error: any) => {
+              console.error(error)
+              Swal.fire({
+                title: 'Error!',
+                text: error.error.message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              })
+            },
+            complete: () => {
 
-            this.registerOnHistorial()
-          }
-        });
+              this.registerOnHistorial()
+            }
+          });
       }
     }
   }

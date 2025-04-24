@@ -11,6 +11,8 @@ import { SubtipologiaService } from '../../../tipologia/common/services/subtipol
 import { DataService } from '../../../../shared/services/data.service';
 import { FileService } from '../../../../shared/services/file.service';
 import { FormWorkflowService } from '../../common/services/form-workflow.service';
+import { finalize } from 'rxjs';
+import { LoadingService } from '../../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-workflow-form',
@@ -42,6 +44,7 @@ export class WorkflowFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private workflowService: WorkflowService,
     private areaService: AreaService,
     private tipologiaService: TipologiaService,
@@ -49,8 +52,7 @@ export class WorkflowFormComponent {
     private dataService: DataService,
     private fileService: FileService,
     private formWorkflowService: FormWorkflowService,
-    private router: Router
-
+    private loadingService: LoadingService,
   ) {
 
     this.workflowForm = this.formBuilder.group({
@@ -191,51 +193,57 @@ export class WorkflowFormComponent {
   }
 
   onSave(request: any) {
+
+    this.loadingService.show();
     if (this.idWorkflow) {
-      this.workflowService.update(request).subscribe({
-        next: (response: any) => {
-          console.log(response)
-          Swal.fire({
-            title: 'Éxito.',
-            text: response.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          })
-          this.goToBack();
-        },
-        error: (error: any) => {
-          console.error(error)
-          Swal.fire({
-            title: 'Error!',
-            text: error.error.message,
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        }
-      });
+      this.workflowService.update(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response: any) => {
+            console.log(response)
+            Swal.fire({
+              title: 'Éxito.',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            })
+            this.goToBack();
+          },
+          error: (error: any) => {
+            console.error(error)
+            Swal.fire({
+              title: 'Error!',
+              text: error.error.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+          }
+        });
     }
     else {
-      this.workflowService.create(request).subscribe({
-        next: (response: any) => {
-          console.log(response)
-          Swal.fire({
-            title: 'Éxito.',
-            text: response.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          })
-          this.goToBack();
-        },
-        error: (error: any) => {
-          console.error(error)
-          Swal.fire({
-            title: 'Error!',
-            text: error.error.message,
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        }
-      });
+      this.workflowService.create(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response: any) => {
+            console.log(response)
+            Swal.fire({
+              title: 'Éxito.',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            })
+            this.goToBack();
+          },
+          error: (error: any) => {
+            console.error(error)
+            Swal.fire({
+              title: 'Error!',
+              text: error.error.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+          }
+        });
     }
   }
 

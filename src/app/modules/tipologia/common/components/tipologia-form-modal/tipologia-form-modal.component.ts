@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TipologiaService } from '../../services/tipologia.service';
 import { ITipologiaForm } from '../../models/tipologia-form.interface';
+import { LoadingService } from '../../../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-tipologia-form-modal',
@@ -27,7 +29,8 @@ export class TipologiaFormModalComponent {
     public dialogRef: DynamicDialogRef,
     public dialogconfig: DynamicDialogConfig,
     private formBuilder: FormBuilder,
-    private tipologiaService: TipologiaService
+    private tipologiaService: TipologiaService,
+    private loadingService: LoadingService,
   ) {
 
     this.id = this.dialogconfig.data.id
@@ -64,11 +67,14 @@ export class TipologiaFormModalComponent {
     let request = this.form.value as ITipologiaForm;
 
     if (request) {
-      this.tipologiaService.create(request).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-        }
-      });
+      this.loadingService.show();
+      this.tipologiaService.create(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          }
+        });
     }
   }
 
@@ -76,11 +82,14 @@ export class TipologiaFormModalComponent {
     let request = this.form.value as ITipologiaForm;
 
     if (request) {
-      this.tipologiaService.update(request).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-        }
-      });
+      this.loadingService.show();
+      this.tipologiaService.update(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          }
+        });
     }
   }
 }

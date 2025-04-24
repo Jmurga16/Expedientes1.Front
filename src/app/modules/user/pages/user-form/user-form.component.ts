@@ -6,6 +6,8 @@ import { IUsuarioForm } from '../../common/models/usuario-form.interface';
 import Swal from 'sweetalert2';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
 import { AreaService } from '../../../area/common/services/area.service';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-user-form',
@@ -29,10 +31,10 @@ export class UserFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private usuarioService: UsuarioService,
     private areaService: AreaService,
-    private router: Router
-
+    private loadingService: LoadingService,
   ) {
 
     this.userForm = this.formBuilder.group({
@@ -137,51 +139,57 @@ export class UserFormComponent implements OnInit {
 
     if (this.validateForm(request) && this.userForm.valid) {
 
+      this.loadingService.show();
+
       if (this.idUsuario) {
-        this.usuarioService.update(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
+        this.usuarioService.update(request)
+          .pipe(finalize(() => this.loadingService.hide()))
+          .subscribe({
+            next: (response: any) => {
+              console.log(response)
+              Swal.fire({
+                title: 'Éxito.',
+                text: response.message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              })
+              this.goToBack();
+            },
+            error: (error: any) => {
+              console.error(error)
+              Swal.fire({
+                title: 'Error!',
+                text: error.error.message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              })
+            }
+          });
       }
       else {
-        this.usuarioService.create(request).subscribe({
-          next: (response: any) => {
-            console.log(response)
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            console.error(error)
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
+        this.usuarioService.create(request)
+          .pipe(finalize(() => this.loadingService.hide()))
+          .subscribe({
+            next: (response: any) => {
+              console.log(response)
+              Swal.fire({
+                title: 'Éxito.',
+                text: response.message,
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              })
+              this.goToBack();
+            },
+            error: (error: any) => {
+              console.error(error)
+              Swal.fire({
+                title: 'Error!',
+                text: error.error.message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+              })
+            }
+          });
       }
     }
   }

@@ -4,6 +4,8 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TipologiaService } from '../../services/tipologia.service';
 import { SubtipologiaService } from '../../services/subtipologia.service';
 import { ISubtipologiaForm } from '../../models/subtipologia-form.interface';
+import { LoadingService } from '../../../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 
 @Component({
@@ -31,7 +33,9 @@ export class SubtipologiaFormModalComponent {
     public dialogconfig: DynamicDialogConfig,
     private formBuilder: FormBuilder,
     private tipologiaService: TipologiaService,
-    private subtipologiaService: SubtipologiaService
+    private subtipologiaService: SubtipologiaService,
+    private loadingService: LoadingService,
+
   ) {
 
     this.id = this.dialogconfig.data.id
@@ -69,11 +73,14 @@ export class SubtipologiaFormModalComponent {
     let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
-      this.subtipologiaService.create(request).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-        }
-      });
+      this.loadingService.show();
+      this.subtipologiaService.create(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          }
+        });
     }
   }
 
@@ -81,11 +88,14 @@ export class SubtipologiaFormModalComponent {
     let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
-      this.subtipologiaService.update(request).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-        }
-      });
+      this.loadingService.show();
+      this.subtipologiaService.update(request)
+        .pipe(finalize(() => this.loadingService.hide()))
+        .subscribe({
+          next: (response) => {
+            this.dialogRef.close(response);
+          }
+        });
     }
   }
 }
