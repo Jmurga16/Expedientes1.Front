@@ -20,6 +20,7 @@ import { OverlayModule } from 'primeng/overlay';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AvatarModule } from 'primeng/avatar';
 import { TopbarComponent } from '../topbar/topbar.component';
+import { SharedModule } from '../../../shared/shared.module';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { TopbarComponent } from '../topbar/topbar.component';
     OverlayModule,
     ButtonModule,
     OverlayPanelModule,
-    AvatarModule
+    AvatarModule,
+    SharedModule
   ]
 })
 export class LayoutModule { }

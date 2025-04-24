@@ -11,6 +11,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { PanelModule } from 'primeng/panel';
 import { RouterModule } from '@angular/router';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { RouterModule } from '@angular/router';
     PasswordModule,
     CardModule,
     PanelModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ]
 })
 export class AuthModule { }
