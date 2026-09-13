@@ -50,7 +50,6 @@ export class DemandaWorkflowComponent {
       descripcion: [null],
 
       domicilio: [null],
-      prioridad: [null],
       rutaImagen: [null],
 
       informacionAdicional: [null],
