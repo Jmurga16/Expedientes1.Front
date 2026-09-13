@@ -22,8 +22,10 @@ export class TipologiaFormModalComponent {
   ]
 
 
+  saving: boolean = false;
+
   get disabledForm(): boolean {
-    return this.form.invalid;
+    return this.form.invalid || this.saving;
   }
 
   constructor(
@@ -65,12 +67,17 @@ export class TipologiaFormModalComponent {
   }
 
   create() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as ITipologiaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.tipologiaService.create(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -88,12 +95,17 @@ export class TipologiaFormModalComponent {
   }
 
   update() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as ITipologiaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.tipologiaService.update(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -108,5 +120,10 @@ export class TipologiaFormModalComponent {
           }
         });
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 }

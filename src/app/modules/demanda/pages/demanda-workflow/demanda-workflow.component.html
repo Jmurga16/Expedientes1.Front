@@ -21,7 +21,7 @@
 
     <div class="p-fluid p-formgrid grid">
         <div class="btn-custom" style="margin-right: 1rem;" *ngIf="!(currentRol=='usuario')">
-            <p-button type="submit" label="Guardar"></p-button>
+            <p-button type="submit" label="Guardar" [disabled]="saving" [loading]="saving"></p-button>
         </div>
 
         <div class="btn-custom">

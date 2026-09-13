@@ -23,7 +23,7 @@
         <div class="form-footer">
             <p-button type="button" label="Cancelar" styleClass="p-button-secondary" (click)="closeModal()"></p-button>
             <p-button type="submit" label="Guardar" (onClick)="id ? update() : create()"
-                [disabled]="disabledForm"></p-button>
+                [disabled]="disabledForm" [loading]="saving"></p-button>
         </div>
     </div>
 </form>

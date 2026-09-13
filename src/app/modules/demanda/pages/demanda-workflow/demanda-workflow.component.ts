@@ -8,6 +8,8 @@ import { DataService } from '../../../../shared/services/data.service';
 import { TokenService } from '../../../../auth/services/token.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { HistorialDemandaListModalComponent } from '../historial-demanda-list-modal/historial-demanda-list-modal.component';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-demanda-workflow',
@@ -17,6 +19,7 @@ import { HistorialDemandaListModalComponent } from '../historial-demanda-list-mo
 export class DemandaWorkflowComponent {
 
   loading: boolean = false
+  saving: boolean = false
   demandaForm: FormGroup;
   idDemanda: any
   diagramUrl: string = ""
@@ -33,6 +36,7 @@ export class DemandaWorkflowComponent {
     private dataService: DataService,
     private tokenService: TokenService,
     private dialogService: DialogService,
+    private loadingService: LoadingService,
   ) {
 
     this.demandaForm = this.formBuilder.group({
@@ -134,6 +138,10 @@ export class DemandaWorkflowComponent {
   }
 
   onSubmit() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.demandaForm.getRawValue() as IDemandaForm;
 
     if (this.validateForm(request)) {
@@ -147,26 +155,34 @@ export class DemandaWorkflowComponent {
         return;
       }
 
-      this.demandaService.update(request).subscribe({
-        next: (response: any) => {
-          Swal.fire({
-            title: 'Éxito.',
-            text: response.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          })
-          this.goToBack();
-        },
-        error: (error: any) => {
-          console.error(error)
-          Swal.fire({
-            title: 'Error!',
-            text: error.error.message,
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        }
-      });
+      this.saving = true;
+      this.loadingService.show();
+
+      this.demandaService.update(request)
+        .pipe(finalize(() => {
+          this.saving = false;
+          this.loadingService.hide();
+        }))
+        .subscribe({
+          next: (response: any) => {
+            Swal.fire({
+              title: 'Éxito.',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            })
+            this.goToBack();
+          },
+          error: (error: any) => {
+            console.error(error)
+            Swal.fire({
+              title: 'Error!',
+              text: error.error.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
+          }
+        });
 
     }
   }

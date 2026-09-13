@@ -19,6 +19,7 @@ export class UserFormComponent implements OnInit {
   readonly: boolean = false;
   isEdit: boolean = false;
   loading: boolean = false;
+  saving: boolean = false;
 
   listRoles: any[] = [];
   listEstadosUsuario: any[] = []
@@ -136,6 +137,10 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.saving) {
+      return;
+    }
+
     console.log(this.userForm.value);
     let request = this.userForm.value as IUsuarioForm;
 
@@ -153,11 +158,12 @@ export class UserFormComponent implements OnInit {
         return;
       }
 
+      this.saving = true;
       this.loadingService.show();
 
       if (this.idUsuario) {
         this.usuarioService.update(request)
-          .pipe(finalize(() => this.loadingService.hide()))
+          .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
               console.log(response)
@@ -182,7 +188,7 @@ export class UserFormComponent implements OnInit {
       }
       else {
         this.usuarioService.create(request)
-          .pipe(finalize(() => this.loadingService.hide()))
+          .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
               console.log(response)
@@ -206,6 +212,11 @@ export class UserFormComponent implements OnInit {
           });
       }
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 
   validateForm(request: any): boolean {

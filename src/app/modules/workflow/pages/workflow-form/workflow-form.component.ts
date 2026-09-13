@@ -25,6 +25,7 @@ export class WorkflowFormComponent {
   readonly: boolean = false;
   isEdit: boolean = false;
   loading: boolean = false;
+  saving: boolean = false;
 
   listRoles: any[] = [];
   listEstadosWorkflow: any[] = []
@@ -182,6 +183,10 @@ export class WorkflowFormComponent {
   }
 
   onSubmit() {
+    if (this.saving) {
+      return;
+    }
+
     console.log(this.workflowForm.value);
     let request = this.workflowForm.value as IWorkflowForm;
 
@@ -194,14 +199,19 @@ export class WorkflowFormComponent {
       return;
     }
 
+    if (!this.fileBPMN && !this.workflowForm.controls["bpmn"].value) {
+      this.showWarning('Debe diseñar el diagrama BPMN del flujo.');
+      return;
+    }
+
+    this.saving = true;
+    this.loadingService.show();
+
     if (this.fileBPMN) {
       this.generateUrlBPMN()
     }
-    else if (this.workflowForm.controls["bpmn"].value) {
-      this.onSave(this.workflowForm.value)
-    }
     else {
-      this.showWarning('Debe diseñar el diagrama BPMN del flujo.');
+      this.onSave(this.workflowForm.value)
     }
   }
 
@@ -216,10 +226,9 @@ export class WorkflowFormComponent {
 
   onSave(request: any) {
 
-    this.loadingService.show();
     if (this.idWorkflow) {
       this.workflowService.update(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response: any) => {
             console.log(response)
@@ -244,7 +253,7 @@ export class WorkflowFormComponent {
     }
     else {
       this.workflowService.create(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response: any) => {
             console.log(response)
@@ -267,6 +276,11 @@ export class WorkflowFormComponent {
           }
         });
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 
   validateForm(request: any): boolean {
@@ -325,6 +339,7 @@ export class WorkflowFormComponent {
         this.onSave(this.workflowForm.value)
       },
       error: (err) => {
+        this.onSaveFinished();
         console.error('Error al subir archivo:', err)
         Swal.fire({
           title: 'Error!',

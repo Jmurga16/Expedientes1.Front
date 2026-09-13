@@ -25,8 +25,10 @@ export class SubtipologiaFormModalComponent {
   ]
 
 
+  saving: boolean = false;
+
   get disabledForm(): boolean {
-    return this.form.invalid;
+    return this.form.invalid || this.saving;
   }
 
   constructor(
@@ -71,12 +73,17 @@ export class SubtipologiaFormModalComponent {
   }
 
   create() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.subtipologiaService.create(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -94,12 +101,17 @@ export class SubtipologiaFormModalComponent {
   }
 
   update() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as ISubtipologiaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.subtipologiaService.update(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -114,5 +126,10 @@ export class SubtipologiaFormModalComponent {
           }
         });
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 }

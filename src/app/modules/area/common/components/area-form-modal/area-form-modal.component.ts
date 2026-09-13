@@ -21,8 +21,10 @@ export class AreaFormModalComponent {
     { value: 0, nombre: "Inactivo" }
   ]
 
+  saving: boolean = false;
+
   get disabledForm(): boolean {
-    return this.form.invalid;
+    return this.form.invalid || this.saving;
   }
 
   constructor(
@@ -62,12 +64,17 @@ export class AreaFormModalComponent {
   }
 
   create() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as IAreaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.areaService.create(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -85,12 +92,17 @@ export class AreaFormModalComponent {
   }
 
   update() {
+    if (this.saving) {
+      return;
+    }
+
     let request = this.form.value as IAreaForm;
 
     if (request) {
+      this.saving = true;
       this.loadingService.show();
       this.areaService.update(request)
-        .pipe(finalize(() => this.loadingService.hide()))
+        .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
@@ -105,5 +117,10 @@ export class AreaFormModalComponent {
           }
         });
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 }

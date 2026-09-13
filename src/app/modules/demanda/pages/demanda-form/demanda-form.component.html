@@ -119,7 +119,7 @@
             </div>
 
             <div class="footer">
-                <p-button type="submit" label="Guardar"></p-button>
+                <p-button type="submit" label="Guardar" [disabled]="saving" [loading]="saving"></p-button>
                 <p-button type="button" label="Salir" styleClass="p-button-danger" (onClick)="goToBack()"></p-button>
             </div>
         </form>

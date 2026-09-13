@@ -24,6 +24,7 @@ export class DemandaFormComponent {
   readonly: boolean = false;
   isEdit: boolean = false;
   loading: boolean = false;
+  saving: boolean = false;
 
   listRoles: any[] = [];
   listEstadosDemanda: any[] = []
@@ -196,6 +197,10 @@ export class DemandaFormComponent {
   }
 
   onSubmit() {
+    if (this.saving) {
+      return;
+    }
+
     console.log(this.demandaForm.value);
     let request = this.demandaForm.value as IDemandaForm;
 
@@ -210,10 +215,11 @@ export class DemandaFormComponent {
         return;
       }
 
+      this.saving = true;
       this.loadingService.show();
       if (this.idDemanda) {
         this.demandaService.update(request)
-          .pipe(finalize(() => this.loadingService.hide()))
+          .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
               console.log(response)
@@ -238,7 +244,7 @@ export class DemandaFormComponent {
       }
       else {
         this.demandaService.create(request)
-          .pipe(finalize(() => this.loadingService.hide()))
+          .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
               console.log(response)
@@ -262,6 +268,11 @@ export class DemandaFormComponent {
           });
       }
     }
+  }
+
+  private onSaveFinished() {
+    this.saving = false;
+    this.loadingService.hide();
   }
 
   validateForm(request: any): boolean {
