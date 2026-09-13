@@ -1,44 +1,199 @@
 .login-background {
-    display            : flex;
-    justify-content    : center;
-    align-items        : center;
-    height             : 100vh;
-    padding            : 1rem;
-    background-image   : url('/assets/images/municipal-background.jpg');
-    background-size    : cover;
-    background-position: center;
+    align-items: stretch;
+    background: #f6f8f7;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 47%);
+    min-height: 100vh;
+}
+
+.login-intro {
+    background: radial-gradient(circle at 78% 20%, rgba(82, 211, 164, .22), transparent 25rem), radial-gradient(circle at 20% 90%, rgba(12, 148, 136, .25), transparent 27rem), linear-gradient(135deg, #073b32 0%, #0c5b50 55%, #0f766e 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(2.5rem, 7vw, 6rem);
+}
+
+.login-intro h1 {
+    font-size: clamp(2.5rem, 4vw, 4.5rem);
+    letter-spacing: -.055em;
+    line-height: 1.02;
+    margin: 1rem 0 1.5rem;
+}
+
+.login-intro h1 em {
+    color: #9be9d0;
+    font-style: normal;
+}
+
+.intro-brand,
+.mobile-brand {
+    align-items: center;
+    display: flex;
+    font-size: 1.2rem;
+    font-weight: 800;
+    gap: .65rem;
+    letter-spacing: .1em;
+}
+
+.intro-brand img,
+.mobile-brand img {
+    height: 2.6rem;
+    width: 2.6rem;
+}
+
+.eyebrow {
+    color: #087f6e;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    margin: 0;
+}
+
+.login-intro .eyebrow {
+    color: #87e4c5;
+}
+
+.intro-copy {
+    color: rgba(255, 255, 255, .74);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 31rem;
+}
+
+.intro-footer {
+    color: rgba(255, 255, 255, .7);
+    font-size: .85rem;
+}
+
+.intro-footer i {
+    margin-right: .5rem;
 }
 
 .login-panel {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius   : 10px;
-    box-shadow      : 0 4px 15px rgba(0, 0, 0, 0.2);
+    align-self: center;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    justify-self: center;
+    width: min(100%, 28rem) !important;
+}
+
+:host ::ng-deep .login-panel .p-panel-header {
+    display: none;
+}
+
+:host ::ng-deep .login-panel .p-panel-content {
+    background: transparent;
+    border: 0;
+    padding: 0;
 }
 
 .login-form {
-    padding: 20px;
+    background: #fff;
+    border: 1px solid rgba(20, 83, 45, .08);
+    border-radius: 1.25rem;
+    box-shadow: 0 24px 60px rgba(7, 59, 50, .12);
+    padding: 2.5rem;
 }
 
 .login-form .p-field {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.login-form .p-field label {
+    color: #34433e;
+    display: block;
+    font-size: .86rem;
+    font-weight: 650;
+    margin-bottom: .5rem;
+}
+
+.login-form .p-field input {
+    border-radius: .65rem;
+    padding: .8rem .8rem .8rem 2.45rem;
+    width: 100%;
+}
+
+.login-form .p-field .p-input-icon-left {
+    display: block;
+    width: 100%;
+}
+
+.login-form .p-field .p-input-icon-left>i {
+    color: #6d827a;
+    left: .8rem;
+    margin-top: -.48rem;
+}
+
+.login-form .p-field button {
+    background: #0f766e;
+    border-color: #0f766e;
+    border-radius: .65rem;
+    font-weight: 700;
+    justify-content: center;
+    padding: .82rem;
+    width: 100%;
+}
+
+.login-form .p-field button:not(:disabled):hover {
+    background: #0b5d57;
+    border-color: #0b5d57;
+}
+
+h2 {
+    color: #17352d;
+    font-size: 1.85rem;
+    letter-spacing: -.04em;
+    margin: .55rem 0 .35rem;
+}
+
+.form-subtitle {
+    color: #708079;
+    font-size: .92rem;
+    margin: 0 0 2rem;
+}
+
+.mobile-brand {
+    display: none;
 }
 
 .register-link {
-    text-align: center;
     margin-top: 1rem;
+    text-align: center;
+}
 
-    a {
-        color          : #007ad9;
-        text-decoration: none;
+.register-link a {
+    color: #0f766e;
+    text-decoration: none;
+}
 
-        &:hover {
-            text-decoration: underline;
-        }
-    }
+.register-link a:hover {
+    text-decoration: underline;
 }
 
 @media (max-width: 600px) {
+    .login-background {
+        display: block;
+        padding: 1.25rem;
+    }
+
+    .login-intro {
+        display: none;
+    }
+
     .login-panel {
-        width: 90%;
+        margin: 3rem auto;
+        width: 100% !important;
+    }
+
+    .login-form {
+        padding: 2rem 1.5rem;
+    }
+
+    .mobile-brand {
+        display: flex;
+        margin-bottom: 2.5rem;
     }
 }

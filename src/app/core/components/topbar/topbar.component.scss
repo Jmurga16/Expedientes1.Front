@@ -1,8 +1,45 @@
-.bg-white {
-    background-color: white;
+.brand {
+    align-items: center;
+    color: var(--text-color);
+    display: inline-flex;
+    gap: .55rem;
+    letter-spacing: -.02em;
+    text-decoration: none;
+}
+
+.brand img {
+    height: 2.65rem;
+    width: 2.65rem;
+}
+
+.brand-name {
+    color: #14532d;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: .075em;
+}
+
+.brand-divider {
+    color: #a7b8b2;
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.brand-section {
+    color: var(--text-color-secondary);
+    font-size: .95rem;
+    font-weight: 500;
 }
 
 a {
-    color : black;
+    color: var(--text-color);
     cursor: pointer;
+}
+
+@media (max-width: 600px) {
+
+    .brand-section,
+    .brand-divider {
+        display: none;
+    }
 }

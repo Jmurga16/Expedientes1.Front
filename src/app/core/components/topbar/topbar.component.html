@@ -1,25 +1,13 @@
 <div class="layout-topbar">
-    <!-- <a class="layout-topbar-logo" routerLink="">
-        <img src="assets/images/logov1.png" alt="logo">
-    </a> -->
-
-    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
-        <i class="pi pi-bars"></i>
-    </button>
-
-
-
+    <a class="brand" routerLink="/admin/home" aria-label="NEXO Expedientes">
+        <img src="assets/images/nexo-logo.svg" alt="Logo de NEXO">
+        <span class="brand-name">NEXO</span>
+        <span class="brand-divider">|</span>
+        <span class="brand-section">{{ section }}</span>
+    </a>
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()"><i class="pi pi-bars"></i></button>
     <div #topbarmenu class="layout-topbar-menu">
-
-        <button class="p-link layout-topbar-button" (click)="op.toggle($event)">
-            <i class="pi pi-ellipsis-v"></i>
-        </button>
-
-        <p-overlayPanel #op>
-            <a (click)=" logout()">
-                Cerrar Sesión
-            </a>
-        </p-overlayPanel>
-
+        <button class="p-link layout-topbar-button" (click)="op.toggle($event)" aria-label="Abrir menú de sesión"><i class="pi pi-ellipsis-v"></i></button>
+        <p-overlayPanel #op><a (click)="logout()">Cerrar sesión</a></p-overlayPanel>
     </div>
 </div>
