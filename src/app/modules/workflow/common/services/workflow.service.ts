@@ -35,6 +35,12 @@ export class WorkflowService {
     return this.http.get<IWorkflow>(`${this._api}/${id}`);
   }
 
+  exists(idTipoDemanda: number, idTipologia: number, idSubtipologia: number): Observable<boolean> {
+    const params = HttpParamsUtility.buildHttpParams({ idTipoDemanda, idTipologia, idSubtipologia });
+
+    return this.http.get<boolean>(`${this._api}/exists`, { params });
+  }
+
   create(request: IWorkflowForm): Observable<IResponseForm> {
     return this.http.post<IResponseForm>(`${this._api}`, request);
   }

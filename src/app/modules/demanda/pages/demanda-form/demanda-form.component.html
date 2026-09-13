@@ -70,6 +70,23 @@
                     </div>
                 </div>
 
+                <div class="p-fluid p-formgrid grid" *ngIf="workflowFaltante">
+                    <div class="field col-12 md:col-12">
+                        <div class="p-inline-message p-inline-message-warn w-full justify-content-start">
+                            <i class="pi pi-exclamation-triangle mr-2"></i>
+                            <span *ngIf="!esAdmin">
+                                Todavía no hay un circuito definido para este tipo de trámite. Comuníquese con el
+                                administrador del sistema para que lo cree.
+                            </span>
+                            <span *ngIf="esAdmin">
+                                Todavía no hay un circuito definido para esta combinación.
+                                <a class="cursor-pointer font-medium underline" (click)="goToCrearWorkflow()">Crear flujo
+                                    de trabajo</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-12">
                         <label htmlFor="descripcion">Descripción Tipología</label>

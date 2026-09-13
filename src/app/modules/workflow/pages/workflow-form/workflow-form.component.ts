@@ -80,6 +80,9 @@ export class WorkflowFormComponent {
       if (this.idWorkflow) {
         this.getWorkflow();
       }
+      else {
+        this.preloadFromQueryParams();
+      }
     });
 
     this.getRoles()
@@ -87,6 +90,19 @@ export class WorkflowFormComponent {
     this.getAreas()
     this.getTipologia();
     this.getTipoDemanda();
+  }
+
+  private preloadFromQueryParams() {
+    const query = this.activatedRoute.snapshot.queryParamMap;
+    const idTipoDemanda = Number(query.get('idTipoDemanda'));
+    const idTipologia = Number(query.get('idTipologia'));
+    const idSubtipologia = Number(query.get('idSubtipologia'));
+
+    if (!idTipoDemanda || !idTipologia || !idSubtipologia)
+      return;
+
+    this.workflowForm.patchValue({ idTipoDemanda, idTipologia, idSubtipologia });
+    this.getSubtipologia(idTipologia);
   }
 
   getWorkflow() {

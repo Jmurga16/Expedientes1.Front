@@ -11,7 +11,11 @@ import { DataService } from '../../../../shared/services/data.service';
 import { UsuarioService } from '../../../user/common/services/usuario.service';
 import { FileService } from '../../../../shared/services/file.service';
 import { LoadingService } from '../../../../shared/services/loading.service';
+import { TokenService } from '../../../../auth/services/token.service';
+import { WorkflowService } from '../../../workflow/common/services/workflow.service';
 import { finalize } from 'rxjs';
+
+const WORKFLOW_NOT_CONFIGURED = 'WORKFLOW_NOT_CONFIGURED';
 
 @Component({
   selector: 'app-demanda-form',
@@ -40,6 +44,9 @@ export class DemandaFormComponent {
   idDemanda: any
   imagenPreview: string | null = null;
 
+  esAdmin: boolean = false;
+  workflowFaltante: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -52,6 +59,8 @@ export class DemandaFormComponent {
     private fileService: FileService,
     private usuarioService: UsuarioService,
     private loadingService: LoadingService,
+    private tokenService: TokenService,
+    private workflowService: WorkflowService,
   ) {
 
     this.userForm = this.formBuilder.group({
@@ -74,7 +83,6 @@ export class DemandaFormComponent {
       descripcion: [null],
 
       domicilio: [null],
-      prioridad: [null],
       rutaImagen: [null],
 
       informacionAdicional: [null],
@@ -102,6 +110,44 @@ export class DemandaFormComponent {
       }
     });
 
+    this.esAdmin = this.tokenService.isAdmin();
+    this.watchWorkflowDisponible();
+
+  }
+
+  private watchWorkflowDisponible() {
+    ['idTipoDemanda', 'idTipologia', 'idSubtipologia'].forEach(control => {
+      this.demandaForm.controls[control].valueChanges.subscribe(() => this.checkWorkflowDisponible());
+    });
+  }
+
+  private checkWorkflowDisponible() {
+    this.workflowFaltante = false;
+
+    if (this.idDemanda)
+      return;
+
+    const idTipoDemanda = this.demandaForm.controls['idTipoDemanda'].value;
+    const idTipologia = this.demandaForm.controls['idTipologia'].value;
+    const idSubtipologia = this.demandaForm.controls['idSubtipologia'].value;
+
+    if (!idTipoDemanda || !idTipologia || !idSubtipologia)
+      return;
+
+    this.workflowService.exists(idTipoDemanda, idTipologia, idSubtipologia).subscribe({
+      next: (existe: boolean) => this.workflowFaltante = !existe,
+      error: () => this.workflowFaltante = false
+    });
+  }
+
+  goToCrearWorkflow() {
+    this.router.navigate(['/admin/workflow/create'], {
+      queryParams: {
+        idTipoDemanda: this.demandaForm.controls['idTipoDemanda'].value,
+        idTipologia: this.demandaForm.controls['idTipologia'].value,
+        idSubtipologia: this.demandaForm.controls['idSubtipologia'].value
+      }
+    });
   }
 
   getUser() {
@@ -235,12 +281,7 @@ export class DemandaFormComponent {
             },
             error: (error: any) => {
               console.error(error)
-              Swal.fire({
-                title: 'Error!',
-                text: error.error.message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-              })
+              this.handleSaveError(error);
             }
           });
       }
@@ -260,16 +301,50 @@ export class DemandaFormComponent {
             },
             error: (error: any) => {
               console.error(error)
-              Swal.fire({
-                title: 'Error!',
-                text: error.error.message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-              })
+              this.handleSaveError(error);
             }
           });
       }
     }
+  }
+
+  private handleSaveError(error: any) {
+    if (error.error?.code === WORKFLOW_NOT_CONFIGURED) {
+      this.showWorkflowNotConfigured(error.error.message);
+      return;
+    }
+
+    Swal.fire({
+      title: 'Error!',
+      text: error.error?.message ?? 'No se pudo guardar la demanda.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar'
+    })
+  }
+
+  private showWorkflowNotConfigured(message: string) {
+    if (!this.esAdmin) {
+      Swal.fire({
+        title: 'Trámite no disponible',
+        text: `${message} Comuníquese con el administrador del sistema para que lo cree.`,
+        icon: 'warning',
+        confirmButtonText: 'Aceptar'
+      })
+      return;
+    }
+
+    Swal.fire({
+      title: 'Falta el flujo de trabajo',
+      text: `${message} Puede crearlo ahora y volver a registrar la demanda.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Crear flujo de trabajo',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.goToCrearWorkflow();
+      }
+    })
   }
 
   private onSaveFinished() {
