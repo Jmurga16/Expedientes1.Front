@@ -3,9 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout.component';
 import { HomeComponent } from '../../../shared/components/home/home.component';
 import { AdminGuard } from '../../../auth/guards/admin.guard';
-/* import { DiagramComponent } from '../../../shared/components/diagram/diagram.component';
-import { BpmnComponent } from '../../../shared/components/bpmn/bpmn.component';
- */
+
 const routes: Routes = [
   {
     path: '',
@@ -13,7 +11,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'user',
+        redirectTo: 'home',
         pathMatch: 'full',
       },
       {
@@ -26,16 +24,19 @@ const routes: Routes = [
         path: 'tipologia',
         loadChildren: () =>
           import('../../../modules/tipologia/tipologia.module').then((m) => m.TipologiaModule),
+        canActivate: [AdminGuard]
       },
       {
         path: 'area',
         loadChildren: () =>
           import('../../../modules/area/area.module').then((m) => m.AreaModule),
+        canActivate: [AdminGuard]
       },
       {
         path: 'workflow',
         loadChildren: () =>
           import('../../../modules/workflow/workflow.module').then((m) => m.WorkflowModule),
+        canActivate: [AdminGuard]
       },
       {
         path: 'demanda',
@@ -46,11 +47,6 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent
       },
-      /* {
-        path: 'diagram',
-        component: BpmnComponent
-      }, */
-
     ],
   },
 ];

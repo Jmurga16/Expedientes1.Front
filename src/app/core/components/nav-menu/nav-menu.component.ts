@@ -4,6 +4,16 @@ import { LayoutService } from '../../services/layout.service';
 import { IMenu } from '../../models/menu.interface';
 import { MenuService } from '../../services/menu.service';
 
+const MENU_MINIMO: IMenu[] = [
+  {
+    label: 'Menú',
+    items: [
+      { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['./home'] },
+      { label: 'Cerrar Sesión', icon: 'pi pi-fw pi-sign-out', routerLink: ['/auth/login'] }
+    ]
+  }
+];
+
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
@@ -25,90 +35,15 @@ export class NavMenuComponent implements OnInit {
   }
 
   getMenu() {
-
-    let currentRol = this.tokenService.getCurrentRol()
-
-    this.menuService.getMenuByRol(currentRol).subscribe({
-      next: (response: any) => {
-
-        console.log(response)
-        if (response) {
-          this.model = response;
-        }
-        
+    this.menuService.getMenuByRol(this.tokenService.getCurrentRol()).subscribe({
+      next: (response: IMenu[]) => {
+        this.model = response?.length ? response : MENU_MINIMO;
         this.loading = false;
       },
       error: () => {
-        this.getMenuAdmin()
+        this.model = MENU_MINIMO;
         this.loading = false;
-
       }
     });
-  }
-
-  getMenuAdmin() {
-    this.model = [
-      {
-        "label": "Menú",
-        "items": [
-          {
-            "label": "Home",
-            "icon": "pi pi-fw pi-home",
-            "routerLink": [
-              "./home"
-            ]
-          },
-          {
-            "label": "Usuarios",
-            "icon": "pi pi-fw pi-user",
-            "routerLink": [
-              "user/list"
-            ]
-          },
-          {
-            "label": "Tipología",
-            "icon": "pi pi-fw pi-th-large",
-            "routerLink": [
-              "tipologia/list"
-            ]
-          },
-          {
-            "label": "SubTipología",
-            "icon": "pi pi-fw pi-table",
-            "routerLink": [
-              "tipologia/subtipologia/list"
-            ]
-          },
-          {
-            "label": "Area",
-            "icon": "pi pi-fw pi-map",
-            "routerLink": [
-              "area/list"
-            ]
-          },
-          {
-            "label": "Demandas",
-            "icon": "pi pi-fw pi-list",
-            "routerLink": [
-              "demanda/list"
-            ]
-          },
-          {
-            "label": "Flujos de Trabajo",
-            "icon": "pi pi-fw pi-share-alt",
-            "routerLink": [
-              "workflow/list"
-            ]
-          },
-          {
-            "label": "Cerrar Sesión",
-            "icon": "pi pi-fw pi-sign-out",
-            "routerLink": [
-              "/auth/login"
-            ]
-          }
-        ]
-      }
-    ]
   }
 }

@@ -17,13 +17,6 @@
                 ]
             },
             {
-                "label": "Flujos de Trabajo",
-                "icon": "pi pi-fw pi-share-alt",
-                "routerLink": [
-                    "workflow/list"
-                ]
-            },
-            {
                 "label": "Cerrar Sesión",
                 "icon": "pi pi-fw pi-sign-out",
                 "routerLink": [
