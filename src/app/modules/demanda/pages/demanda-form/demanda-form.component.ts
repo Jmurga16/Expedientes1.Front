@@ -38,6 +38,7 @@ export class DemandaFormComponent {
   userForm: FormGroup;
 
   idDemanda: any
+  imagenPreview: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -121,6 +122,7 @@ export class DemandaFormComponent {
       next: (response: any) => {
         console.log(response)
         this.demandaForm.patchValue(response);
+        this.loadImagenPreview(response.rutaImagen);
         this.loading = false;
       },
       error: () => {
@@ -301,6 +303,17 @@ export class DemandaFormComponent {
     return message == ""
   }
 
+  private loadImagenPreview(rutaImagen: string | null) {
+    this.imagenPreview = null;
+    if (!rutaImagen)
+      return;
+
+    this.fileService.resolveUrl(rutaImagen).subscribe({
+      next: (url: string) => this.imagenPreview = url,
+      error: () => this.imagenPreview = null
+    });
+  }
+
   onUploadImage(event: any) {
     const file = event.files[0];
     const container = "demanda-imagen"
@@ -311,6 +324,7 @@ export class DemandaFormComponent {
           console.log('Archivo subido:', response);
           const fileUrl = response.fileUrl;
           this.demandaForm.patchValue({ rutaImagen: fileUrl });
+          this.imagenPreview = response.viewUrl ?? fileUrl;
         },
         error: (err) => {
           console.error('Error al subir archivo:', err)

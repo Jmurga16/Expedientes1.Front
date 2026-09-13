@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 
@@ -40,6 +42,15 @@ export class FileService {
         formData.append('file', file);
 
         return this.http.post(`${this._api}/${containerName}`, formData);
+    }
+
+    // Los contenedores son privados: un blob solo se lee con la URL firmada que emite el backend.
+    resolveUrl(url: string): Observable<string> {
+        if (!url || !url.startsWith(environment.azureBlob))
+            return of(url);
+
+        return this.http.get<{ url: string }>(`${this._api}/view`, { params: { url } })
+            .pipe(map(response => response.url));
     }
 
     downloadFile(filename: string, data: string | Blob, type: string): void {

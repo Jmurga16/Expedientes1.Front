@@ -111,7 +111,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     console.log(url)
 
     return (
-      this.http.get(url, { responseType: 'text' }).pipe(
+      this.fileService.resolveUrl(url).pipe(
+        switchMap((signedUrl: string) => this.http.get(signedUrl, { responseType: 'text' })),
         switchMap((xml: string) => this.importDiagram(xml)),
         map(result => result.warnings),
       ).subscribe(

@@ -109,8 +109,8 @@
 
                 <div class="p-fluid p-formgrid grid">
                     <div class="field col-12 md:col-12">
-                        <img [src]="demandaForm.get('rutaImagen')?.value" alt="Descripción de la imagen"
-                            class="imagen-clase" *ngIf="demandaForm.get('rutaImagen')?.value!=null" width="400px" />
+                        <img [src]="imagenPreview" alt="Descripción de la imagen" class="imagen-clase"
+                            *ngIf="imagenPreview" width="400px" />
                     </div>
 
                     <input type="hidden" formControlName="rutaImagen" />
