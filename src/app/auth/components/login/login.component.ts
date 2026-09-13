@@ -40,10 +40,10 @@ export class LoginComponent {
           next: () => {
             this.router.navigate(['/admin']);
           },
-          error: () => {
+          error: (error: any) => {
             Swal.fire({
               title: 'Error!',
-              text: 'Credenciales Incorrectas',
+              text: error.error?.message ?? 'Credenciales Incorrectas',
               icon: 'error',
               confirmButtonText: 'Aceptar'
             });

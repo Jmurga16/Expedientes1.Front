@@ -11,6 +11,7 @@ export const TokenInterceptor: HttpInterceptorFn = (request, next) => {
 
     const token = tokenService.getToken();
     const isBlobRequest = request.url.includes(environment.azureBlob);
+    const isAuthRequest = request.url.includes('/auth/');
 
     if (token && !isBlobRequest) {
         request = request.clone({
@@ -20,7 +21,7 @@ export const TokenInterceptor: HttpInterceptorFn = (request, next) => {
 
     return next(request).pipe(
         catchError((error: HttpErrorResponse) => {
-            if (error.status === 401 && token && !isBlobRequest) {
+            if (error.status === 401 && token && !isBlobRequest && !isAuthRequest) {
                 tokenService.logOut();
                 router.navigate(['auth/login']);
             }
