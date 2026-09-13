@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 
 const TOKEN_KEY = 'AuthToken';
 
+const ROL_PRECEDENCIA = [
+  ['ROLE_ADMIN', 'administrador'],
+  ['ROLE_AREA', 'referente'],
+  ['ROLE_COLAB', 'colaborador'],
+  ['ROLE_USER', 'usuario'],
+] as const;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -81,26 +88,10 @@ export class TokenService {
     return this.getDataJWT(this.payloadRol);
   }
 
+  // Se queda con el rol de mayor privilegio, sin importar el orden en que vengan en el token.
   getCurrentRol(): string {
-    
-    let roles = this.getRoles()    
-    let currentRol = ""
-
-    roles.forEach((element: any) => {
-      if (element.includes("ROLE_ADMIN")) {
-        currentRol = "administrador";
-      }
-      else if (element.includes("ROLE_AREA")) {
-        currentRol = "referente";
-      }
-      else if (element.includes("ROLE_COLAB")) {
-        currentRol = "colaborador";
-      }
-      else if (element.includes("ROLE_USER")) {
-        currentRol = "usuario";
-      }
-    });
-    return currentRol;
+    const roles: string[] = this.getRoles() ?? [];
+    return ROL_PRECEDENCIA.find(([rol]) => roles.includes(rol))?.[1] ?? '';
   }
 
 
