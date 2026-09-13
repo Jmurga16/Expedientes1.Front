@@ -5,6 +5,7 @@ import { TipologiaService } from '../../services/tipologia.service';
 import { ITipologiaForm } from '../../models/tipologia-form.interface';
 import { LoadingService } from '../../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-tipologia-form-modal',
@@ -73,6 +74,14 @@ export class TipologiaFormModalComponent {
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error!',
+              text: error.error?.message ?? 'No se pudo guardar el registro.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
           }
         });
     }
@@ -88,6 +97,14 @@ export class TipologiaFormModalComponent {
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error!',
+              text: error.error?.message ?? 'No se pudo guardar el registro.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
           }
         });
     }

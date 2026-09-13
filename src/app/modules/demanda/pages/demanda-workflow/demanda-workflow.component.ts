@@ -134,12 +134,19 @@ export class DemandaWorkflowComponent {
   }
 
   onSubmit() {
-    // getRawValue incluye los controles deshabilitados (paso/estado para el rol usuario).
     let request = this.demandaForm.getRawValue() as IDemandaForm;
 
-    if (this.validateForm(request) && this.demandaForm.valid) {
+    if (this.validateForm(request)) {
+      if (this.demandaForm.invalid) {
+        Swal.fire({
+          title: 'Advertencia!',
+          text: 'Revise los datos del formulario.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        })
+        return;
+      }
 
-      // El backend registra la entrada de historial (paso, estado y observaciones) en el mismo update.
       this.demandaService.update(request).subscribe({
         next: (response: any) => {
           Swal.fire({

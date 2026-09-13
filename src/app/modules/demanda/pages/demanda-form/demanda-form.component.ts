@@ -79,7 +79,7 @@ export class DemandaFormComponent {
       paso: ['Inicio'],
       urlBpmn: ['/assets/demo/base.bpmn'],
 
-      estado: [1] // 1 = Receptada; 0 es el borrado logico
+      estado: [1]
     });
 
   }
@@ -199,7 +199,17 @@ export class DemandaFormComponent {
     console.log(this.demandaForm.value);
     let request = this.demandaForm.value as IDemandaForm;
 
-    if (this.validateForm(request) && this.demandaForm.valid) {
+    if (this.validateForm(request)) {
+      if (this.demandaForm.invalid) {
+        Swal.fire({
+          title: 'Advertencia!',
+          text: 'Revise los datos del formulario.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        })
+        return;
+      }
+
       this.loadingService.show();
       if (this.idDemanda) {
         this.demandaService.update(request)
@@ -238,7 +248,6 @@ export class DemandaFormComponent {
                 icon: 'success',
                 confirmButtonText: 'Aceptar'
               })
-              // La entrada inicial del historial la registra el backend al crear la demanda.
               this.goToBack();
             },
             error: (error: any) => {
@@ -292,7 +301,15 @@ export class DemandaFormComponent {
           const fileUrl = response.fileUrl;
           this.demandaForm.patchValue({ rutaImagen: fileUrl });
         },
-        error: (err) => console.error('Error al subir archivo:', err),
+        error: (err) => {
+          console.error('Error al subir archivo:', err)
+          Swal.fire({
+            title: 'Error!',
+            text: err.error?.message ?? 'No se pudo subir la imagen.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          })
+        },
       });
     }
   }

@@ -5,6 +5,7 @@ import { AreaService } from '../../services/area.service';
 import { IAreaForm } from '../../models/area-form.interface';
 import { LoadingService } from '../../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-area-form-modal',
@@ -70,6 +71,14 @@ export class AreaFormModalComponent {
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error!',
+              text: error.error?.message ?? 'No se pudo guardar el registro.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
           }
         });
     }
@@ -85,6 +94,14 @@ export class AreaFormModalComponent {
         .subscribe({
           next: (response) => {
             this.dialogRef.close(response);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error!',
+              text: error.error?.message ?? 'No se pudo guardar el registro.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            })
           }
         });
     }

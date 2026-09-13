@@ -185,11 +185,33 @@ export class WorkflowFormComponent {
     console.log(this.workflowForm.value);
     let request = this.workflowForm.value as IWorkflowForm;
 
-    if (this.validateForm(request) && this.workflowForm.valid) {
-
-      this.generateUrlBPMN()
-
+    if (!this.validateForm(request)) {
+      return;
     }
+
+    if (this.workflowForm.invalid) {
+      this.showWarning('Revise los datos del formulario.');
+      return;
+    }
+
+    if (this.fileBPMN) {
+      this.generateUrlBPMN()
+    }
+    else if (this.workflowForm.controls["bpmn"].value) {
+      this.onSave(this.workflowForm.value)
+    }
+    else {
+      this.showWarning('Debe diseñar el diagrama BPMN del flujo.');
+    }
+  }
+
+  showWarning(message: string) {
+    Swal.fire({
+      title: 'Advertencia!',
+      text: message,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    })
   }
 
   onSave(request: any) {
@@ -296,18 +318,21 @@ export class WorkflowFormComponent {
 
     const file = new File([this.fileBPMN], nameFile, { type: this.fileBPMN.type });
 
-    if (this.fileBPMN) {
-      this.fileService.uploadFile(file, container).subscribe({
-        next: (response: any) => {
-          console.log('Archivo subido:', response);
-          this.workflowForm.controls["bpmn"].setValue(response.fileUrl)
-        },
-        error: (err) => console.error('Error al subir archivo:', err),
-        complete: () => {
-
-          this.onSave(this.workflowForm.value)
-        }
-      });
-    }
+    this.fileService.uploadFile(file, container).subscribe({
+      next: (response: any) => {
+        console.log('Archivo subido:', response);
+        this.workflowForm.controls["bpmn"].setValue(response.fileUrl)
+        this.onSave(this.workflowForm.value)
+      },
+      error: (err) => {
+        console.error('Error al subir archivo:', err)
+        Swal.fire({
+          title: 'Error!',
+          text: err.error?.message ?? 'No se pudo subir el diagrama BPMN.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        })
+      }
+    });
   }
 }
