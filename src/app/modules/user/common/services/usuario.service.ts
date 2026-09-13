@@ -29,8 +29,8 @@ export class UsuarioService {
     return this.http.get<IUsuario>(`${this._api}/${id}`);
   }
 
-  getByEmail(email: string): Observable<IUsuario> {
-    return this.http.get<IUsuario>(`${this._api}/email/${email}`);
+  getMe(): Observable<IUsuario> {
+    return this.http.get<IUsuario>(`${this._api}/me`);
   }
 
   create(request: IUsuarioForm): Observable<IResponseForm> {

@@ -9,10 +9,7 @@ import { TipologiaService } from '../../../tipologia/common/services/tipologia.s
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
 import { DataService } from '../../../../shared/services/data.service';
 import { UsuarioService } from '../../../user/common/services/usuario.service';
-import { TokenService } from '../../../../auth/services/token.service';
 import { FileService } from '../../../../shared/services/file.service';
-import { HistorialDemandaService } from '../../common/services/historial-demanda.service';
-import { IHistorialDemandaForm } from '../../common/models/historial-demanda-form.interface';
 import { LoadingService } from '../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
 
@@ -38,7 +35,6 @@ export class DemandaFormComponent {
 
   demandaForm: FormGroup;
   userForm: FormGroup;
-  historialDemandaForm: FormGroup;
 
   idDemanda: any
 
@@ -47,14 +43,12 @@ export class DemandaFormComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private demandaService: DemandaService,
-    private historialDemandaService: HistorialDemandaService,
     private areaService: AreaService,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
     private fileService: FileService,
     private usuarioService: UsuarioService,
-    private tokenService: TokenService,
     private loadingService: LoadingService,
   ) {
 
@@ -85,17 +79,7 @@ export class DemandaFormComponent {
       paso: ['Inicio'],
       urlBpmn: ['/assets/demo/base.bpmn'],
 
-      estado: [0]
-    });
-
-    this.historialDemandaForm = this.formBuilder.group({
-      id: [null],
-      idUsuario: [null],
-      idDemanda: [null],
-      paso: ['Inicio'],
-      observaciones: [null],
-      fecha: [null],
-      estado: [0]
+      estado: [1] // 1 = Receptada; 0 es el borrado logico
     });
 
   }
@@ -119,15 +103,9 @@ export class DemandaFormComponent {
   }
 
   getUser() {
-    let email = this.tokenService.getEmail()
-
-    this.usuarioService.getByEmail(email).subscribe({
+    this.usuarioService.getMe().subscribe({
       next: (response: any) => {
-        console.log(response)
         this.userForm.patchValue(response);
-
-        this.demandaForm.controls["idUsuario"].setValue(response.id)
-        this.historialDemandaForm.controls["idUsuario"].setValue(response.id)
 
         this.loading = false;
       },
@@ -260,10 +238,8 @@ export class DemandaFormComponent {
                 icon: 'success',
                 confirmButtonText: 'Aceptar'
               })
-
-              this.demandaForm.controls["id"].setValue(response.id)
-              this.historialDemandaForm.controls["idDemanda"].setValue(response.id)
-
+              // La entrada inicial del historial la registra el backend al crear la demanda.
+              this.goToBack();
             },
             error: (error: any) => {
               console.error(error)
@@ -273,10 +249,6 @@ export class DemandaFormComponent {
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
               })
-            },
-            complete: () => {
-
-              this.registerOnHistorial()
             }
           });
       }
@@ -323,26 +295,6 @@ export class DemandaFormComponent {
         error: (err) => console.error('Error al subir archivo:', err),
       });
     }
-  }
-
-  registerOnHistorial() {
-
-    let request = this.historialDemandaForm.value as IHistorialDemandaForm;
-
-    this.historialDemandaService.create(request).subscribe({
-      next: (response: any) => {
-        this.goToBack();
-      },
-      error: (error: any) => {
-        console.error(error)
-        Swal.fire({
-          title: 'Error!',
-          text: error.error.message,
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        })
-      }
-    });
   }
 
 }

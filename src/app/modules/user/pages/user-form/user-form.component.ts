@@ -59,6 +59,8 @@ export class UserFormComponent implements OnInit {
       this.idUsuario = params['id']; // Obtén el ID de la ruta
       console.log('User ID:', this.idUsuario);
       if (this.idUsuario) {
+        this.userForm.controls['password'].removeValidators(Validators.required);
+        this.userForm.controls['password'].updateValueAndValidity();
         this.getUser();
       }
     });
@@ -137,7 +139,19 @@ export class UserFormComponent implements OnInit {
     console.log(this.userForm.value);
     let request = this.userForm.value as IUsuarioForm;
 
-    if (this.validateForm(request) && this.userForm.valid) {
+    if (this.validateForm(request)) {
+
+      if (this.userForm.invalid) {
+        Swal.fire({
+          title: 'Advertencia!',
+          text: this.userForm.controls['password'].invalid
+            ? 'La contraseña debe tener mayúsculas, minúsculas y un carácter especial.'
+            : 'Revise los datos del formulario.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        })
+        return;
+      }
 
       this.loadingService.show();
 
@@ -208,7 +222,7 @@ export class UserFormComponent implements OnInit {
       message = "El campo Domicilio es requerido."
     } else if (request.email == null || request.email == "") {
       message = "El campo Correo Electrónico es requerido."
-    } else if (request.password == null || request.password == "") {
+    } else if (!this.idUsuario && (request.password == null || request.password == "")) {
       message = "El campo Contraseña es requerido."
     } else if (request.roles == null || request.roles.length == 0) {
       message = "El campo Rol es requerido."
