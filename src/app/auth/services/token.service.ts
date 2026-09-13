@@ -9,15 +9,17 @@ const ROL_PRECEDENCIA = [
   ['ROLE_USER', 'usuario'],
 ] as const;
 
+interface JwtPayload {
+  sub?: string;
+  email?: string;
+  roles?: string[];
+  exp?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
-
-  private readonly payloadEmail = "email"
-  private readonly payloadRol = "roles"
-
-  constructor() { }
 
   public setToken(token: string): void {
     localStorage.setItem(TOKEN_KEY, token);
@@ -35,64 +37,41 @@ export class TokenService {
     localStorage.removeItem(TOKEN_KEY);
   }
 
-  public isLogged(): boolean {
-    return this.getToken() != null;
+  public isAuthenticated(): boolean {
+    const exp = this.getPayload()?.exp;
+    return exp != null && Date.now() < exp * 1000;
   }
 
   public isAdmin(): boolean {
-    if (!this.isLogged()) {
-      return false;
-    }
-    const token = this.getToken();
-    const payload = token!.split(".")[1];
-    const payloadDecoded = atob(payload);
-
-    const values = JSON.parse(payloadDecoded);
-    const roles = values.roles;
-    if (roles.indexOf('ROLE_ADMIN') < 0) {
-      return false;
-    }
-    return true;
+    return this.isAuthenticated() && this.getRoles().includes('ROLE_ADMIN');
   }
 
-  isAuthenticated(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      return false
-    }
-
-    const payload = JSON.parse(atob(token!.split(".")[1]));
-    const exp = payload.exp * 1000
-
-    return Date.now() < exp;
-
+  public getEmail(): string {
+    return this.getPayload()?.email ?? '';
   }
 
-  getDataJWT(campo: string): string {
-    const token = this.getToken()
-
-    if (!token) {
-      return ''
-    }
-
-    var dataToken = JSON.parse(atob(token.split('.')[1]));
-
-    return dataToken[campo]
+  public getRoles(): string[] {
+    return this.getPayload()?.roles ?? [];
   }
 
-  getEmail() {
-    return this.getDataJWT("email");
-  }
-
-  getRoles(): any {
-    return this.getDataJWT(this.payloadRol);
-  }
-
-  // Se queda con el rol de mayor privilegio, sin importar el orden en que vengan en el token.
-  getCurrentRol(): string {
-    const roles: string[] = this.getRoles() ?? [];
+  public getCurrentRol(): string {
+    const roles = this.getRoles();
     return ROL_PRECEDENCIA.find(([rol]) => roles.includes(rol))?.[1] ?? '';
   }
 
+  private getPayload(): JwtPayload | null {
+    const payload = this.getToken()?.split('.')[1];
+    if (!payload) {
+      return null;
+    }
 
+    try {
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '=');
+      const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
+    } catch {
+      return null;
+    }
+  }
 }
