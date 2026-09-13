@@ -47,6 +47,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   idArea = new FormControl()
 
   private bpmnJS: BpmnJS = new BpmnJS();
+  private nombreSubscription?: Subscription;
+  private readonly onCommandStackChanged = () => this.updateDiagramFile();
 
   constructor(
     private http: HttpClient,
@@ -60,6 +62,9 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
         this.bpmnJS.get<Canvas>('canvas').zoom('fit-viewport');
       }
     });
+
+    const eventBus = this.bpmnJS.get('eventBus') as any;
+    eventBus.on('commandStack.changed', this.onCommandStackChanged);
   }
 
   ngAfterContentInit(): void {
@@ -76,7 +81,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     console.log("this.idDemanda")
     console.log(this.idDemanda)
 
-    this.formWorkflowService.nombre$.subscribe(value => {
+    this.nombreSubscription = this.formWorkflowService.nombre$.subscribe(value => {
       this.updateWorkflowName(value)
     });
 
@@ -92,6 +97,11 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   ngOnDestroy(): void {
+    this.nombreSubscription?.unsubscribe();
+
+    const eventBus = this.bpmnJS.get('eventBus') as any;
+    eventBus.off('commandStack.changed', this.onCommandStackChanged);
+
     this.bpmnJS.destroy();
   }
 
@@ -126,13 +136,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     console.log("importDiagram")
     console.log(xml)
     this.xmlLocal = xml
-
-    const eventBus = this.bpmnJS.get('eventBus') as any; // Aserción de tipo
-    eventBus.on('commandStack.changed', () => {
-      console.log('Cambio detectado en el diagrama');
-      console.log(this.bpmnJS);
-      this.updateDiagramFile();
-    });
 
     if (this.idDemanda) {
       this.getTasks()
