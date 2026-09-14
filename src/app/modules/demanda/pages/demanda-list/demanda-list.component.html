@@ -54,8 +54,8 @@
                         Estado
                     </div>
                 </th>
-                <th style="width: 10%">
-                    <div class="flex justify-content-between align-items-center">
+                <th class="col-opciones">
+                    <div class="flex justify-content-center align-items-center">
                         Opciones
                     </div>
                 </th>
@@ -85,7 +85,7 @@
                 <td>
                     {{demanda.estado | steptask}}
                 </td>
-                <td class="text-center">
+                <td class="col-opciones text-center">
                     <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEdit(demanda.id)"
                         pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
                     </button>

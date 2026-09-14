@@ -33,6 +33,12 @@
     }
 }
 
+.p-datatable .col-opciones {
+    width: 1%;
+    min-width: 9.5rem;
+    white-space: nowrap;
+}
+
 .p-inputtext[readonly] {
     &:hover,
     &:focus {
