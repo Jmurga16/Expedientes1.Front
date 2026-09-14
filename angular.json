@@ -33,6 +33,10 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
               "src/assets",
               "src/web.config",
               "src/robots.txt"
