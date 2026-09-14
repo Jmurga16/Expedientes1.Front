@@ -1,24 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { AreaService } from '../../services/area.service';
-import { IAreaForm } from '../../models/area-form.interface';
-import { LoadingService } from '../../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
-import Swal from 'sweetalert2';
+import { AreaService } from '../../services/area.service';
+import { IArea } from '../../models/area.interface';
+import { IAreaForm } from '../../models/area-form.interface';
+import { IOpcion } from '../../../../../shared/models/opcion.interface';
+import { LoadingService } from '../../../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-area-form-modal',
   templateUrl: './area-form-modal.component.html',
   styleUrl: './area-form-modal.component.scss'
 })
-export class AreaFormModalComponent {
+export class AreaFormModalComponent implements OnInit {
 
-  id: any
+  id?: number
   form: FormGroup
-  listEstado = [
-    { value: 1, nombre: "Activo" },
-    { value: 0, nombre: "Inactivo" }
+  listEstado: IOpcion[] = [
+    { id: 1, nombre: "Activo" },
+    { id: 0, nombre: "Inactivo" }
   ]
 
   saving: boolean = false;
@@ -56,67 +57,36 @@ export class AreaFormModalComponent {
   }
 
   getData() {
-    this.areaService.getById(this.id).subscribe({
-      next: (response) => {
+    this.areaService.getById(this.id!).subscribe({
+      next: (response: IArea) => {
         this.form.patchValue(response);
       }
     });
   }
 
   create() {
-    if (this.saving) {
-      return;
-    }
-
-    let request = this.form.value as IAreaForm;
-
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.areaService.create(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.guardar(false);
   }
 
   update() {
+    this.guardar(true);
+  }
+
+  private guardar(esEdicion: boolean) {
     if (this.saving) {
       return;
     }
 
-    let request = this.form.value as IAreaForm;
+    const request: IAreaForm = this.form.value;
 
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.areaService.update(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.saving = true;
+    this.loadingService.show();
+
+    const peticion = esEdicion ? this.areaService.update(request) : this.areaService.create(request);
+
+    peticion.pipe(finalize(() => this.onSaveFinished())).subscribe({
+      next: (response) => this.dialogRef.close(response)
+    });
   }
 
   private onSaveFinished() {

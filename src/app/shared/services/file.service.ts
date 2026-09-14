@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-
+import { IUploadedFile } from '../models/uploaded-file.interface';
+import { SILENCIAR_ERROR } from '../../core/interceptors/error.interceptor';
 
 @Injectable({
     providedIn: 'root',
@@ -15,33 +16,31 @@ export class FileService {
         this._api = `${environment.apiUrl}/file`;
     }
 
-    uploadFile(file: File, containerName: string): Observable<any> {
+    uploadFile(file: File, containerName: string): Observable<IUploadedFile> {
         const formData = new FormData();
         formData.append('file', file);
 
-        return this.http.post(`${this._api}/${containerName}`, formData);
+        return this.http.post<IUploadedFile>(`${this._api}/${containerName}`, formData);
     }
 
-    uploadFileUnique(file: File, containerName: string): Observable<any> {
-        const formData = new FormData();
-
-        // Generar un nombre único basado en la fecha/hora
+    uploadFileUnique(file: File, containerName: string): Observable<IUploadedFile> {
         const uniqueName = `${new Date().getTime()}_${file.name}`;
-
-        // Crear un nuevo archivo con el nombre único
         const renamedFile = new File([file], uniqueName, { type: file.type });
 
+        const formData = new FormData();
         formData.append('file', renamedFile);
 
-        return this.http.post(`${this._api}/${containerName}`, formData);
+        return this.http.post<IUploadedFile>(`${this._api}/${containerName}`, formData);
     }
 
     resolveUrl(url: string): Observable<string> {
         if (!url || !url.startsWith(environment.azureBlob))
             return of(url);
 
-        return this.http.get<{ url: string }>(`${this._api}/view`, { params: { url } })
-            .pipe(map(response => response.url));
+        return this.http.get<{ url: string }>(`${this._api}/view`, {
+            params: { url },
+            context: new HttpContext().set(SILENCIAR_ERROR, true)
+        }).pipe(map(response => response.url));
     }
 
     downloadFile(filename: string, data: string | Blob, type: string): void {
@@ -57,6 +56,4 @@ export class FileService {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
     }
-
-
 }

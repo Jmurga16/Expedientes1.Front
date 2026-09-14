@@ -1,6 +1,5 @@
 export interface IAreaForm {
-  id?: number,
-  nombre: string,
-  estado: number,
+  id: number | null;
+  nombre: string;
+  estado: number;
 }
-

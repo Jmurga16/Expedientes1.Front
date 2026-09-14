@@ -1,30 +1,32 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DemandaService } from '../../common/services/demanda.service';
-import { IDemandaForm } from '../../common/models/demanda-form.interface';
-import Swal from 'sweetalert2';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DataService } from '../../../../shared/services/data.service';
-import { TokenService } from '../../../../auth/services/token.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { HistorialDemandaListModalComponent } from '../historial-demanda-list-modal/historial-demanda-list-modal.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
+import { DemandaService } from '../../common/services/demanda.service';
+import { IDemanda } from '../../common/models/demanda.interface';
+import { IDemandaForm } from '../../common/models/demanda-form.interface';
+import { HistorialDemandaListModalComponent } from '../historial-demanda-list-modal/historial-demanda-list-modal.component';
+import { IOpcion } from '../../../../shared/models/opcion.interface';
+import { DataService } from '../../../../shared/services/data.service';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
+import { TokenService } from '../../../../auth/services/token.service';
 
 @Component({
   selector: 'app-demanda-workflow',
   templateUrl: './demanda-workflow.component.html',
   styleUrl: './demanda-workflow.component.scss'
 })
-export class DemandaWorkflowComponent {
+export class DemandaWorkflowComponent implements OnInit {
 
   loading: boolean = false
   saving: boolean = false
   demandaForm: FormGroup;
-  idDemanda: any
+  idDemanda?: number
   diagramUrl: string = ""
-  listTask: any[] = []
-  listEstadosDemanda: any[] = []
+  listTask: IOpcion<string>[] = []
+  listEstadosDemanda: IOpcion[] = []
   currentRol: string = ""
   ref: DynamicDialogRef | undefined;
 
@@ -37,6 +39,7 @@ export class DemandaWorkflowComponent {
     private tokenService: TokenService,
     private dialogService: DialogService,
     private loadingService: LoadingService,
+    private notification: NotificationService,
   ) {
 
     this.demandaForm = this.formBuilder.group({
@@ -80,8 +83,8 @@ export class DemandaWorkflowComponent {
   }
 
   getDemanda() {
-    this.demandaService.getById(this.idDemanda).subscribe({
-      next: (response: any) => {
+    this.demandaService.getById(this.idDemanda!).subscribe({
+      next: (response: IDemanda) => {
         this.demandaForm.patchValue(response);
         this.diagramUrl = response.urlBpmn
         this.loading = false;
@@ -94,7 +97,7 @@ export class DemandaWorkflowComponent {
 
   getEstadosDemanda() {
     this.dataService.getEstadosStep().subscribe({
-      next: (response: any) => {
+      next: (response: IOpcion[]) => {
         this.listEstadosDemanda = response;
       }
     });
@@ -106,23 +109,17 @@ export class DemandaWorkflowComponent {
     });
   }
 
-  validateForm(request: any): boolean {
-
+  validateForm(request: IDemandaForm): boolean {
     let message: string = "";
 
-    if (request.paso == null || request.paso == "") {
+    if (!request.paso) {
       message = "El campo Paso es requerido."
-    } else if (request.estado == null || request.estado == "") {
+    } else if (request.estado == null) {
       message = "El campo Estado es requerido."
     }
 
     if (message != "") {
-      Swal.fire({
-        title: 'Advertencia!',
-        text: message,
-        icon: 'warning',
-        confirmButtonText: 'Aceptar'
-      })
+      this.notification.warning(message);
     }
 
     return message == ""
@@ -133,74 +130,48 @@ export class DemandaWorkflowComponent {
       return;
     }
 
-    let request = this.demandaForm.getRawValue() as IDemandaForm;
+    const request: IDemandaForm = this.demandaForm.getRawValue();
 
-    if (this.validateForm(request)) {
-      if (this.demandaForm.invalid) {
-        Swal.fire({
-          title: 'Advertencia!',
-          text: 'Revise los datos del formulario.',
-          icon: 'warning',
-          confirmButtonText: 'Aceptar'
-        })
-        return;
-      }
-
-      this.saving = true;
-      this.loadingService.show();
-
-      this.demandaService.update(request)
-        .pipe(finalize(() => {
-          this.saving = false;
-          this.loadingService.hide();
-        }))
-        .subscribe({
-          next: (response: any) => {
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.goToBack();
-          },
-          error: (error: any) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-
-    }
-  }
-
-  listPasos(event: any) {
-    if (!event.includes("Finalizado")) {
-      event.push("Finalizado")
+    if (!this.validateForm(request)) {
+      return;
     }
 
-    this.listTask = this.mapListToDropdown(event)
+    if (this.demandaForm.invalid) {
+      this.notification.warning('Revise los datos del formulario.');
+      return;
+    }
+
+    this.saving = true;
+    this.loadingService.show();
+
+    this.demandaService.update(request)
+      .pipe(finalize(() => {
+        this.saving = false;
+        this.loadingService.hide();
+      }))
+      .subscribe({
+        next: (response) => {
+          this.notification.success(response.message);
+          this.goToBack();
+        }
+      });
   }
 
-  mapListToDropdown(list: string[]): any[] {
-    return list.map(item => ({ id: item, nombre: item }));
+  listPasos(pasos: string[]) {
+    if (!pasos.includes("Finalizado")) {
+      pasos.push("Finalizado")
+    }
+
+    this.listTask = pasos.map(paso => ({ id: paso, nombre: paso }));
   }
 
   openModalHistorial() {
-    let headerModal = "Historial de Demanda"
-
     this.ref = this.dialogService.open(HistorialDemandaListModalComponent, {
       data: {
         idDemanda: this.idDemanda,
       },
-      header: headerModal,
+      header: "Historial de Demanda",
       width: '55rem'
     });
   }
-
-
-
 }

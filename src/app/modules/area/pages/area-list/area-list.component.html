@@ -12,7 +12,7 @@
     </div>
 
     <p-table #dataTable1 [value]="datatable" dataKey="id" [loading]="loading" [rowHover]="true" [lazy]="true"
-        (onLazyLoad)="getDatatable($event)" [rows]="request.pageSize" [totalRecords]="totalRecords"
+        (onLazyLoad)="getDatatable()" [rows]="pageSize" [totalRecords]="totalRecords"
         [rowsPerPageOptions]="[5, 10, 20]" [showCurrentPageReport]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
         styleClass="p-datatable-gridlines"

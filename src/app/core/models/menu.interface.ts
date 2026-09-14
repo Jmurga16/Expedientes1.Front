@@ -1,12 +1,11 @@
-export interface IMenu {
-    label: string
-    items: IMenuItem[]
-    separator?: any
+import { MenuItem } from 'primeng/api';
+
+export interface IMenu extends MenuItem {
+  action?: 'logout';
+  items?: IMenu[];
 }
 
-interface IMenuItem {
-    label: string,
-    icon: string,
-    routerLink: any,
-    action?: 'logout'
+export interface MenuChangeEvent {
+  key: string;
+  routeEvent?: boolean;
 }

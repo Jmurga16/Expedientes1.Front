@@ -4,6 +4,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuService } from '../../services/menu.service';
+import { IMenu, MenuChangeEvent } from '../../models/menu.interface';
 import { TokenService } from '../../../auth/services/token.service';
 
 
@@ -25,7 +26,7 @@ import { TokenService } from '../../../auth/services/token.service';
 })
 export class MenuItemComponent implements OnInit, OnDestroy {
 
-  @Input() item: any;
+  @Input() item!: IMenu;
 
   @Input() index!: number;
 
@@ -42,10 +43,10 @@ export class MenuItemComponent implements OnInit, OnDestroy {
   key: string = "";
 
   constructor(public router: Router, private menuService: MenuService, private tokenService: TokenService) {
-    this.menuSourceSubscription = this.menuService.menuSource$.subscribe((value: any) => {
+    this.menuSourceSubscription = this.menuService.menuSource$.subscribe((value: MenuChangeEvent) => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
-          this.active = (value.key === this.key || value.key.startsWith(this.key + '-')) ? true : false;
+          this.active = value.key === this.key || value.key.startsWith(this.key + '-');
         }
         else {
           if (value.key !== this.key && !value.key.startsWith(this.key + '-')) {

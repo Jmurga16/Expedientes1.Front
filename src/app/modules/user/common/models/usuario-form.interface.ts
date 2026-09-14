@@ -1,16 +1,14 @@
-export interface IUsuarioForm {
-  id?: number,
-  name: string,
-  lastname: string,
-  dni: string,
-  address?: string,
-  username?: string,
-  email: string,
-  password: string,
-  status: number,
-  roles: IUsuarioFormRol[],
-}
+import { Rol } from './usuario.interface';
 
-export interface IUsuarioFormRol {
-  id: number;
+export interface IUsuarioForm {
+  id: number | null;
+  name: string;
+  lastname: string;
+  dni: string;
+  address: string;
+  email: string;
+  password: string | null;
+  status: number;
+  idArea: number | null;
+  roles: Rol[];
 }

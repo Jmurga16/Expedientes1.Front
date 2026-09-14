@@ -1,21 +1,14 @@
+export type Rol = 'ROLE_ADMIN' | 'ROLE_USER' | 'ROLE_AREA' | 'ROLE_COLAB';
+
 export interface IUsuario {
-    id?: number;
-    username?: string;
-    name?: string;
-    lastname?: string;
-    roles?: any;
-    status?:number;
-
-    idUsuario?: number;
-    nombresCompletos?: string;
-    rol?: string;
-    cuenta?: string;
-    estadoUsuario?: string;
-}
-
-
-export interface IUsuarioListRequest {
-    filtro: string,
-    pagina: number,
-    totalPorPagina: number
+  id: number;
+  name: string;
+  lastname: string;
+  dni: string;
+  address: string;
+  email: string;
+  username: string;
+  roles: Rol[];
+  idArea: number | null;
+  status: number;
 }

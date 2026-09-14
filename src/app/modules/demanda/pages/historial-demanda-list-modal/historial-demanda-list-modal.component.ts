@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { Table } from 'primeng/table';
 import { HistorialDemandaService } from '../../common/services/historial-demanda.service';
 import { IHistorialDemandaList } from '../../common/models/historial-demanda-list.interface';
 
@@ -10,32 +11,31 @@ import { IHistorialDemandaList } from '../../common/models/historial-demanda-lis
 })
 export class HistorialDemandaListModalComponent {
 
-  idDemanda: any
+  idDemanda: number
   datatable: IHistorialDemandaList[] = []
   loading: boolean = true;
-  request: any = { search: "", pageIndex: 1, pageSize: 10 }
   totalRecords: number = 0
+  pageSize: number = 10
 
   constructor(
-    public dialogRef: DynamicDialogRef,
     public dialogconfig: DynamicDialogConfig,
     private historialDemandaService: HistorialDemandaService
   ) {
     this.idDemanda = this.dialogconfig.data.idDemanda
   }
 
-  onGlobalFilter(table: any, event: Event) {
+  onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  getDatatable(event?: any) {
-
+  getDatatable() {
     this.loading = true;
     this.datatable = []
 
-    this.historialDemandaService.get(this.idDemanda, this.request).subscribe({
-      next: (response: any) => {
+    this.historialDemandaService.get(this.idDemanda).subscribe({
+      next: (response: IHistorialDemandaList[]) => {
         this.datatable = response
+        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {
@@ -43,5 +43,4 @@ export class HistorialDemandaListModalComponent {
       }
     });
   }
-
 }

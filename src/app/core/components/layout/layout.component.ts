@@ -16,7 +16,7 @@ export class LayoutComponent implements OnDestroy {
 
   routerSubscription: Subscription;
 
-  menuOutsideClickListener: any;
+  menuOutsideClickListener: (() => void) | null = null;
 
   @ViewChild(NavMenuComponent) sideBar!: NavMenuComponent;
 

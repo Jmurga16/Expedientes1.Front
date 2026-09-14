@@ -1,7 +1,6 @@
 export interface ISubtipologiaForm {
-  id?: number,
-  nombre: string,
-  idTipologia: number,
-  estado: number,
+  id: number | null;
+  nombre: string;
+  idTipologia: number;
+  estado: number;
 }
-

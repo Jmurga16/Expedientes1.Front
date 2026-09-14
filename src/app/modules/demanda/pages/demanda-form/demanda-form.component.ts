@@ -1,19 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DemandaService } from '../../common/services/demanda.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
+import { DemandaService } from '../../common/services/demanda.service';
+import { IDemanda } from '../../common/models/demanda.interface';
 import { IDemandaForm } from '../../common/models/demanda-form.interface';
-import Swal from 'sweetalert2';
-import { AreaService } from '../../../area/common/services/area.service';
+import { ITipologia } from '../../../tipologia/common/models/tipologia.interface';
+import { ISubtipologia } from '../../../tipologia/common/models/subtipologia.interface';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
-import { DataService } from '../../../../shared/services/data.service';
+import { WorkflowService } from '../../../workflow/common/services/workflow.service';
 import { UsuarioService } from '../../../user/common/services/usuario.service';
+import { IUsuario } from '../../../user/common/models/usuario.interface';
+import { ITipoDemanda } from '../../../../shared/models/tipo-demanda.interface';
+import { IOpcion } from '../../../../shared/models/opcion.interface';
+import { DataService } from '../../../../shared/services/data.service';
 import { FileService } from '../../../../shared/services/file.service';
 import { LoadingService } from '../../../../shared/services/loading.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 import { TokenService } from '../../../../auth/services/token.service';
-import { WorkflowService } from '../../../workflow/common/services/workflow.service';
-import { finalize } from 'rxjs';
 
 const WORKFLOW_NOT_CONFIGURED = 'WORKFLOW_NOT_CONFIGURED';
 
@@ -22,7 +28,7 @@ const WORKFLOW_NOT_CONFIGURED = 'WORKFLOW_NOT_CONFIGURED';
   templateUrl: './demanda-form.component.html',
   styleUrl: './demanda-form.component.scss'
 })
-export class DemandaFormComponent {
+export class DemandaFormComponent implements OnInit {
 
   headerTitle: string = "Gestión de Demandas"
   readonly: boolean = false;
@@ -30,18 +36,15 @@ export class DemandaFormComponent {
   loading: boolean = false;
   saving: boolean = false;
 
-  listRoles: any[] = [];
-  listEstadosDemanda: any[] = []
-
-  listArea: any = []
-  listTipoDemanda: any[] = []
-  listTipologia: any[] = []
-  listSubtipologia: any[] = []
+  listEstadosDemanda: IOpcion[] = []
+  listTipoDemanda: ITipoDemanda[] = []
+  listTipologia: ITipologia[] = []
+  listSubtipologia: ISubtipologia[] = []
 
   demandaForm: FormGroup;
   userForm: FormGroup;
 
-  idDemanda: any
+  idDemanda?: number
   imagenPreview: string | null = null;
 
   esAdmin: boolean = false;
@@ -52,7 +55,6 @@ export class DemandaFormComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private demandaService: DemandaService,
-    private areaService: AreaService,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
@@ -61,6 +63,7 @@ export class DemandaFormComponent {
     private loadingService: LoadingService,
     private tokenService: TokenService,
     private workflowService: WorkflowService,
+    private notification: NotificationService,
   ) {
 
     this.userForm = this.formBuilder.group({
@@ -98,7 +101,6 @@ export class DemandaFormComponent {
 
     this.getUser();
     this.getEstadosDemanda()
-    this.getAreas()
     this.getTipologia();
     this.getTipoDemanda();
 
@@ -151,9 +153,8 @@ export class DemandaFormComponent {
 
   getUser() {
     this.usuarioService.getMe().subscribe({
-      next: (response: any) => {
+      next: (response: IUsuario) => {
         this.userForm.patchValue(response);
-
         this.loading = false;
       },
       error: () => {
@@ -163,8 +164,8 @@ export class DemandaFormComponent {
   }
 
   getDemanda() {
-    this.demandaService.getById(this.idDemanda).subscribe({
-      next: (response: any) => {
+    this.demandaService.getById(this.idDemanda!).subscribe({
+      next: (response: IDemanda) => {
         this.demandaForm.patchValue(response);
         this.loadImagenPreview(response.rutaImagen);
         this.loading = false;
@@ -178,17 +179,9 @@ export class DemandaFormComponent {
     });
   }
 
-  getAreas() {
-    this.areaService.getActives().subscribe({
-      next: (response: any) => {
-        this.listArea = response;
-      }
-    });
-  }
-
   getTipoDemanda() {
     this.dataService.getTipoDemanda().subscribe({
-      next: (response: any) => {
+      next: (response: ITipoDemanda[]) => {
         this.listTipoDemanda = response;
       }
     });
@@ -196,50 +189,41 @@ export class DemandaFormComponent {
 
   getTipologia() {
     this.tipologiaService.getActives().subscribe({
-      next: (response: any) => {
+      next: (response: ITipologia[]) => {
         this.listTipologia = response;
       }
     });
   }
 
-  async getSubtipologia(idTipologia: number) {
-
+  getSubtipologia(idTipologia: number) {
     this.setDescripcion(idTipologia)
 
     this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
-      next: (response: any) => {
+      next: (response: ISubtipologia[]) => {
         this.listSubtipologia = response;
       }
     });
   }
 
   setDescripcion(idTipologia: number) {
-    this.listTipologia.forEach(element => {
-      if (element.id == idTipologia) {
-        this.demandaForm.controls["descripcion"].setValue(element.descripcion)
-      }
-    });
+    const tipologia = this.listTipologia.find(item => item.id == idTipologia);
+    if (tipologia) {
+      this.demandaForm.controls["descripcion"].setValue(tipologia.descripcion)
+    }
   }
 
   getEstadosDemanda() {
     this.dataService.getEstadosStep().subscribe({
-      next: (response: any) => {
+      next: (response: IOpcion[]) => {
         this.listEstadosDemanda = response;
       }
     });
   }
 
   goToBack() {
-    if (this.idDemanda) {
-      this.router.navigate(['../../list'], {
-        relativeTo: this.activatedRoute
-      });
-    }
-    else {
-      this.router.navigate(['../list'], {
-        relativeTo: this.activatedRoute
-      });
-    }
+    this.router.navigate([this.idDemanda ? '../../list' : '../list'], {
+      relativeTo: this.activatedRoute
+    });
   }
 
   onSubmit() {
@@ -247,93 +231,52 @@ export class DemandaFormComponent {
       return;
     }
 
-    let request = this.demandaForm.value as IDemandaForm;
+    const request: IDemandaForm = this.demandaForm.value;
 
-    if (this.validateForm(request)) {
-      if (this.demandaForm.invalid) {
-        Swal.fire({
-          title: 'Advertencia!',
-          text: 'Revise los datos del formulario.',
-          icon: 'warning',
-          confirmButtonText: 'Aceptar'
-        })
-        return;
-      }
-
-      this.saving = true;
-      this.loadingService.show();
-      if (this.idDemanda) {
-        this.demandaService.update(request)
-          .pipe(finalize(() => this.onSaveFinished()))
-          .subscribe({
-            next: (response: any) => {
-              Swal.fire({
-                title: 'Éxito.',
-                text: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.goToBack();
-            },
-            error: (error: any) => this.handleSaveError(error)
-          });
-      }
-      else {
-        this.demandaService.create(request)
-          .pipe(finalize(() => this.onSaveFinished()))
-          .subscribe({
-            next: (response: any) => {
-              Swal.fire({
-                title: 'Éxito.',
-                text: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.goToBack();
-            },
-            error: (error: any) => this.handleSaveError(error)
-          });
-      }
-    }
-  }
-
-  private handleSaveError(error: any) {
-    if (error.error?.code === WORKFLOW_NOT_CONFIGURED) {
-      this.showWorkflowNotConfigured(error.error.message);
+    if (!this.validateForm(request)) {
       return;
     }
 
-    Swal.fire({
-      title: 'Error!',
-      text: error.error?.message ?? 'No se pudo guardar la demanda.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar'
-    })
+    if (this.demandaForm.invalid) {
+      this.notification.warning('Revise los datos del formulario.');
+      return;
+    }
+
+    this.saving = true;
+    this.loadingService.show();
+
+    const peticion = this.idDemanda ? this.demandaService.update(request) : this.demandaService.create(request);
+
+    peticion.pipe(finalize(() => this.onSaveFinished())).subscribe({
+      next: (response) => {
+        this.notification.success(response.message);
+        this.goToBack();
+      },
+      error: (error: HttpErrorResponse) => this.handleSaveError(error)
+    });
+  }
+
+  private handleSaveError(error: HttpErrorResponse) {
+    if (error.error?.code === WORKFLOW_NOT_CONFIGURED) {
+      this.showWorkflowNotConfigured(error.error.message);
+    }
   }
 
   private showWorkflowNotConfigured(message: string) {
     if (!this.esAdmin) {
-      Swal.fire({
-        title: 'Trámite no disponible',
-        text: `${message} Comuníquese con el administrador del sistema para que lo cree.`,
-        icon: 'warning',
-        confirmButtonText: 'Aceptar'
-      })
+      this.notification.warning(`${message} Comuníquese con el administrador del sistema para que lo cree.`);
       return;
     }
 
-    Swal.fire({
-      title: 'Falta el flujo de trabajo',
-      text: `${message} Puede crearlo ahora y volver a registrar la demanda.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Crear flujo de trabajo',
-      cancelButtonText: 'Cancelar'
-    }).then(result => {
-      if (result.isConfirmed) {
+    this.notification.confirmWarning(
+      'Falta el flujo de trabajo',
+      `${message} Puede crearlo ahora y volver a registrar la demanda.`,
+      'Crear flujo de trabajo'
+    ).then(confirmado => {
+      if (confirmado) {
         this.goToCrearWorkflow();
       }
-    })
+    });
   }
 
   private onSaveFinished() {
@@ -341,27 +284,21 @@ export class DemandaFormComponent {
     this.loadingService.hide();
   }
 
-  validateForm(request: any): boolean {
-
+  validateForm(request: IDemandaForm): boolean {
     let message: string = "";
 
-    if (request.idTipoDemanda == null || request.idTipoDemanda == "") {
+    if (!request.idTipoDemanda) {
       message = "El campo Tipo de Demanda es requerido."
-    } else if (request.idTipologia == null || request.idTipologia == "") {
+    } else if (!request.idTipologia) {
       message = "El campo Tipologia es requerido."
-    } else if (request.idSubtipologia == null || request.idSubtipologia == "") {
+    } else if (!request.idSubtipologia) {
       message = "El campo Subtipologia es requerido."
-    } else if (request.domicilio == null || request.domicilio == "") {
+    } else if (!request.domicilio) {
       message = "El campo Domicilio es requerido."
     }
 
     if (message != "") {
-      Swal.fire({
-        title: 'Advertencia!',
-        text: message,
-        icon: 'warning',
-        confirmButtonText: 'Aceptar'
-      })
+      this.notification.warning(message);
     }
 
     return message == ""
@@ -378,27 +315,16 @@ export class DemandaFormComponent {
     });
   }
 
-  onUploadImage(event: any) {
+  onUploadImage(event: { files: File[] }) {
     const file = event.files[0];
-    const container = "demanda-imagen"
+    if (!file)
+      return;
 
-    if (file) {
-      this.fileService.uploadFileUnique(file, container).subscribe({
-        next: (response: any) => {
-          const fileUrl = response.fileUrl;
-          this.demandaForm.patchValue({ rutaImagen: fileUrl });
-          this.imagenPreview = response.viewUrl ?? fileUrl;
-        },
-        error: (err) => {
-          Swal.fire({
-            title: 'Error!',
-            text: err.error?.message ?? 'No se pudo subir la imagen.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-          })
-        },
-      });
-    }
+    this.fileService.uploadFileUnique(file, 'demanda-imagen').subscribe({
+      next: (response) => {
+        this.demandaForm.patchValue({ rutaImagen: response.fileUrl });
+        this.imagenPreview = response.viewUrl ?? response.fileUrl;
+      }
+    });
   }
-
 }

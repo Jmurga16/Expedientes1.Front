@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { IMessage } from '../../core/models/generic/message.interface';
 import { JwtTokenDto } from '../models/jwt-token-dto';
 import { CreateUserDto } from '../models/create-user-dto';
 import { LoginUserDto } from '../models/login-user-dto';
@@ -14,13 +15,10 @@ export class AuthService {
 
   authURL = environment.apiUrl + '/auth/';
 
-
   constructor(
     private httpClient: HttpClient,
     private tokenService: TokenService
-  ) {
-
-  }
+  ) { }
 
   public login(request: LoginUserDto): Observable<JwtTokenDto> {
     return this.httpClient.post<JwtTokenDto>(this.authURL + 'login', request).pipe(
@@ -32,9 +30,7 @@ export class AuthService {
     );
   }
 
-  public register(request: CreateUserDto): Observable<any> {
-    return this.httpClient.post<any>(this.authURL + 'create-user', request);
+  public register(request: CreateUserDto): Observable<IMessage> {
+    return this.httpClient.post<IMessage>(this.authURL + 'create-user', request);
   }
-
-
 }

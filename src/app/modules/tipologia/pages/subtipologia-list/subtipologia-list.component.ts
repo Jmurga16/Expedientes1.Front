@@ -1,51 +1,49 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import Swal from 'sweetalert2';
+import { Table } from 'primeng/table';
 import { ISubtipologia } from '../../common/models/subtipologia.interface';
+import { ITipologia } from '../../common/models/tipologia.interface';
 import { SubtipologiaService } from '../../common/services/subtipologia.service';
-import { SubtipologiaFormModalComponent } from '../../common/components/subtipologia-form-modal/subtipologia-form-modal.component';
 import { TipologiaService } from '../../common/services/tipologia.service';
-
+import { IMessage } from '../../../../core/models/generic/message.interface';
+import { NotificationService } from '../../../../shared/services/notification.service';
+import { SubtipologiaFormModalComponent } from '../../common/components/subtipologia-form-modal/subtipologia-form-modal.component';
 
 @Component({
   selector: 'app-subtipologia-list',
   templateUrl: './subtipologia-list.component.html',
   styleUrl: './subtipologia-list.component.scss'
 })
-export class SubtipologiaListComponent {
+export class SubtipologiaListComponent implements OnInit {
 
   datatable: ISubtipologia[] = []
   loading: boolean = true;
-  request: any = { search: "", pageIndex: 1, pageSize: 10 }
   totalRecords: number = 0
+  pageSize: number = 10
   ref: DynamicDialogRef | undefined;
-  listTipologia = []
+  listTipologia: ITipologia[] = []
 
-  idTipologia = new FormControl()
-
-  @ViewChild('filter') filter!: ElementRef;
+  idTipologia = new FormControl<number | null>(null)
 
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dialogService: DialogService,
+    private notification: NotificationService,
   ) { }
 
   ngOnInit() {
     this.getTipologias()
   }
 
-  onGlobalFilter(table: any, event: Event) {
+  onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
   getTipologias() {
     this.tipologiaService.getActives().subscribe({
-      next: (response: any) => {
+      next: (response: ITipologia[]) => {
         this.listTipologia = response
       },
       error: () => {
@@ -54,14 +52,18 @@ export class SubtipologiaListComponent {
     });
   }
 
-  getDatatable(event?: any) {
-
-    this.loading = true;
+  getDatatable() {
+    const idTipologia = this.idTipologia.value;
+    this.loading = idTipologia != null;
     this.datatable = []
 
-    this.subtipologiaService.getByIdTipologia(this.idTipologia.value).subscribe({
-      next: (response: any) => {
+    if (idTipologia == null)
+      return;
+
+    this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
+      next: (response: ISubtipologia[]) => {
         this.datatable = response
+        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {
@@ -71,62 +73,31 @@ export class SubtipologiaListComponent {
   }
 
   openModalForm(id?: number) {
-    let headerModal = id ? "Editar" : "Nuevo"
-
     this.ref = this.dialogService.open(SubtipologiaFormModalComponent, {
-      data: {
-        idTipologia: this.idTipologia.value,
-        id: id
-      },
-      header: headerModal,
+      data: { idTipologia: this.idTipologia.value, id },
+      header: id ? 'Editar' : 'Nuevo',
       width: '35rem'
     });
 
-    this.ref.onClose.subscribe((response) => {
+    this.ref.onClose.subscribe((response?: IMessage) => {
       if (response) {
-        Swal.fire({
-          title: response.message,
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
-        })
+        this.notification.success(response.message);
         this.getDatatable();
       }
     });
-
   }
 
-  deleteById(id: any) {
+  deleteById(id: number) {
+    this.notification.confirm('¿Deseas eliminar el Registro?').then(confirmado => {
+      if (!confirmado)
+        return;
 
-    Swal.fire({
-      title: "¿Deseas eliminar el Registro?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: "Aceptar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.subtipologiaService.delete(id).subscribe({
-          next: (response: any) => {
-            if (response.status == "OK") {
-              Swal.fire({
-                title: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.getDatatable();
-            }
-          },
-          error: (error: any) => {
-            Swal.fire({
-              title: 'Error!',
-              text: 'No se pudo eliminar el Registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-      }
+      this.subtipologiaService.delete(id).subscribe({
+        next: (response: IMessage) => {
+          this.notification.success(response.message);
+          this.getDatatable();
+        }
+      });
     });
-
   }
 }

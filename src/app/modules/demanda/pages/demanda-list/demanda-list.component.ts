@@ -1,9 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDemanda } from '../../common/models/demanda.interface';
+import { Table, TableLazyLoadEvent } from 'primeng/table';
+import { IDemandaList } from '../../common/models/demanda.interface';
 import { DemandaService } from '../../common/services/demanda.service';
-import Swal from 'sweetalert2';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filter.interface';
+import { IMessage } from '../../../../core/models/generic/message.interface';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-demanda-list',
@@ -13,38 +15,30 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 export class DemandaListComponent {
 
   headerTitle: string = "Bandeja de Demandas"
-  datatable: IDemanda[] = []
+  datatable: IDemandaList[] = []
   loading: boolean = true;
-  request: any = { search: "", pageIndex: 1, pageSize: 10 }
+  request: IPaginatedFilter = { search: "", pageIndex: 1, pageSize: 10 }
   totalRecords: number = 0
-  ref: DynamicDialogRef | undefined;
   private searchTimer?: ReturnType<typeof setTimeout>;
-
-  @ViewChild('filter') filter!: ElementRef;
 
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private demandaService: DemandaService,
-    private dialogService: DialogService,
+    private notification: NotificationService,
   ) { }
 
-  ngOnInit() {
-
-  }
-
-  onGlobalFilter(table: any, event: Event) {
+  onGlobalFilter(table: Table, event: Event) {
     const value = (event.target as HTMLInputElement).value;
     clearTimeout(this.searchTimer);
     this.searchTimer = setTimeout(() => table.filterGlobal(value, 'contains'), 400);
   }
 
-  getDatatable(event?: any) {
-
+  getDatatable(event?: TableLazyLoadEvent) {
     if (event) {
-      this.request.pageSize = event.rows
-      this.request.pageIndex = (event.first / event.rows) + 1
-      this.request.search = event.globalFilter
+      this.request.pageSize = event.rows ?? this.request.pageSize
+      this.request.pageIndex = ((event.first ?? 0) / this.request.pageSize) + 1
+      this.request.search = typeof event.globalFilter === 'string' ? event.globalFilter : ''
     }
 
     this.loading = true;
@@ -68,51 +62,29 @@ export class DemandaListComponent {
     });
   }
 
-  goToEdit(id: any) {
+  goToEdit(id: number) {
     this.router.navigate(['../edit', id], {
       relativeTo: this.activatedRoute
     });
   }
 
-  deleteById(id: any) {
-
-    Swal.fire({
-      title: "¿Deseas eliminar el Registro?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: "Aceptar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.demandaService.delete(id).subscribe({
-          next: (response: any) => {
-            if (response.status == "OK") {
-              Swal.fire({
-                title: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.getDatatable();
-            }
-          },
-          error: (error: any) => {
-            Swal.fire({
-              title: 'Error!',
-              text: 'No se pudo eliminar el Registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-      }
-    });
-
-  }
-
-  goToDiagram(id: any) {
+  goToDiagram(id: number) {
     this.router.navigate(['../diagram', id], {
       relativeTo: this.activatedRoute
     });
   }
-  
+
+  deleteById(id: number) {
+    this.notification.confirm('¿Deseas eliminar el Registro?').then(confirmado => {
+      if (!confirmado)
+        return;
+
+      this.demandaService.delete(id).subscribe({
+        next: (response: IMessage) => {
+          this.notification.success(response.message);
+          this.getDatatable();
+        }
+      });
+    });
+  }
 }

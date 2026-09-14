@@ -2,12 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from '../../../../../environments/environment';
-import { HttpParamsUtility } from '../../../../core/utils/HttpParamsUtility';
+import { IMessage } from '../../../../core/models/generic/message.interface';
 import { IUsuario } from '../models/usuario.interface';
-import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
-import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filter.interface';
 import { IUsuarioForm } from '../models/usuario-form.interface';
-import { IResponseForm } from '../../../../core/models/generic/response-form.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -19,10 +16,8 @@ export class UsuarioService {
     this._api = `${environment.apiUrl}/user`;
   }
 
-  get(request: IPaginatedFilter): Observable<IPaginatedList<IUsuario>> {
-    const params = HttpParamsUtility.buildHttpParams(request);
-
-    return this.http.get<IPaginatedList<IUsuario>>(`${this._api}`, { params });
+  get(): Observable<IUsuario[]> {
+    return this.http.get<IUsuario[]>(`${this._api}`);
   }
 
   getById(id: number): Observable<IUsuario> {
@@ -33,16 +28,15 @@ export class UsuarioService {
     return this.http.get<IUsuario>(`${this._api}/me`);
   }
 
-  create(request: IUsuarioForm): Observable<IResponseForm> {
-    return this.http.post<IResponseForm>(`${this._api}`, request);
+  create(request: IUsuarioForm): Observable<IMessage> {
+    return this.http.post<IMessage>(`${this._api}`, request);
   }
 
-  update(request: IUsuarioForm): Observable<IResponseForm> {
-    return this.http.put<IResponseForm>(`${this._api}/${request.id}`, request);
+  update(request: IUsuarioForm): Observable<IMessage> {
+    return this.http.put<IMessage>(`${this._api}/${request.id}`, request);
   }
 
-  delete(id: any): Observable<IResponseForm> {
-    return this.http.delete<IResponseForm>(`${this._api}/${id}`);
+  delete(id: number): Observable<IMessage> {
+    return this.http.delete<IMessage>(`${this._api}/${id}`);
   }
-
 }

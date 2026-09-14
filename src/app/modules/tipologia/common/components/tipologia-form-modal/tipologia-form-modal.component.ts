@@ -1,26 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { TipologiaService } from '../../services/tipologia.service';
-import { ITipologiaForm } from '../../models/tipologia-form.interface';
-import { LoadingService } from '../../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
-import Swal from 'sweetalert2';
+import { TipologiaService } from '../../services/tipologia.service';
+import { ITipologia } from '../../models/tipologia.interface';
+import { ITipologiaForm } from '../../models/tipologia-form.interface';
+import { IOpcion } from '../../../../../shared/models/opcion.interface';
+import { LoadingService } from '../../../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-tipologia-form-modal',
   templateUrl: './tipologia-form-modal.component.html',
   styleUrl: './tipologia-form-modal.component.scss'
 })
-export class TipologiaFormModalComponent {
+export class TipologiaFormModalComponent implements OnInit {
 
-  id: any
+  id?: number
   form: FormGroup
-  listEstado = [
-    { value: 1, nombre: "Activo" },
-    { value: 0, nombre: "Inactivo" }
+  listEstado: IOpcion[] = [
+    { id: 1, nombre: "Activo" },
+    { id: 0, nombre: "Inactivo" }
   ]
-
 
   saving: boolean = false;
 
@@ -58,68 +58,36 @@ export class TipologiaFormModalComponent {
   }
 
   getData() {
-
-    this.tipologiaService.getById(this.id).subscribe({
-      next: (response) => {
+    this.tipologiaService.getById(this.id!).subscribe({
+      next: (response: ITipologia) => {
         this.form.patchValue(response);
       }
     });
   }
 
   create() {
-    if (this.saving) {
-      return;
-    }
-
-    let request = this.form.value as ITipologiaForm;
-
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.tipologiaService.create(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.guardar(false);
   }
 
   update() {
+    this.guardar(true);
+  }
+
+  private guardar(esEdicion: boolean) {
     if (this.saving) {
       return;
     }
 
-    let request = this.form.value as ITipologiaForm;
+    const request: ITipologiaForm = this.form.value;
 
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.tipologiaService.update(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.saving = true;
+    this.loadingService.show();
+
+    const peticion = esEdicion ? this.tipologiaService.update(request) : this.tipologiaService.create(request);
+
+    peticion.pipe(finalize(() => this.onSaveFinished())).subscribe({
+      next: (response) => this.dialogRef.close(response)
+    });
   }
 
   private onSaveFinished() {

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 import { CreateUserDto } from '../../models/create-user-dto';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../shared/directives/password-validator.directive';
 import { LoadingService } from '../../../shared/services/loading.service';
-import { finalize } from 'rxjs';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-signup',
@@ -21,6 +21,7 @@ export class SignupComponent {
     private router: Router,
     private authService: AuthService,
     private loadingService: LoadingService,
+    private notification: NotificationService,
   ) {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
@@ -33,34 +34,21 @@ export class SignupComponent {
   }
 
   onSubmit() {
-    let request = this.registerForm.value as CreateUserDto;
-
-    if (this.registerForm.valid) {
-
-      this.loadingService.show();
-      
-      this.authService.register(request)
-        .pipe(finalize(() => this.loadingService.hide()))
-        .subscribe({
-          next: (response: any) => {
-            Swal.fire({
-              title: 'Éxito.',
-              text: response.message,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            })
-            this.router.navigate(['/auth/login']);
-          },
-          error: (error: any) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error.message,
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
+    if (!this.registerForm.valid) {
+      return;
     }
-  }
 
+    const request: CreateUserDto = this.registerForm.value;
+
+    this.loadingService.show();
+
+    this.authService.register(request)
+      .pipe(finalize(() => this.loadingService.hide()))
+      .subscribe({
+        next: (response) => {
+          this.notification.success(response.message);
+          this.router.navigate(['/auth/login']);
+        }
+      });
+  }
 }

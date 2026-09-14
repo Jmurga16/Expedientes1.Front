@@ -1,13 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UsuarioService } from '../../common/services/usuario.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IUsuarioForm } from '../../common/models/usuario-form.interface';
-import Swal from 'sweetalert2';
-import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
-import { AreaService } from '../../../area/common/services/area.service';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
+import { UsuarioService } from '../../common/services/usuario.service';
+import { IUsuario, Rol } from '../../common/models/usuario.interface';
+import { IUsuarioForm } from '../../common/models/usuario-form.interface';
+import { IArea } from '../../../area/common/models/area.interface';
+import { IOpcion } from '../../../../shared/models/opcion.interface';
+import { AreaService } from '../../../area/common/services/area.service';
+import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
+
+const ROLES: IOpcion<Rol>[] = [
+  { id: 'ROLE_ADMIN', nombre: 'Administrador' },
+  { id: 'ROLE_USER', nombre: 'Usuario' },
+  { id: 'ROLE_AREA', nombre: 'Referente Area' },
+  { id: 'ROLE_COLAB', nombre: 'Colaborador' },
+];
+
+const ESTADOS: IOpcion<number>[] = [
+  { id: 0, nombre: 'Inactivo' },
+  { id: 1, nombre: 'Activo' },
+];
 
 @Component({
   selector: 'app-user-form',
@@ -21,13 +36,12 @@ export class UserFormComponent implements OnInit {
   loading: boolean = false;
   saving: boolean = false;
 
-  listRoles: any[] = [];
-  listEstadosUsuario: any[] = []
-  listArea: any = []
+  listRoles: IOpcion<Rol>[] = ROLES;
+  listEstadosUsuario: IOpcion<number>[] = ESTADOS;
+  listArea: IArea[] = [];
 
   userForm: FormGroup;
-  idUsuario: any
-
+  idUsuario?: number
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,6 +50,7 @@ export class UserFormComponent implements OnInit {
     private usuarioService: UsuarioService,
     private areaService: AreaService,
     private loadingService: LoadingService,
+    private notification: NotificationService,
   ) {
 
     this.userForm = this.formBuilder.group({
@@ -57,7 +72,7 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      this.idUsuario = params['id']; // Obtén el ID de la ruta
+      this.idUsuario = params['id'];
       if (this.idUsuario) {
         this.userForm.controls['password'].removeValidators(Validators.required);
         this.userForm.controls['password'].updateValueAndValidity();
@@ -65,14 +80,12 @@ export class UserFormComponent implements OnInit {
       }
     });
 
-    this.getRoles()
-    this.getEstadosUsuario()
     this.getAreas()
   }
 
   getUser() {
-    this.usuarioService.getById(this.idUsuario).subscribe({
-      next: (response: any) => {
+    this.usuarioService.getById(this.idUsuario!).subscribe({
+      next: (response: IUsuario) => {
         this.userForm.patchValue(response);
         this.loading = false;
       },
@@ -84,54 +97,21 @@ export class UserFormComponent implements OnInit {
 
   getAreas() {
     this.areaService.getActives().subscribe({
-      next: (response: any) => {
+      next: (response: IArea[]) => {
         this.listArea = response;
       }
     });
   }
 
-  getRoles() {
-    this.listRoles = [
-      { id: "ROLE_ADMIN", nombre: "Administrador" },
-      { id: "ROLE_USER", nombre: "Usuario" },
-      { id: "ROLE_AREA", nombre: "Referente Area" },
-      { id: "ROLE_COLAB", nombre: "Colaborador" }
-    ]
-  }
-
   haveArea(): boolean {
-    let roles = this.userForm.controls['roles'].value;
-
-    if (roles == null) {
-      return false;
-    }
-    else if (roles.includes('ROLE_AREA') || roles.includes('ROLE_COLAB')) {
-      return true;
-    }
-    else {
-      return false;
-    }
-
-  }
-
-  getEstadosUsuario() {
-    this.listEstadosUsuario = [
-      { id: 0, nombre: "Inactivo" },
-      { id: 1, nombre: "Activo" }
-    ]
+    const roles: Rol[] | null = this.userForm.controls['roles'].value;
+    return roles != null && (roles.includes('ROLE_AREA') || roles.includes('ROLE_COLAB'));
   }
 
   goToBack() {
-    if (this.idUsuario) {
-      this.router.navigate(['../../list'], {
-        relativeTo: this.activatedRoute
-      });
-    }
-    else {
-      this.router.navigate(['../list'], {
-        relativeTo: this.activatedRoute
-      });
-    }
+    this.router.navigate([this.idUsuario ? '../../list' : '../list'], {
+      relativeTo: this.activatedRoute
+    });
   }
 
   onSubmit() {
@@ -139,72 +119,30 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    let request = this.userForm.value as IUsuarioForm;
+    const request: IUsuarioForm = this.userForm.value;
 
-    if (this.validateForm(request)) {
-
-      if (this.userForm.invalid) {
-        Swal.fire({
-          title: 'Advertencia!',
-          text: this.userForm.controls['password'].invalid
-            ? 'La contraseña debe tener mayúsculas, minúsculas y un carácter especial.'
-            : 'Revise los datos del formulario.',
-          icon: 'warning',
-          confirmButtonText: 'Aceptar'
-        })
-        return;
-      }
-
-      this.saving = true;
-      this.loadingService.show();
-
-      if (this.idUsuario) {
-        this.usuarioService.update(request)
-          .pipe(finalize(() => this.onSaveFinished()))
-          .subscribe({
-            next: (response: any) => {
-              Swal.fire({
-                title: 'Éxito.',
-                text: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.goToBack();
-            },
-            error: (error: any) => {
-              Swal.fire({
-                title: 'Error!',
-                text: error.error.message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-              })
-            }
-          });
-      }
-      else {
-        this.usuarioService.create(request)
-          .pipe(finalize(() => this.onSaveFinished()))
-          .subscribe({
-            next: (response: any) => {
-              Swal.fire({
-                title: 'Éxito.',
-                text: response.message,
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              })
-              this.goToBack();
-            },
-            error: (error: any) => {
-              Swal.fire({
-                title: 'Error!',
-                text: error.error.message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-              })
-            }
-          });
-      }
+    if (!this.validateForm(request)) {
+      return;
     }
+
+    if (this.userForm.invalid) {
+      this.notification.warning(this.userForm.controls['password'].invalid
+        ? 'La contraseña debe tener mayúsculas, minúsculas y un carácter especial.'
+        : 'Revise los datos del formulario.');
+      return;
+    }
+
+    this.saving = true;
+    this.loadingService.show();
+
+    const peticion = this.idUsuario ? this.usuarioService.update(request) : this.usuarioService.create(request);
+
+    peticion.pipe(finalize(() => this.onSaveFinished())).subscribe({
+      next: (response) => {
+        this.notification.success(response.message);
+        this.goToBack();
+      }
+    });
   }
 
   private onSaveFinished() {
@@ -212,21 +150,20 @@ export class UserFormComponent implements OnInit {
     this.loadingService.hide();
   }
 
-  validateForm(request: any): boolean {
-
+  validateForm(request: IUsuarioForm): boolean {
     let message: string = "";
 
-    if (request.name == null || request.name == "") {
+    if (!request.name) {
       message = "El campo Nombres es requerido."
-    } else if (request.lastname == null || request.lastname == "") {
+    } else if (!request.lastname) {
       message = "El campo Apellidos es requerido."
-    } else if (request.dni == null || request.dni == "") {
+    } else if (!request.dni) {
       message = "El campo DNI es requerido."
-    } else if (request.address == null || request.address == "") {
+    } else if (!request.address) {
       message = "El campo Domicilio es requerido."
-    } else if (request.email == null || request.email == "") {
+    } else if (!request.email) {
       message = "El campo Correo Electrónico es requerido."
-    } else if (!this.idUsuario && (request.password == null || request.password == "")) {
+    } else if (!this.idUsuario && !request.password) {
       message = "El campo Contraseña es requerido."
     } else if (request.roles == null || request.roles.length == 0) {
       message = "El campo Rol es requerido."
@@ -234,18 +171,10 @@ export class UserFormComponent implements OnInit {
       message = "El campo Área es requerido."
     }
 
-
     if (message != "") {
-      Swal.fire({
-        title: 'Advertencia!',
-        text: message,
-        icon: 'warning',
-        confirmButtonText: 'Aceptar'
-      })
+      this.notification.warning(message);
     }
 
     return message == ""
   }
-
-
 }

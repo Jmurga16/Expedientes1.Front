@@ -1,6 +1,3 @@
-export class JwtTokenDto {
+export interface JwtTokenDto {
     token: string;
-    constructor(token: string) {
-        this.token = token;
-    }
 }

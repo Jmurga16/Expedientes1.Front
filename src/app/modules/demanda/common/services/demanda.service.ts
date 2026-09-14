@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from '../../../../../environments/environment';
-import { HttpParamsUtility } from '../../../../core/utils/HttpParamsUtility';
 import { IPaginatedList } from '../../../../core/models/generic/paginated-list.interface';
 import { IPaginatedFilter } from '../../../../core/models/generic/paginated-filter.interface';
-import { IResponseForm } from '../../../../core/models/generic/response-form.interface';
-import { IDemanda } from '../models/demanda.interface';
+import { IMessage } from '../../../../core/models/generic/message.interface';
+import { IDemanda, IDemandaCreada, IDemandaList } from '../models/demanda.interface';
 import { IDemandaForm } from '../models/demanda-form.interface';
-
-
 
 @Injectable({
   providedIn: 'root',
@@ -21,34 +18,32 @@ export class DemandaService {
     this._api = `${environment.apiUrl}/demanda`;
   }
 
-  get(request: IPaginatedFilter): Observable<IPaginatedList<IDemanda>> {
-    const params = HttpParamsUtility.buildHttpParams(request);
+  get(request: IPaginatedFilter): Observable<IPaginatedList<IDemandaList>> {
+    const params = new HttpParams()
+      .set('search', request.search)
+      .set('pageIndex', request.pageIndex)
+      .set('pageSize', request.pageSize);
 
-    return this.http.get<IPaginatedList<IDemanda>>(`${this._api}`, { params });
+    return this.http.get<IPaginatedList<IDemandaList>>(`${this._api}`, { params });
   }
 
   getResumen(): Observable<Record<number, number>> {
     return this.http.get<Record<number, number>>(`${this._api}/resumen`);
   }
 
-  getActives(): Observable<IPaginatedList<IDemanda>> {
-    return this.http.get<IPaginatedList<IDemanda>>(`${this._api}/activos`);
-  }
-
   getById(id: number): Observable<IDemanda> {
     return this.http.get<IDemanda>(`${this._api}/${id}`);
   }
 
-  create(request: IDemandaForm): Observable<IResponseForm> {
-    return this.http.post<IResponseForm>(`${this._api}`, request);
+  create(request: IDemandaForm): Observable<IDemandaCreada> {
+    return this.http.post<IDemandaCreada>(`${this._api}`, request);
   }
 
-  update(request: IDemandaForm): Observable<IResponseForm> {
-    return this.http.put<IResponseForm>(`${this._api}/${request.id}`, request);
+  update(request: IDemandaForm): Observable<IMessage> {
+    return this.http.put<IMessage>(`${this._api}/${request.id}`, request);
   }
 
-  delete(id: any): Observable<IResponseForm> {
-    return this.http.delete<IResponseForm>(`${this._api}/${id}`);
+  delete(id: number): Observable<IMessage> {
+    return this.http.delete<IMessage>(`${this._api}/${id}`);
   }
-
 }

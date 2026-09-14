@@ -1,19 +1,20 @@
 export interface IWorkflow {
-    id?: number;
-    username?: string;
-    roles?: any;
-    status?:number;
-
-    idUsuario?: number;
-    nombresCompletos?: string;
-    rol?: string;
-    cuenta?: string;
-    estadoUsuario?: string;
+  id: number;
+  nombre: string;
+  descripcion: string;
+  idTipoDemanda: number;
+  idTipologia: number;
+  idSubtipologia: number;
+  bpmn: string;
+  estado: number;
 }
 
-
-export interface IWorkflowListRequest {
-    filtro: string,
-    pagina: number,
-    totalPorPagina: number
+export interface IWorkflowList {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  tipoDemanda: string;
+  tipologia: string;
+  subtipologia: string;
+  estado: number;
 }

@@ -1,14 +1,10 @@
 export interface IWorkflowForm {
-  id?: number,
-  nombre: string,
-  idTipoDemanda: number,
-  idTipologia: number,
-  idSubtipologia: number,
-  descripcion?: string,
-  bpmn?: string
-  estado?: number
-}
-
-export interface IDiagramForm {
-  id: number;
+  id: number | null;
+  nombre: string;
+  descripcion: string;
+  idTipoDemanda: number;
+  idTipologia: number;
+  idSubtipologia: number;
+  bpmn: string | null;
+  estado: number;
 }

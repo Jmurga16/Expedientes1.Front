@@ -1,29 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { TipologiaService } from '../../services/tipologia.service';
-import { SubtipologiaService } from '../../services/subtipologia.service';
-import { ISubtipologiaForm } from '../../models/subtipologia-form.interface';
-import { LoadingService } from '../../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
-import Swal from 'sweetalert2';
-
+import { SubtipologiaService } from '../../services/subtipologia.service';
+import { ISubtipologia } from '../../models/subtipologia.interface';
+import { ISubtipologiaForm } from '../../models/subtipologia-form.interface';
+import { IOpcion } from '../../../../../shared/models/opcion.interface';
+import { LoadingService } from '../../../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-subtipologia-form-modal',
   templateUrl: './subtipologia-form-modal.component.html',
   styleUrl: './subtipologia-form-modal.component.scss'
 })
-export class SubtipologiaFormModalComponent {
+export class SubtipologiaFormModalComponent implements OnInit {
 
-  id: any
-  idTipologia: any
+  id?: number
+  idTipologia: number
   form: FormGroup
-  listEstado = [
-    { value: 1, nombre: "Activo" },
-    { value: 0, nombre: "Inactivo" }
+  listEstado: IOpcion[] = [
+    { id: 1, nombre: "Activo" },
+    { id: 0, nombre: "Inactivo" }
   ]
-
 
   saving: boolean = false;
 
@@ -35,10 +33,8 @@ export class SubtipologiaFormModalComponent {
     public dialogRef: DynamicDialogRef,
     public dialogconfig: DynamicDialogConfig,
     private formBuilder: FormBuilder,
-    private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private loadingService: LoadingService,
-
   ) {
 
     this.id = this.dialogconfig.data.id
@@ -64,68 +60,36 @@ export class SubtipologiaFormModalComponent {
   }
 
   getData() {
-
-    this.subtipologiaService.getById(this.id).subscribe({
-      next: (response) => {
+    this.subtipologiaService.getById(this.id!).subscribe({
+      next: (response: ISubtipologia) => {
         this.form.patchValue(response);
       }
     });
   }
 
   create() {
-    if (this.saving) {
-      return;
-    }
-
-    let request = this.form.value as ISubtipologiaForm;
-
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.subtipologiaService.create(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.guardar(false);
   }
 
   update() {
+    this.guardar(true);
+  }
+
+  private guardar(esEdicion: boolean) {
     if (this.saving) {
       return;
     }
 
-    let request = this.form.value as ISubtipologiaForm;
+    const request: ISubtipologiaForm = this.form.value;
 
-    if (request) {
-      this.saving = true;
-      this.loadingService.show();
-      this.subtipologiaService.update(request)
-        .pipe(finalize(() => this.onSaveFinished()))
-        .subscribe({
-          next: (response) => {
-            this.dialogRef.close(response);
-          },
-          error: (error) => {
-            Swal.fire({
-              title: 'Error!',
-              text: error.error?.message ?? 'No se pudo guardar el registro.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            })
-          }
-        });
-    }
+    this.saving = true;
+    this.loadingService.show();
+
+    const peticion = esEdicion ? this.subtipologiaService.update(request) : this.subtipologiaService.create(request);
+
+    peticion.pipe(finalize(() => this.onSaveFinished())).subscribe({
+      next: (response) => this.dialogRef.close(response)
+    });
   }
 
   private onSaveFinished() {

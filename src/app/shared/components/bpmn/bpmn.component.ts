@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import type { ImportDoneEvent } from 'bpmn-js/lib/BaseViewer';
 
 @Component({
   selector: 'app-bpmn',
@@ -8,20 +9,18 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class BpmnComponent {
 
   @Input() urlBPMN!: string;
-  @Input() idDemanda: any
+  @Input() idDemanda?: number;
   @Output() fileChange = new EventEmitter<File>()
   @Output() pasos = new EventEmitter<string[]>()
 
   importError?: Error;
 
-  handleImported(event: any) {
-    const { type, error } = event;
-
-    if (type === 'error') {
-      console.error('Failed to render diagram', error);
+  handleImported(event: ImportDoneEvent) {
+    if (event.error) {
+      console.error('Failed to render diagram', event.error);
     }
 
-    this.importError = error;
+    this.importError = event.error;
   }
 
   onChangeDiagram(file: File): void {

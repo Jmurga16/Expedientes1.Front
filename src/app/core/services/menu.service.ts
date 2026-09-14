@@ -1,11 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-
-export interface MenuChangeEvent {
-    key: string;
-    routeEvent?: boolean;
-}
+import { IMenu, MenuChangeEvent } from '../models/menu.interface';
+import { SILENCIAR_ERROR } from '../interceptors/error.interceptor';
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +21,9 @@ export class MenuService {
         this.menuSource.next(event);
     }
 
-    getMenuByRol(rol: string): Observable<any> {
-        return this.httpClient.get<any>(this.jsonUrl + `menu/menu-${rol}.json`);
+    getMenuByRol(rol: string): Observable<IMenu[]> {
+        return this.httpClient.get<IMenu[]>(this.jsonUrl + `menu/menu-${rol}.json`, {
+            context: new HttpContext().set(SILENCIAR_ERROR, true)
+        });
     }
 }
