@@ -31,6 +31,7 @@ const ESTADOS: IOpcion<number>[] = [
 })
 export class UserFormComponent implements OnInit {
 
+  headerTitle: string = "Gestión de Usuario"
   readonly: boolean = false;
   isEdit: boolean = false;
   loading: boolean = false;
@@ -71,6 +72,13 @@ export class UserFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.readonly = this.activatedRoute.snapshot.data['readonly'] === true;
+
+    if (this.readonly) {
+      this.headerTitle = "Detalle de Usuario"
+      this.userForm.disable();
+    }
+
     this.activatedRoute.params.subscribe(params => {
       this.idUsuario = params['id'];
       if (this.idUsuario) {
@@ -115,11 +123,11 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.saving) {
+    if (this.saving || this.readonly) {
       return;
     }
 
-    const request: IUsuarioForm = this.userForm.value;
+    const request: IUsuarioForm = this.userForm.getRawValue();
 
     if (!this.validateForm(request)) {
       return;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { UsuarioService } from '../../common/services/usuario.service';
@@ -11,11 +11,10 @@ import { NotificationService } from '../../../../shared/services/notification.se
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
-export class UserListComponent {
+export class UserListComponent implements OnInit {
 
   usuarios: IUsuario[] = []
   loading: boolean = true;
-  totalRecords: number = 0
   pageSize: number = 10
 
   constructor(
@@ -24,6 +23,10 @@ export class UserListComponent {
     private usuarioService: UsuarioService,
     private notification: NotificationService,
   ) { }
+
+  ngOnInit() {
+    this.getUsers()
+  }
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -36,7 +39,6 @@ export class UserListComponent {
     this.usuarioService.get().subscribe({
       next: (response: IUsuario[]) => {
         this.usuarios = response
-        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {
@@ -48,6 +50,12 @@ export class UserListComponent {
   goToNewUser() {
     this.router.navigate(['../create'], {
       relativeTo: this.activatedRoute,
+    });
+  }
+
+  goToViewUser(id: number) {
+    this.router.navigate(['../view', id], {
+      relativeTo: this.activatedRoute
     });
   }
 

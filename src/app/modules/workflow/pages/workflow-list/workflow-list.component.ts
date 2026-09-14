@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { IWorkflowList } from '../../common/models/workflow.interface';
@@ -11,12 +11,11 @@ import { NotificationService } from '../../../../shared/services/notification.se
   templateUrl: './workflow-list.component.html',
   styleUrl: './workflow-list.component.scss'
 })
-export class WorkflowListComponent {
+export class WorkflowListComponent implements OnInit {
 
   headerTitle: string = "Flujos de Trabajo"
   datatable: IWorkflowList[] = []
   loading: boolean = true;
-  totalRecords: number = 0
   pageSize: number = 10
 
   constructor(
@@ -25,6 +24,10 @@ export class WorkflowListComponent {
     private workflowService: WorkflowService,
     private notification: NotificationService,
   ) { }
+
+  ngOnInit() {
+    this.getDatatable()
+  }
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -37,7 +40,6 @@ export class WorkflowListComponent {
     this.workflowService.get().subscribe({
       next: (response: IWorkflowList[]) => {
         this.datatable = response
-        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {
@@ -49,6 +51,12 @@ export class WorkflowListComponent {
   goToNew() {
     this.router.navigate(['../create'], {
       relativeTo: this.activatedRoute,
+    });
+  }
+
+  goToView(id: number) {
+    this.router.navigate(['../view', id], {
+      relativeTo: this.activatedRoute
     });
   }
 

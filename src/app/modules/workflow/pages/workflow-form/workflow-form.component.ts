@@ -62,6 +62,8 @@ export class WorkflowFormComponent implements OnInit {
       estado: [1]
     });
 
+    this.formWorkflowService.setNombre('');
+
     this.workflowForm.get('nombre')?.valueChanges.subscribe((value: string) => {
       this.formWorkflowService.setNombre(value);
     });
@@ -69,6 +71,13 @@ export class WorkflowFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.readonly = this.activatedRoute.snapshot.data['readonly'] === true;
+
+    if (this.readonly) {
+      this.headerTitle = "Detalle de Flujo"
+      this.workflowForm.disable();
+    }
+
     this.activatedRoute.params.subscribe(params => {
       this.idWorkflow = params['id'];
       if (this.idWorkflow) {
@@ -137,11 +146,11 @@ export class WorkflowFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.saving) {
+    if (this.saving || this.readonly) {
       return;
     }
 
-    const request: IWorkflowForm = this.workflowForm.value;
+    const request: IWorkflowForm = this.workflowForm.getRawValue();
 
     if (!this.validateForm(request)) {
       return;
@@ -216,7 +225,7 @@ export class WorkflowFormComponent implements OnInit {
     this.fileService.uploadFile(file, 'workflow-bpmn').subscribe({
       next: (response) => {
         controls['bpmn'].setValue(response.fileUrl)
-        this.onSave(this.workflowForm.value)
+        this.onSave(this.workflowForm.getRawValue())
       },
       error: () => this.onSaveFinished()
     });

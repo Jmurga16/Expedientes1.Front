@@ -20,6 +20,11 @@ const routes: Routes = [
   {
     path: 'edit/:id',
     component: UserFormComponent
+  },
+  {
+    path: 'view/:id',
+    component: UserFormComponent,
+    data: { readonly: true }
   }
 ];
 

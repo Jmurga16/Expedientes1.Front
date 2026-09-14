@@ -5,7 +5,7 @@
             <div class="p-fluid p-formgrid grid">
                 <div class="field col-12 md:col-6">
                     <label htmlFor="nombre">Nombre</label>
-                    <input pInputText id="nombre" type="text" formControlName="nombre" [readOnly]="readonly" />
+                    <input pInputText id="nombre" type="text" formControlName="nombre" />
                 </div>
                 <div class="field col-12 md:col-6">
                     <label htmlFor="idTipoDemanda">Tipo de Demanda</label>
@@ -36,12 +36,14 @@
             </div>
 
 
-            <app-bpmn [urlBPMN]="diagramUrl" (fileChange)="onDiagramFileChange($event)"></app-bpmn>
+            <app-bpmn [urlBPMN]="diagramUrl" [readonly]="readonly" (fileChange)="onDiagramFileChange($event)"></app-bpmn>
 
 
             <div class="footer">
-                <p-button type="submit" label="Guardar" [disabled]="saving" [loading]="saving"></p-button>
-                <p-button type="button" label="Salir" styleClass="p-button-danger" (onClick)="goToBack()"></p-button>
+                <p-button *ngIf="!readonly" type="submit" label="Guardar" [disabled]="saving"
+                    [loading]="saving"></p-button>
+                <p-button type="button" [label]="readonly ? 'Volver' : 'Salir'" styleClass="p-button-danger"
+                    (onClick)="goToBack()"></p-button>
             </div>
         </form>
     </div>

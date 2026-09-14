@@ -1,10 +1,10 @@
-<p-card header="Gestión de Usuario">
+<p-card [header]="headerTitle">
     <div class="col-12">
         <form [formGroup]="userForm" autocomplete="off" (ngSubmit)="onSubmit()">
             <div class="p-fluid p-formgrid grid">
                 <div class="field col-12 md:col-6">
                     <label htmlFor="name">Nombres</label>
-                    <input pInputText id="name" type="text" formControlName="name" [readOnly]="readonly" />
+                    <input pInputText id="name" type="text" formControlName="name" />
                 </div>
                 <div class="field col-12 md:col-6">
                     <label htmlFor="lastname">Apellidos</label>
@@ -29,7 +29,7 @@
                     <input pInputText type="email" id="email" formControlName="email" />
                 </div>
 
-                <div class="field col-12 md:col-6">
+                <div class="field col-12 md:col-6" *ngIf="!readonly">
                     <label for="new-password">Contraseña</label>
                     <input id="new-password" type="password" pInputText formControlName="password"
                         placeholder="Ingrese su contraseña" />
@@ -59,8 +59,10 @@
             </div>
 
             <div class="footer">
-                <p-button type="submit" label="Guardar" [disabled]="saving" [loading]="saving"></p-button>
-                <p-button type="button" label="Salir" styleClass="p-button-danger" (onClick)="goToBack()"></p-button>
+                <p-button *ngIf="!readonly" type="submit" label="Guardar" [disabled]="saving"
+                    [loading]="saving"></p-button>
+                <p-button type="button" [label]="readonly ? 'Volver' : 'Salir'" styleClass="p-button-danger"
+                    (onClick)="goToBack()"></p-button>
             </div>
         </form>
     </div>

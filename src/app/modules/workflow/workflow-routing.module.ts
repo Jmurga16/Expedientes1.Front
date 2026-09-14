@@ -20,6 +20,11 @@ const routes: Routes = [
   {
     path: 'edit/:id',
     component: WorkflowFormComponent
+  },
+  {
+    path: 'view/:id',
+    component: WorkflowFormComponent,
+    data: { readonly: true }
   }
 ];
 
