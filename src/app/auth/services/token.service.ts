@@ -26,11 +26,7 @@ export class TokenService {
   }
 
   public getToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(TOKEN_KEY);
-    } else {
-      return null;
-    }
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   public logOut(): void {
@@ -44,10 +40,6 @@ export class TokenService {
 
   public isAdmin(): boolean {
     return this.isAuthenticated() && this.getRoles().includes('ROLE_ADMIN');
-  }
-
-  public getEmail(): string {
-    return this.getPayload()?.email ?? '';
   }
 
   public getRoles(): string[] {
