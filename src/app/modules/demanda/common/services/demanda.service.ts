@@ -27,6 +27,10 @@ export class DemandaService {
     return this.http.get<IPaginatedList<IDemanda>>(`${this._api}`, { params });
   }
 
+  getResumen(): Observable<Record<number, number>> {
+    return this.http.get<Record<number, number>>(`${this._api}/resumen`);
+  }
+
   getActives(): Observable<IPaginatedList<IDemanda>> {
     return this.http.get<IPaginatedList<IDemanda>>(`${this._api}/activos`);
   }

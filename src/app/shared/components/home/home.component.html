@@ -1,1 +1,32 @@
-<p>Bienvenido</p>
+<section class="home">
+    <header class="home-header">
+        <h2>Hola{{ nombre ? ', ' + nombre : '' }}</h2>
+        <p>{{ subtitulo }}</p>
+    </header>
+
+    <div class="grid">
+        <div class="col-12 sm:col-6 xl:col-3" *ngFor="let indicador of indicadores">
+            <a class="card indicador" routerLink="/admin/demanda/list">
+                <span class="indicador-icono"><i [class]="indicador.icono"></i></span>
+                <span class="indicador-datos">
+                    <span class="indicador-total">{{ indicador.total ?? '–' }}</span>
+                    <span class="indicador-titulo">{{ indicador.titulo }}</span>
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <h3>Accesos rápidos</h3>
+    <div class="grid">
+        <div class="col-12 md:col-6 xl:col-4" *ngFor="let acceso of accesos">
+            <a class="card acceso" [routerLink]="acceso.link">
+                <i [class]="'acceso-icono ' + acceso.icono"></i>
+                <span>
+                    <span class="acceso-titulo">{{ acceso.titulo }}</span>
+                    <span class="acceso-descripcion">{{ acceso.descripcion }}</span>
+                </span>
+                <i class="pi pi-angle-right acceso-flecha"></i>
+            </a>
+        </div>
+    </div>
+</section>
