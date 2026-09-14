@@ -25,7 +25,6 @@ export class AuthService {
   public login(request: LoginUserDto): Observable<JwtTokenDto> {
     return this.httpClient.post<JwtTokenDto>(this.authURL + 'login', request).pipe(
       tap(response => {
-        console.log(response)
         if (response.token) {
           this.tokenService.setToken(response.token)
         }

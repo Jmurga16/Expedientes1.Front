@@ -46,7 +46,6 @@ export class SubtipologiaListComponent {
   getTipologias() {
     this.tipologiaService.getActives().subscribe({
       next: (response: any) => {
-        console.log(response)
         this.listTipologia = response
       },
       error: () => {
@@ -62,7 +61,6 @@ export class SubtipologiaListComponent {
 
     this.subtipologiaService.getByIdTipologia(this.idTipologia.value).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.datatable = response
         this.loading = false;
       },
@@ -109,7 +107,6 @@ export class SubtipologiaListComponent {
       if (result.isConfirmed) {
         this.subtipologiaService.delete(id).subscribe({
           next: (response: any) => {
-            console.log(response)
             if (response.status == "OK") {
               Swal.fire({
                 title: response.message,

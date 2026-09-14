@@ -52,7 +52,6 @@ export class SignupComponent {
             this.router.navigate(['/auth/login']);
           },
           error: (error: any) => {
-            console.error(error)
             Swal.fire({
               title: 'Error!',
               text: error.error.message,

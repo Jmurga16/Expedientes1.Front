@@ -43,7 +43,6 @@ export class AreaListComponent {
 
     this.areaService.get(this.request).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.datatable = response
         this.loading = false;
       },
@@ -95,7 +94,6 @@ export class AreaListComponent {
       if (result.isConfirmed) {
         this.areaService.delete(id).subscribe({
           next: (response: any) => {
-            console.log(response)
             if (response.status == "OK") {
               Swal.fire({
                 title: response.message,

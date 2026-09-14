@@ -86,7 +86,6 @@ export class DemandaListComponent {
       if (result.isConfirmed) {
         this.demandaService.delete(id).subscribe({
           next: (response: any) => {
-            console.log(response)
             if (response.status == "OK") {
               Swal.fire({
                 title: response.message,

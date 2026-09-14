@@ -104,7 +104,6 @@ export class DemandaFormComponent {
 
     this.activatedRoute.params.subscribe(params => {
       this.idDemanda = params['id'];
-      console.log('Demanda ID:', this.idDemanda);
       if (this.idDemanda) {
         this.getDemanda();
       }
@@ -166,7 +165,6 @@ export class DemandaFormComponent {
   getDemanda() {
     this.demandaService.getById(this.idDemanda).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.demandaForm.patchValue(response);
         this.loadImagenPreview(response.rutaImagen);
         this.loading = false;
@@ -249,7 +247,6 @@ export class DemandaFormComponent {
       return;
     }
 
-    console.log(this.demandaForm.value);
     let request = this.demandaForm.value as IDemandaForm;
 
     if (this.validateForm(request)) {
@@ -270,7 +267,6 @@ export class DemandaFormComponent {
           .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
-              console.log(response)
               Swal.fire({
                 title: 'Éxito.',
                 text: response.message,
@@ -279,10 +275,7 @@ export class DemandaFormComponent {
               })
               this.goToBack();
             },
-            error: (error: any) => {
-              console.error(error)
-              this.handleSaveError(error);
-            }
+            error: (error: any) => this.handleSaveError(error)
           });
       }
       else {
@@ -290,7 +283,6 @@ export class DemandaFormComponent {
           .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
-              console.log(response)
               Swal.fire({
                 title: 'Éxito.',
                 text: response.message,
@@ -299,10 +291,7 @@ export class DemandaFormComponent {
               })
               this.goToBack();
             },
-            error: (error: any) => {
-              console.error(error)
-              this.handleSaveError(error);
-            }
+            error: (error: any) => this.handleSaveError(error)
           });
       }
     }
@@ -396,13 +385,11 @@ export class DemandaFormComponent {
     if (file) {
       this.fileService.uploadFileUnique(file, container).subscribe({
         next: (response: any) => {
-          console.log('Archivo subido:', response);
           const fileUrl = response.fileUrl;
           this.demandaForm.patchValue({ rutaImagen: fileUrl });
           this.imagenPreview = response.viewUrl ?? fileUrl;
         },
         error: (err) => {
-          console.error('Error al subir archivo:', err)
           Swal.fire({
             title: 'Error!',
             text: err.error?.message ?? 'No se pudo subir la imagen.',

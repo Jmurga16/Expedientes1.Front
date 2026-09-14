@@ -58,7 +58,6 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
       this.idUsuario = params['id']; // Obtén el ID de la ruta
-      console.log('User ID:', this.idUsuario);
       if (this.idUsuario) {
         this.userForm.controls['password'].removeValidators(Validators.required);
         this.userForm.controls['password'].updateValueAndValidity();
@@ -74,7 +73,6 @@ export class UserFormComponent implements OnInit {
   getUser() {
     this.usuarioService.getById(this.idUsuario).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.userForm.patchValue(response);
         this.loading = false;
       },
@@ -141,7 +139,6 @@ export class UserFormComponent implements OnInit {
       return;
     }
 
-    console.log(this.userForm.value);
     let request = this.userForm.value as IUsuarioForm;
 
     if (this.validateForm(request)) {
@@ -166,7 +163,6 @@ export class UserFormComponent implements OnInit {
           .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
-              console.log(response)
               Swal.fire({
                 title: 'Éxito.',
                 text: response.message,
@@ -176,7 +172,6 @@ export class UserFormComponent implements OnInit {
               this.goToBack();
             },
             error: (error: any) => {
-              console.error(error)
               Swal.fire({
                 title: 'Error!',
                 text: error.error.message,
@@ -191,7 +186,6 @@ export class UserFormComponent implements OnInit {
           .pipe(finalize(() => this.onSaveFinished()))
           .subscribe({
             next: (response: any) => {
-              console.log(response)
               Swal.fire({
                 title: 'Éxito.',
                 text: response.message,
@@ -201,7 +195,6 @@ export class UserFormComponent implements OnInit {
               this.goToBack();
             },
             error: (error: any) => {
-              console.error(error)
               Swal.fire({
                 title: 'Error!',
                 text: error.error.message,

@@ -46,7 +46,6 @@ export class UserListComponent {
 
     this.usuarioService.get(this.request).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.usuarios = response
         this.totalRecords = response.totalRecords
         this.loading = false;
@@ -81,7 +80,6 @@ export class UserListComponent {
       if (result.isConfirmed) {
         this.usuarioService.delete(id).subscribe({
           next: (response: any) => {
-            console.log(response)
             if (response.status == "OK") {
               Swal.fire({
                 title: response.message,

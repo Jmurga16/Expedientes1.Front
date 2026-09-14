@@ -64,14 +64,12 @@ export class DemandaWorkflowComponent {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
       this.idDemanda = params['id'];
-      console.log('Demanda ID:', this.idDemanda);
       if (this.idDemanda) {
         this.getDemanda();
       }
     });
 
     this.currentRol = this.tokenService.getCurrentRol()
-    console.log("rol", this.currentRol)
 
     if (this.currentRol === 'usuario') {
       this.demandaForm.get('paso')?.disable();
@@ -79,23 +77,17 @@ export class DemandaWorkflowComponent {
     }
 
     this.getEstadosDemanda()
-    console.log("listTask")
-    console.log(this.listTask)
   }
 
   getDemanda() {
     this.demandaService.getById(this.idDemanda).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.demandaForm.patchValue(response);
         this.diagramUrl = response.urlBpmn
         this.loading = false;
       },
       error: () => {
         this.loading = false;
-      },
-      complete: () => {
-        //this.getSubtipologia(this.demandaForm.controls["idTipologia"].value)
       }
     });
   }
@@ -173,7 +165,6 @@ export class DemandaWorkflowComponent {
             this.goToBack();
           },
           error: (error: any) => {
-            console.error(error)
             Swal.fire({
               title: 'Error!',
               text: error.error.message,
@@ -187,9 +178,6 @@ export class DemandaWorkflowComponent {
   }
 
   listPasos(event: any) {
-    console.log("demanda-workflow")
-    console.log(event)
-
     if (!event.includes("Finalizado")) {
       event.push("Finalizado")
     }

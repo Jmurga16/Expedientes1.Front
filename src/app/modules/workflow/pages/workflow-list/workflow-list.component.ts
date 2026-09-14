@@ -43,7 +43,6 @@ export class WorkflowListComponent {
 
     this.workflowService.get(this.request).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.datatable = response
         this.loading = false;
       },
@@ -77,7 +76,6 @@ export class WorkflowListComponent {
       if (result.isConfirmed) {
         this.workflowService.delete(id).subscribe({
           next: (response: any) => {
-            console.log(response)
             if (response.status == "OK") {
               Swal.fire({
                 title: response.message,

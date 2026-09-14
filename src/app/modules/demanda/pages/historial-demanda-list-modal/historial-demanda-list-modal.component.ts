@@ -35,7 +35,6 @@ export class HistorialDemandaListModalComponent {
 
     this.historialDemandaService.get(this.idDemanda, this.request).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.datatable = response
         this.loading = false;
       },
