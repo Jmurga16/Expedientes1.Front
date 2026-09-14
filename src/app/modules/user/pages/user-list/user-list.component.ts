@@ -6,6 +6,8 @@ import { IUsuario } from '../../common/models/usuario.interface';
 import { IMessage } from '../../../../core/models/generic/message.interface';
 import { NotificationService } from '../../../../shared/services/notification.service';
 
+const ID_ADMIN_DEMO = 1;
+
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
@@ -45,6 +47,10 @@ export class UserListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  esAdminDemo(id: number): boolean {
+    return id === ID_ADMIN_DEMO;
   }
 
   goToNewUser() {

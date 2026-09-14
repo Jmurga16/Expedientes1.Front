@@ -31,20 +31,20 @@
                     </div>
                 </th>
 
-                <th style="width: 25%">
+                <th style="width: 20%">
                     <div class="flex justify-content-between align-items-center">
                         Roles
                     </div>
                 </th>
 
-                <th style="width: 15%">
+                <th style="width: 12%">
                     <div class="flex justify-content-between align-items-center">
                         Estado
                     </div>
                 </th>
 
-                <th style="width: 10%">
-                    <div class="flex justify-content-between align-items-center">
+                <th class="col-opciones">
+                    <div class="flex justify-content-center align-items-center">
                         Opciones
                     </div>
                 </th>
@@ -69,18 +69,20 @@
                     {{usuario.status == 1 ? "Activo":"Inactivo"}}
                 </td>
 
-                <td class="text-center">
+                <td class="col-opciones text-center">
                     <button pButton pRipple type="button" icon="pi pi-eye" (click)="goToViewUser(usuario.id)"
                         pTooltip="Ver" class="p-button-rounded p-button-text p-button-tbl">
                     </button>
 
-                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.id)"
-                        pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
-                    </button>
+                    <ng-container *ngIf="!esAdminDemo(usuario.id)">
+                        <button pButton pRipple type="button" icon="pi pi-pencil" (click)="goToEditUser(usuario.id)"
+                            pTooltip="Editar" class="p-button-rounded p-button-text p-button-tbl">
+                        </button>
 
-                    <button pButton pRipple type="button" icon="pi pi-trash" *ngIf="usuario.id!=1"
-                        (click)="deleteUserById(usuario.id)" class="p-button-rounded p-button-text p-button-tbl">
-                    </button>
+                        <button pButton pRipple type="button" icon="pi pi-trash" (click)="deleteUserById(usuario.id)"
+                            pTooltip="Eliminar" class="p-button-rounded p-button-text p-button-tbl">
+                        </button>
+                    </ng-container>
                 </td>
             </tr>
         </ng-template>
