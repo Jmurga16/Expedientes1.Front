@@ -1,7 +1,15 @@
 .diagram-parent {
-    height  : 600px;
-    border  : solid 3px #EEE;
-    position: relative;
+    height        : 600px;
+    border        : solid 3px #EEE;
+    position      : relative;
+    display       : flex;
+    flex-direction: column;
+    margin-bottom : 1rem;
+}
+
+.diagram-parent > app-diagram {
+    flex      : 1 1 auto;
+    min-height: 0;
 }
 
 .import-error {

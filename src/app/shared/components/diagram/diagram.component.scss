@@ -1,6 +1,21 @@
+:host {
+    display       : flex;
+    flex-direction: column;
+    height        : 100%;
+}
+
+.area-selector {
+    padding: 1rem 1rem 0 1rem;
+}
+
 .diagram-container {
-    height: 100%;
-    width : 100%;
+    flex      : 1 1 auto;
+    min-height: 0;
+    width     : 100%;
+}
+
+.diagram-actions {
+    padding: 1rem;
 }
 
 .diagram-container.solo-lectura ::ng-deep {
@@ -13,10 +28,10 @@
 
 ::ng-deep .djs-palette {
     right: 10px;
-    left: auto;
-    top: 20px;
-  }
-  
-  ::ng-deep .djs-palette .entry {
+    left : auto;
+    top  : 20px;
+}
+
+::ng-deep .djs-palette .entry {
     margin-right: 0;
-  }
+}

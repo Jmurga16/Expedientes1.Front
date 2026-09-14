@@ -1,10 +1,10 @@
-<div style="padding-top: 1rem;" *ngIf="!idDemanda && !readonly">
+<div class="area-selector" *ngIf="!idDemanda && !readonly">
     <div class="flex align-items-center gap-2">
         <label for="idArea" class="flex-shrink-0" style="width: 100px;">Área</label>
         <p-dropdown [options]="listArea" optionLabel="nombre" optionValue="id" placeholder="Seleccione área"
             [formControl]="idArea" class="flex-grow-1"></p-dropdown>
     </div>
-    <div class="mt-2">
+    <div class="mt-3 mb-3">
         <p-button type="button" (click)="addAreaToWorkflow()">Agregar área</p-button>
     </div>
 </div>
@@ -12,6 +12,6 @@
 
 <div #ref class="diagram-container" id="bpmn-container" [class.solo-lectura]="readonly"></div>
 
-<div style="padding-top: 1rem;">
+<div class="diagram-actions">
     <p-button type="button" (click)="exportDiagram()">Descargar BPMN</p-button>
 </div>
