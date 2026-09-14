@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { ITipologia } from '../../common/models/tipologia.interface';
@@ -12,11 +12,10 @@ import { TipologiaFormModalComponent } from '../../common/components/tipologia-f
   templateUrl: './tipologia-list.component.html',
   styleUrl: './tipologia-list.component.scss'
 })
-export class TipologiaListComponent {
+export class TipologiaListComponent implements OnInit {
 
   datatable: ITipologia[] = []
   loading: boolean = true;
-  totalRecords: number = 0
   pageSize: number = 10
   ref: DynamicDialogRef | undefined;
 
@@ -25,6 +24,10 @@ export class TipologiaListComponent {
     private dialogService: DialogService,
     private notification: NotificationService,
   ) { }
+
+  ngOnInit() {
+    this.getDatatable()
+  }
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -37,7 +40,6 @@ export class TipologiaListComponent {
     this.tipologiaService.get().subscribe({
       next: (response: ITipologia[]) => {
         this.datatable = response
-        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {

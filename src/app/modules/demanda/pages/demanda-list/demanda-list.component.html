@@ -1,14 +1,14 @@
 <p-card [header]="headerTitle">
 
-    <div class="flex justify-content-between flex-column sm:flex-row container">
+    <div class="flex justify-content-between align-items-center flex-column sm:flex-row gap-2 mb-3">
 
-        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNew()"></p-button>
-
-        <span class="p-input-icon-left mb-2">
+        <span class="p-input-icon-left w-full sm:w-20rem">
             <i class="pi pi-search"></i>
-            <input pInputText type="text" #filter (keyup)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
+            <input pInputText type="text" (input)="onGlobalFilter(dataTable1, $event)" placeholder="Buscar"
                 class="w-full" />
         </span>
+
+        <p-button type="button" label="Nuevo" icon="pi pi-fw pi-plus" (click)="goToNew()"></p-button>
     </div>
 
     <p-table #dataTable1 [value]="datatable" dataKey="id" [loading]="loading" [rowHover]="true" [lazy]="true"

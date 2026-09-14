@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Table } from 'primeng/table';
 import { IArea } from '../../common/models/area.interface';
@@ -12,11 +12,10 @@ import { AreaFormModalComponent } from '../../common/components/area-form-modal/
   templateUrl: './area-list.component.html',
   styleUrl: './area-list.component.scss'
 })
-export class AreaListComponent {
+export class AreaListComponent implements OnInit {
 
   datatable: IArea[] = []
   loading: boolean = true;
-  totalRecords: number = 0
   pageSize: number = 10
   ref: DynamicDialogRef | undefined;
 
@@ -25,6 +24,10 @@ export class AreaListComponent {
     private dialogService: DialogService,
     private notification: NotificationService,
   ) { }
+
+  ngOnInit() {
+    this.getDatatable()
+  }
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
@@ -37,7 +40,6 @@ export class AreaListComponent {
     this.areaService.get().subscribe({
       next: (response: IArea[]) => {
         this.datatable = response
-        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {

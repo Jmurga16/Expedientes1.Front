@@ -19,7 +19,6 @@ export class SubtipologiaListComponent implements OnInit {
 
   datatable: ISubtipologia[] = []
   loading: boolean = true;
-  totalRecords: number = 0
   pageSize: number = 10
   ref: DynamicDialogRef | undefined;
   listTipologia: ITipologia[] = []
@@ -63,7 +62,6 @@ export class SubtipologiaListComponent implements OnInit {
     this.subtipologiaService.getByIdTipologia(idTipologia).subscribe({
       next: (response: ISubtipologia[]) => {
         this.datatable = response
-        this.totalRecords = response.length
         this.loading = false;
       },
       error: () => {
