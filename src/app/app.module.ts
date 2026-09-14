@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TokenInterceptor } from './core/interceptors/token.interceptor';
+import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { TokenInterceptor } from './core/interceptors/token.interceptor';
   ],
   providers: [
     provideHttpClient(
-      withInterceptors([TokenInterceptor])
+      withInterceptors([TokenInterceptor, ErrorInterceptor])
     )
   ],
   bootstrap: [AppComponent]
