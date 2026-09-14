@@ -20,6 +20,10 @@
     </div>
 
     <div class="p-fluid p-formgrid grid">
+        <div class="btn-custom" style="margin-right: 1rem;">
+            <p-button type="button" label="Atrás" icon="pi pi-arrow-left" severity="secondary" (onClick)="goToBack()"></p-button>
+        </div>
+
         <div class="btn-custom" style="margin-right: 1rem;" *ngIf="!(currentRol=='usuario')">
             <p-button type="submit" label="Guardar" [disabled]="saving" [loading]="saving"></p-button>
         </div>
