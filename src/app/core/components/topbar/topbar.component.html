@@ -6,7 +6,7 @@
         <span class="brand-section">{{ section }}</span>
     </a>
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()"><i class="pi pi-bars"></i></button>
-    <div #topbarmenu class="layout-topbar-menu">
+    <div class="layout-topbar-menu">
         <button class="p-link layout-topbar-button" (click)="op.toggle($event)" aria-label="Abrir menú de sesión"><i class="pi pi-ellipsis-v"></i></button>
         <p-overlayPanel #op><a (click)="logout()">Cerrar sesión</a></p-overlayPanel>
     </div>

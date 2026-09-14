@@ -4,17 +4,13 @@ import { Subject } from 'rxjs';
 export interface AppConfig {
     inputStyle: string;
     colorScheme: string;
-    theme: string;
     ripple: boolean;
     menuMode: string;
-    scale: number;
 }
 
 interface LayoutState {
     staticMenuDesktopInactive: boolean;
     overlayMenuActive: boolean;
-    profileSidebarVisible: boolean;
-    configSidebarVisible: boolean;
     staticMenuMobileActive: boolean;
     menuHoverActive: boolean;
 }
@@ -29,24 +25,16 @@ export class LayoutService {
         inputStyle: 'outlined',
         menuMode: 'static',
         colorScheme: 'light',
-        theme: 'lara-light-indigo',
-        scale: 14,
     };
 
     state: LayoutState = {
         staticMenuDesktopInactive: false,
         overlayMenuActive: false,
-        profileSidebarVisible: false,
-        configSidebarVisible: false,
         staticMenuMobileActive: false,
         menuHoverActive: false
     };
 
-    private configUpdate = new Subject<AppConfig>();
-
     private overlayOpen = new Subject<any>();
-
-    configUpdate$ = this.configUpdate.asObservable();
 
     overlayOpen$ = this.overlayOpen.asObservable();
 
@@ -57,7 +45,6 @@ export class LayoutService {
                 this.overlayOpen.next(null);
             }
         }
-        
 
         if (this.isDesktop()) {
             this.state.staticMenuDesktopInactive = !this.state.staticMenuDesktopInactive;
@@ -71,17 +58,6 @@ export class LayoutService {
         }
     }
 
-    showProfileSidebar() {
-        this.state.profileSidebarVisible = !this.state.profileSidebarVisible;
-        if (this.state.profileSidebarVisible) {
-            this.overlayOpen.next(null);
-        }
-    }
-
-    showConfigSidebar() {
-        this.state.configSidebarVisible = true;
-    }
-
     isOverlay() {
         return this.config.menuMode === 'overlay';
     }
@@ -89,13 +65,4 @@ export class LayoutService {
     isDesktop() {
         return window.innerWidth > 991;
     }
-
-    isMobile() {
-        return !this.isDesktop();
-    }
-
-    onConfigUpdate() {
-        this.configUpdate.next(this.config);
-    }
-
 }

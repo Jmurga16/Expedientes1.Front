@@ -14,9 +14,9 @@ export class LayoutComponent implements OnDestroy {
 
   overlayMenuOpenSubscription: Subscription;
 
-  menuOutsideClickListener: any;
+  routerSubscription: Subscription;
 
-  profileMenuOutsideClickListener: any;
+  menuOutsideClickListener: any;
 
   @ViewChild(NavMenuComponent) sideBar!: NavMenuComponent;
 
@@ -35,27 +35,13 @@ export class LayoutComponent implements OnDestroy {
         });
       }
 
-      if (!this.profileMenuOutsideClickListener) {
-        this.profileMenuOutsideClickListener = this.renderer.listen('document', 'click', event => {
-          const isOutsideClicked = !(this.topBar.menu.nativeElement.isSameNode(event.target) || this.topBar.menu.nativeElement.contains(event.target)
-            || this.topBar.topbarMenuButton.nativeElement.isSameNode(event.target) || this.topBar.topbarMenuButton.nativeElement.contains(event.target));
-
-          if (isOutsideClicked) {
-            this.hideProfileMenu();
-          }
-        });
-      }
-
       if (this.layoutService.state.staticMenuMobileActive) {
         this.blockBodyScroll();
       }
     });
 
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.hideMenu();
-        this.hideProfileMenu();
-      });
+    this.routerSubscription = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => this.hideMenu());
   }
 
   hideMenu() {
@@ -67,14 +53,6 @@ export class LayoutComponent implements OnDestroy {
       this.menuOutsideClickListener = null;
     }
     this.unblockBodyScroll();
-  }
-
-  hideProfileMenu() {
-    this.layoutService.state.profileSidebarVisible = false;
-    if (this.profileMenuOutsideClickListener) {
-      this.profileMenuOutsideClickListener();
-      this.profileMenuOutsideClickListener = null;
-    }
   }
 
   blockBodyScroll(): void {
@@ -111,9 +89,8 @@ export class LayoutComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.overlayMenuOpenSubscription) {
-      this.overlayMenuOpenSubscription.unsubscribe();
-    }
+    this.overlayMenuOpenSubscription?.unsubscribe();
+    this.routerSubscription?.unsubscribe();
 
     if (this.menuOutsideClickListener) {
       this.menuOutsideClickListener();

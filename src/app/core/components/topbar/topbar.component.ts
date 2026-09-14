@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
 import { LayoutService } from '../../services/layout.service';
 import { TokenService } from '../../../auth/services/token.service';
 import { NavigationEnd, Router } from '@angular/router';
@@ -7,11 +6,8 @@ import { filter } from 'rxjs';
 
 @Component({ selector: 'app-topbar', templateUrl: './topbar.component.html', styleUrls: ['./topbar.component.scss'] })
 export class TopbarComponent implements OnInit {
-  items!: MenuItem[];
   section = 'Inicio';
   @ViewChild('menubutton') menuButton!: ElementRef;
-  @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
-  @ViewChild('topbarmenu') menu!: ElementRef;
 
   constructor(public layoutService: LayoutService, private tokenService: TokenService, private router: Router) {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => this.updateSection());
