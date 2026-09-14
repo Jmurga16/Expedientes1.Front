@@ -191,6 +191,7 @@ export class DemandaFormComponent implements OnInit {
     this.tipologiaService.getActives().subscribe({
       next: (response: ITipologia[]) => {
         this.listTipologia = response;
+        this.setDescripcion(this.demandaForm.controls["idTipologia"].value);
       }
     });
   }
