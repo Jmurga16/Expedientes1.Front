@@ -231,7 +231,7 @@ export class DemandaFormComponent implements OnInit {
       return;
     }
 
-    const request: IDemandaForm = this.demandaForm.value;
+    const request: IDemandaForm = this.demandaForm.getRawValue();
 
     if (!this.validateForm(request)) {
       return;

@@ -11,3 +11,33 @@
 
 
 @import "assets/layout/styles/layout/layout.scss";
+
+/* Campos de solo lectura y deshabilitados */
+.p-inputtext[readonly],
+.p-inputtext:disabled,
+.p-dropdown.p-disabled,
+.p-multiselect.p-disabled {
+    opacity: 1;
+    background-color: var(--surface-200);
+    color: var(--text-color-secondary);
+    cursor: default;
+}
+
+.p-dropdown.p-disabled,
+.p-multiselect.p-disabled {
+    .p-dropdown-label,
+    .p-dropdown-trigger,
+    .p-multiselect-label,
+    .p-multiselect-trigger {
+        color: var(--text-color-secondary);
+    }
+}
+
+.p-inputtext[readonly] {
+    &:hover,
+    &:focus {
+        border-color: var(--surface-300);
+        box-shadow: none;
+        outline: 0 none;
+    }
+}
