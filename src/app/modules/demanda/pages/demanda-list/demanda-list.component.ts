@@ -18,6 +18,7 @@ export class DemandaListComponent {
   request: any = { search: "", pageIndex: 1, pageSize: 10 }
   totalRecords: number = 0
   ref: DynamicDialogRef | undefined;
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -33,14 +34,16 @@ export class DemandaListComponent {
   }
 
   onGlobalFilter(table: any, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+    const value = (event.target as HTMLInputElement).value;
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => table.filterGlobal(value, 'contains'), 400);
   }
 
   getDatatable(event?: any) {
 
     if (event) {
-      //this.request.pageSize = event.rows
-      //this.request.pageIndex = (event.first / this.request.pageSize) + 1
+      this.request.pageSize = event.rows
+      this.request.pageIndex = (event.first / event.rows) + 1
       this.request.search = event.globalFilter
     }
 
@@ -48,9 +51,9 @@ export class DemandaListComponent {
     this.datatable = []
 
     this.demandaService.get(this.request).subscribe({
-      next: (response: any) => {
-        console.log(response)
-        this.datatable = response
+      next: (response) => {
+        this.datatable = response.items
+        this.totalRecords = response.totalRecords
         this.loading = false;
       },
       error: () => {
