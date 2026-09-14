@@ -18,6 +18,7 @@
             },
             {
                 "label": "Cerrar Sesión",
+                "action": "logout",
                 "icon": "pi pi-fw pi-sign-out",
                 "routerLink": [
                     "/auth/login"

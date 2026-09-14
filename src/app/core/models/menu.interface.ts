@@ -7,5 +7,6 @@ export interface IMenu {
 interface IMenuItem {
     label: string,
     icon: string,
-    routerLink: any
+    routerLink: any,
+    action?: 'logout'
 }

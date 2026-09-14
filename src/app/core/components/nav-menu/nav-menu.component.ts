@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { TokenService } from '../../../auth/services/token.service';
-import { LayoutService } from '../../services/layout.service';
 import { IMenu } from '../../models/menu.interface';
 import { MenuService } from '../../services/menu.service';
 
@@ -9,7 +8,7 @@ const MENU_MINIMO: IMenu[] = [
     label: 'Menú',
     items: [
       { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['./home'] },
-      { label: 'Cerrar Sesión', icon: 'pi pi-fw pi-sign-out', routerLink: ['/auth/login'] }
+      { label: 'Cerrar Sesión', icon: 'pi pi-fw pi-sign-out', routerLink: ['/auth/login'], action: 'logout' }
     ]
   }
 ];
@@ -24,7 +23,7 @@ export class NavMenuComponent implements OnInit {
   model: IMenu[] = [];
   loading: boolean = false
 
-  constructor(public layoutService: LayoutService,
+  constructor(
     private tokenService: TokenService,
     private menuService: MenuService,
     public el: ElementRef

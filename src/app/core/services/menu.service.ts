@@ -14,22 +14,14 @@ export class MenuService {
 
     private jsonUrl = '/assets/demo/data/';
 
-    constructor(private httpClient: HttpClient) {
-
-    }
+    constructor(private httpClient: HttpClient) { }
 
     private menuSource = new Subject<MenuChangeEvent>();
-    private resetSource = new Subject();
 
     menuSource$ = this.menuSource.asObservable();
-    resetSource$ = this.resetSource.asObservable();
 
     onMenuStateChange(event: MenuChangeEvent) {
         this.menuSource.next(event);
-    }
-
-    reset() {
-        this.resetSource.next(true);
     }
 
     getMenuByRol(rol: string): Observable<any> {

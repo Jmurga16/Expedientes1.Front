@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, Host, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { LayoutService } from '../../services/layout.service';
 import { MenuService } from '../../services/menu.service';
 import { TokenService } from '../../../auth/services/token.service';
 
@@ -38,12 +37,11 @@ export class MenuItemComponent implements OnInit, OnDestroy {
 
   menuSourceSubscription: Subscription;
 
-  menuResetSubscription: Subscription;
+  routerSubscription: Subscription;
 
   key: string = "";
 
-  constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService,
-    private tokenService: TokenService) {
+  constructor(public router: Router, private menuService: MenuService, private tokenService: TokenService) {
     this.menuSourceSubscription = this.menuService.menuSource$.subscribe((value: any) => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
@@ -57,12 +55,8 @@ export class MenuItemComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.menuResetSubscription = this.menuService.resetSource$.subscribe(() => {
-      this.active = false;
-    });
-
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(params => {
+    this.routerSubscription = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
         if (this.item.routerLink) {
           this.updateActiveStateFromRoute();
         }
@@ -85,25 +79,21 @@ export class MenuItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  itemClick(event: Event, item?: any) {
-
-    if (item.label.includes('Cerrar')) {
+  itemClick(event: Event) {
+    if (this.item.action === 'logout') {
       this.tokenService.logOut();
       this.router.navigate(['auth/login']);
     }
 
-    // avoid processing disabled items
     if (this.item.disabled) {
       event.preventDefault();
       return;
     }
 
-    // execute command
     if (this.item.command) {
       this.item.command({ originalEvent: event, item: this.item });
     }
 
-    // toggle active state
     if (this.item.items) {
       this.active = !this.active;
     }
@@ -125,8 +115,8 @@ export class MenuItemComponent implements OnInit, OnDestroy {
       this.menuSourceSubscription.unsubscribe();
     }
 
-    if (this.menuResetSubscription) {
-      this.menuResetSubscription.unsubscribe();
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
     }
   }
 }
