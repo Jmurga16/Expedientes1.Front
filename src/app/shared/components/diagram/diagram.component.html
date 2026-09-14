@@ -1,4 +1,4 @@
-<div style="padding-top: 1rem;" *ngIf="!idDemanda">
+<div style="padding-top: 1rem;" *ngIf="!idDemanda && !readonly">
     <div class="flex align-items-center gap-2">
         <label for="idArea" class="flex-shrink-0" style="width: 100px;">Área</label>
         <p-dropdown [options]="listArea" optionLabel="nombre" optionValue="id" placeholder="Seleccione área"
@@ -10,7 +10,7 @@
 </div>
 
 
-<div #ref class="diagram-container" id="bpmn-container"></div>
+<div #ref class="diagram-container" id="bpmn-container" [class.solo-lectura]="readonly"></div>
 
 <div style="padding-top: 1rem;">
     <p-button type="button" (click)="exportDiagram()">Descargar BPMN</p-button>

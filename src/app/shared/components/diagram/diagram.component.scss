@@ -3,6 +3,14 @@
     width : 100%;
 }
 
+.diagram-container.solo-lectura ::ng-deep {
+    .djs-palette,
+    .djs-context-pad,
+    .djs-direct-editing-parent {
+        display: none;
+    }
+}
+
 ::ng-deep .djs-palette {
     right: 10px;
     left: auto;
