@@ -1,11 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkflowService } from '../../common/services/workflow.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IWorkflowForm } from '../../common/models/workflow-form.interface';
 import Swal from 'sweetalert2';
-import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
-import { AreaService } from '../../../area/common/services/area.service';
 import { TipologiaService } from '../../../tipologia/common/services/tipologia.service';
 import { SubtipologiaService } from '../../../tipologia/common/services/subtipologia.service';
 import { DataService } from '../../../../shared/services/data.service';
@@ -19,17 +17,11 @@ import { LoadingService } from '../../../../shared/services/loading.service';
   templateUrl: './workflow-form.component.html',
   styleUrl: './workflow-form.component.scss'
 })
-export class WorkflowFormComponent {
+export class WorkflowFormComponent implements OnInit {
 
   headerTitle: string = "Gestión de Flujo"
   readonly: boolean = false;
-  isEdit: boolean = false;
-  loading: boolean = false;
   saving: boolean = false;
-
-  listRoles: any[] = [];
-  listEstadosWorkflow: any[] = []
-  listArea: any = []
 
   listTipoDemanda: any[] = []
   listTipologia: any[] = []
@@ -38,7 +30,6 @@ export class WorkflowFormComponent {
   workflowForm: FormGroup;
   idWorkflow: any
 
-  //@Input() urlBPMN?: string;
   diagramUrl: string = '/assets/demo/base.bpmn';
   fileBPMN: any
 
@@ -47,7 +38,6 @@ export class WorkflowFormComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private workflowService: WorkflowService,
-    private areaService: AreaService,
     private tipologiaService: TipologiaService,
     private subtipologiaService: SubtipologiaService,
     private dataService: DataService,
@@ -75,8 +65,7 @@ export class WorkflowFormComponent {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      this.idWorkflow = params['id']; // Obtén el ID de la ruta
-      console.log('Workflow ID:', this.idWorkflow);
+      this.idWorkflow = params['id'];
       if (this.idWorkflow) {
         this.getWorkflow();
       }
@@ -85,9 +74,6 @@ export class WorkflowFormComponent {
       }
     });
 
-    this.getRoles()
-    this.getEstadosWorkflow()
-    this.getAreas()
     this.getTipologia();
     this.getTipoDemanda();
   }
@@ -108,24 +94,9 @@ export class WorkflowFormComponent {
   getWorkflow() {
     this.workflowService.getById(this.idWorkflow).subscribe({
       next: (response: any) => {
-        console.log(response)
         this.workflowForm.patchValue(response);
         this.diagramUrl = response.bpmn
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-      complete: () => {
-        this.getSubtipologia(this.workflowForm.controls["idTipologia"].value)
-      }
-    });
-  }
-
-  getAreas() {
-    this.areaService.getActives().subscribe({
-      next: (response: any) => {
-        this.listArea = response;
+        this.getSubtipologia(response.idTipologia)
       }
     });
   }
@@ -154,37 +125,6 @@ export class WorkflowFormComponent {
     });
   }
 
-  getRoles() {
-    this.listRoles = [
-      { id: "ROLE_ADMIN", nombre: "Administrador" },
-      { id: "ROLE_USER", nombre: "Workflow" },
-      { id: "ROLE_AREA", nombre: "Referente Area" },
-      { id: "ROLE_COLAB", nombre: "Colaborador" }
-    ]
-  }
-
-  haveArea(): boolean {
-    let roles = this.workflowForm.controls['roles'].value;
-
-    if (roles == null) {
-      return false;
-    }
-    else if (roles.includes('ROLE_AREA') || roles.includes('ROLE_COLAB')) {
-      return true;
-    }
-    else {
-      return false;
-    }
-
-  }
-
-  getEstadosWorkflow() {
-    this.listEstadosWorkflow = [
-      { id: 0, nombre: "Inactivo" },
-      { id: 1, nombre: "Activo" }
-    ]
-  }
-
   goToBack() {
     if (this.idWorkflow) {
       this.router.navigate(['../../list'], {
@@ -203,7 +143,6 @@ export class WorkflowFormComponent {
       return;
     }
 
-    console.log(this.workflowForm.value);
     let request = this.workflowForm.value as IWorkflowForm;
 
     if (!this.validateForm(request)) {
@@ -247,7 +186,6 @@ export class WorkflowFormComponent {
         .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response: any) => {
-            console.log(response)
             Swal.fire({
               title: 'Éxito.',
               text: response.message,
@@ -257,7 +195,6 @@ export class WorkflowFormComponent {
             this.goToBack();
           },
           error: (error: any) => {
-            console.error(error)
             Swal.fire({
               title: 'Error!',
               text: error.error.message,
@@ -272,7 +209,6 @@ export class WorkflowFormComponent {
         .pipe(finalize(() => this.onSaveFinished()))
         .subscribe({
           next: (response: any) => {
-            console.log(response)
             Swal.fire({
               title: 'Éxito.',
               text: response.message,
@@ -282,7 +218,6 @@ export class WorkflowFormComponent {
             this.goToBack();
           },
           error: (error: any) => {
-            console.error(error)
             Swal.fire({
               title: 'Error!',
               text: error.error.message,
@@ -326,14 +261,8 @@ export class WorkflowFormComponent {
     return message == ""
   }
 
-  onDiagramUrlChange(newUrl: string): void {
-    this.diagramUrl = newUrl;
-    console.log('URL del diagrama actualizada:', this.diagramUrl);
-  }
-
   onDiagramFileChange(file: File): void {
     this.fileBPMN = file;
-    console.log('Archivo del diagrama actualizada:', this.fileBPMN);
   }
 
   generateUrlBPMN() {
@@ -350,13 +279,11 @@ export class WorkflowFormComponent {
 
     this.fileService.uploadFile(file, container).subscribe({
       next: (response: any) => {
-        console.log('Archivo subido:', response);
         this.workflowForm.controls["bpmn"].setValue(response.fileUrl)
         this.onSave(this.workflowForm.value)
       },
       error: (err) => {
         this.onSaveFinished();
-        console.error('Error al subir archivo:', err)
         Swal.fire({
           title: 'Error!',
           text: err.error?.message ?? 'No se pudo subir el diagrama BPMN.',

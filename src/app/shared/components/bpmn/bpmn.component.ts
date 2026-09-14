@@ -7,22 +7,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class BpmnComponent {
 
-  title = 'bpmn-js-angular';
   @Input() urlBPMN!: string;
   @Input() idDemanda: any
-  @Output() urlChange = new EventEmitter<string>()
   @Output() fileChange = new EventEmitter<File>()
-  @Output() pasos = new EventEmitter<any>()
+  @Output() pasos = new EventEmitter<string[]>()
 
   importError?: Error;
 
   handleImported(event: any) {
-
-    const { type, error, warnings } = event;
-
-    if (type === 'success') {
-      console.log(`Rendered diagram (%s warnings)`, warnings.length);
-    }
+    const { type, error } = event;
 
     if (type === 'error') {
       console.error('Failed to render diagram', error);
@@ -31,20 +24,11 @@ export class BpmnComponent {
     this.importError = error;
   }
 
-  onUrlUpdated(newUrl: string): void {
-    this.urlBPMN = newUrl;
-    this.urlChange.emit(this.urlBPMN);
-  }
-
   onChangeDiagram(file: File): void {
     this.fileChange.emit(file);
   }
 
-  listPasos(event: any){
-    /* console.log("bpmn.component")
-    console.log("listPasos")
-    console.log(event) */
-    this.pasos.emit(event);
+  listPasos(pasos: string[]) {
+    this.pasos.emit(pasos);
   }
-
 }

@@ -1,25 +1,14 @@
-import { AfterContentInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
-
+import { FormControl } from '@angular/forms';
+import { from, Observable, Subscription } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import type Canvas from 'diagram-js/lib/core/Canvas';
 import type { ImportDoneEvent, ImportXMLResult } from 'bpmn-js/lib/BaseViewer';
-import type Modeling from 'bpmn-js/lib/features/modeling/Modeling';
-
-// Importa el tipo de Modeling
-/**
- * You may include a different variant of BpmnJS:
- *
- * bpmn-viewer  - displays BPMN diagrams without the ability
- *                to navigate them
- * bpmn-modeler - bootstraps a full-fledged BPMN editor
- */
 import BpmnJS from 'bpmn-js/lib/Modeler';
-import { from, Observable, Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 import { FileService } from '../../services/file.service';
 import { AreaService } from '../../../modules/area/common/services/area.service';
-import { FormControl } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { FormWorkflowService } from '../../../modules/workflow/common/services/form-workflow.service';
 
 @Component({
@@ -27,26 +16,27 @@ import { FormWorkflowService } from '../../../modules/workflow/common/services/f
   templateUrl: './diagram.component.html',
   styleUrl: './diagram.component.scss'
 })
-
 export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy, OnInit {
 
   @ViewChild('ref', { static: true }) private el: ElementRef | undefined;
   @Input() url?: string;
   @Input() idDemanda: any
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
-  @Output() urlUpdated = new EventEmitter<string>();
   @Output() fileBPMN = new EventEmitter<File>();
-  @Output() pasos = new EventEmitter<any>();
+  @Output() pasos = new EventEmitter<string[]>();
 
   nameWorkflow: string = "newWorkflow"
   xmlLocal: any
-  isWorkflow: boolean = true
   listArea: any;
-  listTask: any[] = [];
 
   idArea = new FormControl()
 
+  actualBound = `<dc:Bounds x="156" y="62" width="600" height="125" />`
+  heightActual = 125
+  positionY = 62
+
   private bpmnJS: BpmnJS = new BpmnJS();
+  private loadSubscription?: Subscription;
   private nombreSubscription?: Subscription;
   private readonly onCommandStackChanged = () => this.updateDiagramFile();
 
@@ -55,7 +45,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     private fileService: FileService,
     private areaService: AreaService,
     private formWorkflowService: FormWorkflowService,
-
   ) {
     this.bpmnJS.on<ImportDoneEvent>('import.done', ({ error }) => {
       if (!error) {
@@ -74,29 +63,21 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   ngOnInit(): void {
-    if (this.url) {
-      this.loadUrl(this.url);
-    }
     this.getAreas()
-    console.log("this.idDemanda")
-    console.log(this.idDemanda)
 
     this.nombreSubscription = this.formWorkflowService.nombre$.subscribe(value => {
       this.updateWorkflowName(value)
     });
-
   }
 
-  ngOnChanges(changes: any) {
-    console.log("this.nameWorkflow")
-    console.log(this.nameWorkflow)
-    if (changes.url) {
-      this.loadUrl(changes.url.currentValue);
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['url'] && this.url) {
+      this.loadUrl(this.url);
     }
-
   }
 
   ngOnDestroy(): void {
+    this.loadSubscription?.unsubscribe();
     this.nombreSubscription?.unsubscribe();
 
     const eventBus = this.bpmnJS.get('eventBus') as any;
@@ -105,44 +86,28 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.bpmnJS.destroy();
   }
 
-  loadUrl(url: string): Subscription {
-
-    console.log("loadUrl")
-    console.log(url)
-
-    return (
-      this.fileService.resolveUrl(url).pipe(
-        switchMap((signedUrl: string) => this.http.get(signedUrl, { responseType: 'text' })),
-        switchMap((xml: string) => this.importDiagram(xml)),
-        map(result => result.warnings),
-      ).subscribe(
-        (warnings) => {
-          this.importDone.emit({
-            type: 'success',
-            warnings
-          });
-        },
-        (err) => {
-          this.importDone.emit({
-            type: 'error',
-            error: err
-          });
-        }
-      )
-    );
+  loadUrl(url: string): void {
+    this.loadSubscription?.unsubscribe();
+    this.loadSubscription = this.fileService.resolveUrl(url).pipe(
+      switchMap((signedUrl: string) => this.http.get(signedUrl, { responseType: 'text' })),
+      switchMap((xml: string) => this.importDiagram(xml)),
+      map(result => result.warnings),
+    ).subscribe({
+      next: (warnings) => this.importDone.emit({ type: 'success', warnings }),
+      error: (err) => this.importDone.emit({ type: 'error', error: err })
+    });
   }
 
   private importDiagram(xml: string): Observable<ImportXMLResult> {
-
-    console.log("importDiagram")
-    console.log(xml)
     this.xmlLocal = xml
 
-    if (this.idDemanda) {
-      this.getTasks()
-    }
-
-    return from(this.bpmnJS.importXML(xml));
+    return from(this.bpmnJS.importXML(xml)).pipe(
+      tap(() => {
+        if (this.idDemanda) {
+          this.pasos.emit(this.getTasks());
+        }
+      })
+    );
   }
 
   exportDiagram(): void {
@@ -159,42 +124,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
         console.error('Error al exportar el diagrama como XML:', err);
       }
     );
-  }
-
-  uploadDiagram() {
-    this.bpmnJS.saveXML({ format: true }).then(
-      (result) => {
-        const xml = result?.xml;
-        if (xml) {
-          this.onUpload(xml);
-        } else {
-          console.error('No se pudo generar el XML del diagrama.');
-        }
-      },
-      (err) => {
-        console.error('Error al exportar el diagrama como XML:', err);
-      }
-    );
-  }
-
-  onUpload(xml: string) {
-    const file = new File([xml], 'diagram.bpmn', { type: 'application/xml' });
-    const container = "workflow-bpmn"
-
-    if (file) {
-      this.fileService.uploadFileUnique(file, container).subscribe({
-        next: (response: any) => {
-          console.log('Archivo subido:', response);
-          this.updateUrl(response.fileUrl)
-        },
-        error: (err) => console.error('Error al subir archivo:', err),
-      });
-    }
-  }
-
-  updateUrl(newUrl: string): void {
-    this.url = newUrl;
-    this.urlUpdated.emit(this.url);
   }
 
   updateDiagramFile() {
@@ -227,7 +156,7 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   updateWorkflowName(newName: string): void {
-    const moddle = this.bpmnJS.get('moddle') as any; // Obtén el moddle para manipular elementos BPMN
+    const moddle = this.bpmnJS.get('moddle') as any;
     const canvas = this.bpmnJS.get<Canvas>('canvas');
     const rootElement = canvas.getRootElement() as any;
 
@@ -236,123 +165,22 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
       return;
     }
 
-    // Busca el elemento Collaboration en el modelo
     const collaboration = rootElement.businessObject;
     if (!collaboration || collaboration.$type !== 'bpmn:Collaboration') {
       console.error('No se encontró el elemento Collaboration.');
       return;
     }
 
-    // Encuentra el participante en el Collaboration
     const participant = collaboration.participants?.find((p: any) => p.name === this.nameWorkflow || p.name == "newWorkflow");
     if (!participant) {
       console.error('No se encontró el participante con el nombre "newWorkflow".');
       return;
     }
 
-    // Actualiza el nombre del participante
     this.nameWorkflow = newName
     participant.name = newName;
 
-    // Importa nuevamente el XML actualizado
     this.importXMLUpdate()
-  }
-
-  addLane(): void {
-    const moddle = this.bpmnJS.get('moddle') as any; // Obtener moddle para crear elementos BPMN
-    const modeling = this.bpmnJS.get<Modeling>('modeling'); // Obtener servicio de modeling
-    const canvas = this.bpmnJS.get('canvas') as any; // Obtener canvas
-
-    const rootElement = canvas.getRootElement() as any;
-
-    if (!rootElement || !moddle || !modeling) {
-      console.error('No se pudo acceder a rootElement, moddle o modeling.');
-      return;
-    }
-
-    const process = rootElement.businessObject.$type === 'bpmn:Process'
-      ? rootElement.businessObject
-      : rootElement.businessObject.flowElements?.find((el: any) => el.$type === 'bpmn:Process');
-
-    if (!process) {
-      console.error('No se encontró el proceso en el diagrama.');
-      return;
-    }
-
-    let laneSet = process.laneSets?.[0];
-    if (!laneSet) {
-      laneSet = moddle.create('bpmn:LaneSet', { id: `LaneSet_${Date.now()}` });
-      process.laneSets = [laneSet];
-    }
-
-    const newLane = moddle.create('bpmn:Lane', {
-      id: `Lane_${Date.now()}`,
-      name: `New Lane ${laneSet.lanes?.length + 1 || 1}`,
-    });
-
-    laneSet.lanes = laneSet.lanes || [];
-    laneSet.lanes.push(newLane);
-
-    modeling.updateProperties(process, {
-      laneSets: process.laneSets,
-    });
-
-    console.log('Nuevo Lane agregado:', newLane);
-  }
-
-  addLaneToLaneSet2(xml: string, laneId: string, laneName: string): string {
-    const laneTag = `<bpmn:lane id="${laneId}" name="${laneName}" />`;
-    const closingLaneSetTag = '</bpmn:laneSet>';
-
-    if (xml.includes(closingLaneSetTag)) {
-      // Inserta el nuevo lane antes de la etiqueta de cierre de laneSet
-      return xml.replace(closingLaneSetTag, `${laneTag}\n    ${closingLaneSetTag}`);
-    }
-
-    console.error('Etiqueta </bpmn:laneSet> no encontrada.');
-    return xml;
-  }
-
-  addBpmnShape2(xml: string, shapeId: string, elementId: string, x: number, y: number, width: number, height: number): string {
-    const bpmnShape = `
-        <bpmndi:BPMNShape id="${shapeId}" bpmnElement="${elementId}" isHorizontal="true">
-          <dc:Bounds x="${x}" y="${y}" width="${width}" height="${height}" />
-          <bpmndi:BPMNLabel />
-        </bpmndi:BPMNShape>`;
-    const closingPlaneTag = '</bpmndi:BPMNPlane>';
-
-    if (xml.includes(closingPlaneTag)) {
-      // Inserta el nuevo BPMNShape antes de la etiqueta de cierre de BPMNPlane
-      return xml.replace(closingPlaneTag, `${bpmnShape}\n    ${closingPlaneTag}`);
-    }
-
-    console.error('Etiqueta </bpmndi:BPMNPlane> no encontrada.');
-    return xml;
-  }
-
-  addLaneTest() {
-    const originalXml = this.xmlLocal;
-
-    // Agregar un nuevo lane
-    const updatedXmlWithLane = this.addLaneToLaneSet(originalXml, 'Lane_1', 'areaC');
-
-    // Agregar un nuevo BPMNShape
-    const updatedXmlWithShape = this.addBpmnShape2(
-      updatedXmlWithLane, // XML ya actualizado con el nuevo lane
-      'Lane_1_di',
-      'Lane_1',
-      186,  // x
-      312,  // y (ajustado para que esté debajo de la última lane existente)
-      570,  // width
-      125   // height
-    );
-
-
-    console.log("updatedXmlWithShape");
-    console.log(updatedXmlWithShape);
-
-    this.bpmnJS.importXML(updatedXmlWithShape);
-
   }
 
   addAreaToWorkflow() {
@@ -381,7 +209,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     this.listArea = this.listArea.filter((element: any) => element.id !== this.idArea.value);
 
     this.idArea.setValue(null);
-
   }
 
   addLaneToLaneSet(xml: string, laneId: string, laneName: string): string {
@@ -396,15 +223,8 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     return xml;
   }
 
-  actualBound = `<dc:Bounds x="156" y="62" width="600" height="125" />`
-  heightActual = 125
-  positionY = 62
-
   fixWidthHeightTitle(xml: string) {
-
     this.heightActual = this.heightActual + 125
-
-    //console.log(this.heightActual)
 
     const updateBoundParticipant = `<dc:Bounds x="156" y="62" width="600" height="${this.heightActual}" />`
 
@@ -418,12 +238,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   addBpmnShape(xml: string, shapeId: string, elementId: string): string {
-
-    let x = 186;
+    const x = 186;
+    const width = 570;
+    const height = 125;
     this.positionY = this.positionY + 125;
-    let width = 570;
-    let height = 125;
-
 
     const bpmnShape = `
         <bpmndi:BPMNShape id="${shapeId}" bpmnElement="${elementId}" isHorizontal="true">
@@ -433,7 +251,6 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
     const closingPlaneTag = '</bpmndi:BPMNPlane>';
 
     if (xml.includes(closingPlaneTag)) {
-      // Inserta el nuevo BPMNShape antes de la etiqueta de cierre de BPMNPlane
       return xml.replace(closingPlaneTag, `${bpmnShape}\n    ${closingPlaneTag}`);
     }
 
@@ -442,66 +259,31 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
   }
 
   addLaneToWorkflow(lane: string, area: string) {
-    const originalXml = this.xmlLocal;
-
-    // Agregar un nuevo lane
-    const updatedXmlWithLane = this.addLaneToLaneSet(originalXml, lane, area);
-
+    const updatedXmlWithLane = this.addLaneToLaneSet(this.xmlLocal, lane, area);
     const updatedXmlWithParticipant = this.fixWidthHeightTitle(updatedXmlWithLane)
-
-    // Agregar un nuevo BPMNShape
-    const updatedXmlWithShape = this.addBpmnShape(
-      updatedXmlWithParticipant, // XML ya actualizado con el nuevo lane
-      `${lane}_di`,
-      lane
-    );
-
-    /* console.log("updatedXmlWithShape");
-    console.log(updatedXmlWithShape); */
+    const updatedXmlWithShape = this.addBpmnShape(updatedXmlWithParticipant, `${lane}_di`, lane);
 
     this.xmlLocal = updatedXmlWithShape
 
     this.bpmnJS.importXML(updatedXmlWithShape);
-
   }
 
-  getTasks(): void {
-    //console.clear()
-    // Obtén las definiciones del diagrama
+  private getTasks(): string[] {
     const definitions = this.bpmnJS.getDefinitions();
-    console.log("definitions")
-    console.log(definitions)
     if (!definitions || !definitions.rootElements) {
       console.error('No se pudieron obtener las definiciones del diagrama.');
-      return;
+      return [];
     }
 
-    // Filtra los elementos que son procesos
     const processes = definitions.rootElements.filter((el: any) => el.$type === 'bpmn:Process');
-
     if (processes.length === 0) {
       console.error('No se encontraron procesos en el diagrama.');
-      return;
+      return [];
     }
 
-    // Itera sobre los procesos y busca elementos de tipo Task
-    const tasks: any[] = [];
-    processes.forEach((process: any) => {
-      if (process.flowElements) {
-        const processTasks = process.flowElements.filter(
-          (element: any) => element.$type === 'bpmn:Task'
-        );
-        tasks.push(...processTasks);
-      }
-    });
-
-    tasks.forEach(element => {
-      this.listTask.push(element.name)
-    });
-
-    this.pasos.emit(this.listTask);
-
+    return processes
+      .flatMap((process: any) => process.flowElements ?? [])
+      .filter((element: any) => element.$type === 'bpmn:Task')
+      .map((task: any) => task.name);
   }
-
-
 }
