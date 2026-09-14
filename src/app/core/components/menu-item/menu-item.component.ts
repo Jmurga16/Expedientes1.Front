@@ -1,5 +1,5 @@
 import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -36,13 +36,15 @@ export class MenuItemComponent implements OnInit, OnDestroy {
 
   active = false;
 
+  routeActive = false;
+
   menuSourceSubscription: Subscription;
 
   routerSubscription: Subscription;
 
   key: string = "";
 
-  constructor(public router: Router, private menuService: MenuService, private tokenService: TokenService) {
+  constructor(public router: Router, private route: ActivatedRoute, private menuService: MenuService, private tokenService: TokenService) {
     this.menuSourceSubscription = this.menuService.menuSource$.subscribe((value: MenuChangeEvent) => {
       Promise.resolve(null).then(() => {
         if (value.routeEvent) {
@@ -73,11 +75,25 @@ export class MenuItemComponent implements OnInit, OnDestroy {
   }
 
   updateActiveStateFromRoute() {
-    let activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
+    this.routeActive = this.matchesCurrentRoute();
 
-    if (activeRoute) {
+    if (this.routeActive) {
       this.menuService.onMenuStateChange({ key: this.key, routeEvent: true });
     }
+  }
+
+  private matchesCurrentRoute(): boolean {
+    const link = this.router.serializeUrl(this.router.createUrlTree(this.item.routerLink, { relativeTo: this.route }));
+    const url = this.router.url.split(/[?#]/)[0];
+
+    if (url === link)
+      return true;
+
+    if (!link.endsWith('/list'))
+      return false;
+
+    const base = link.slice(0, -'/list'.length);
+    return url.startsWith(base + '/') && !url.endsWith('/list');
   }
 
   itemClick(event: Event) {
