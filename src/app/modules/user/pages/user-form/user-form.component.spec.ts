@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { UserFormComponent } from './user-form.component';
 import { IUsuario } from '../../common/models/usuario.interface';
+import { SharedModule } from '../../../../shared/shared.module';
 
 const USUARIO: IUsuario = {
   id: 7,
@@ -36,7 +37,7 @@ describe('UserFormComponent en modo ver', () => {
       declarations: [UserFormComponent],
       imports: [
         HttpClientTestingModule, ReactiveFormsModule, RouterTestingModule,
-        ButtonModule, CardModule, DropdownModule, InputTextModule, MultiSelectModule
+        ButtonModule, CardModule, DropdownModule, InputTextModule, MultiSelectModule, SharedModule
       ],
       providers: [{
         provide: ActivatedRoute,

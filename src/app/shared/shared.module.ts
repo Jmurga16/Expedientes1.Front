@@ -10,6 +10,7 @@ import { StepTaskPipe } from './pipes/step-task.pipe';
 import { BpmnComponent } from './components/bpmn/bpmn.component';
 import { DiagramComponent } from './components/diagram/diagram.component';
 import { LoadingComponent } from './components/loading/loading.component';
+import { PasswordRequirementsComponent } from './components/password-requirements/password-requirements.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { LoadingComponent } from './components/loading/loading.component';
         BpmnComponent,
         DiagramComponent,
         StepTaskPipe,
-        LoadingComponent
+        LoadingComponent,
+        PasswordRequirementsComponent
     ],
     imports: [
         CommonModule,
@@ -31,7 +33,8 @@ import { LoadingComponent } from './components/loading/loading.component';
         StepTaskPipe,
         BpmnComponent,
         DiagramComponent,
-        LoadingComponent
+        LoadingComponent,
+        PasswordRequirementsComponent
     ],
     providers: [DialogService]
 })

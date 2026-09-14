@@ -9,6 +9,7 @@ import { IArea } from '../../../area/common/models/area.interface';
 import { IOpcion } from '../../../../shared/models/opcion.interface';
 import { AreaService } from '../../../area/common/services/area.service';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../../shared/directives/password-validator.directive';
+import { PASSWORD_MIN_LENGTH } from '../../../../shared/components/password-requirements/password-requirements.component';
 import { LoadingService } from '../../../../shared/services/loading.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 
@@ -62,7 +63,7 @@ export class UserFormComponent implements OnInit {
       address: [null],
 
       email: [null, [Validators.required, Validators.email]],
-      password: [null, [Validators.required, upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
+      password: [null, [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH), upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
       username: [{ disabled: true, value: null }, [Validators.required, Validators.email]],
       status: [1],
       idArea: [null],
@@ -135,7 +136,7 @@ export class UserFormComponent implements OnInit {
 
     if (this.userForm.invalid) {
       this.notification.warning(this.userForm.controls['password'].invalid
-        ? 'La contraseña debe tener mayúsculas, minúsculas y un carácter especial.'
+        ? 'La contraseña no cumple los requisitos indicados debajo del campo.'
         : 'Revise los datos del formulario.');
       return;
     }

@@ -32,6 +32,7 @@
                         <label for="new-password">Contraseña</label>
                         <input id="new-password" type="password" pInputText formControlName="password"
                             placeholder="Ingrese su contraseña" />
+                        <app-password-requirements [control]="registerForm.controls['password']"></app-password-requirements>
                     </div>
                     <div class="field col-12">
                         <button pButton type="submit" label="Registrar" [disabled]="!registerForm.valid"

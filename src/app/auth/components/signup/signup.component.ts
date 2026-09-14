@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { CreateUserDto } from '../../models/create-user-dto';
 import { AuthService } from '../../services/auth.service';
 import { lowerCaseValidator, specialCharacterValidator, upperCaseValidator } from '../../../shared/directives/password-validator.directive';
+import { PASSWORD_MIN_LENGTH } from '../../../shared/components/password-requirements/password-requirements.component';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 
@@ -29,7 +30,7 @@ export class SignupComponent {
       dni: ['', [Validators.required, Validators.pattern(/^\d{7,8}$/)]],
       address: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
+      password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH), upperCaseValidator(), lowerCaseValidator(), specialCharacterValidator()]],
     });
   }
 
