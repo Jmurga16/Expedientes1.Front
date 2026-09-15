@@ -2,8 +2,9 @@
     align-items: stretch;
     background: #f6f8f7;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 47%);
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 46%);
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .login-intro {
@@ -76,8 +77,13 @@
     background: transparent;
     border: 0;
     box-shadow: none;
+    display: block;
     justify-self: center;
-    width: min(100%, 28rem) !important;
+    width: min(calc(100% - 3rem), 28rem) !important;
+}
+
+:host ::ng-deep .login-panel .p-panel {
+    width: 100%;
 }
 
 :host ::ng-deep .login-panel .p-panel-header {
@@ -173,10 +179,41 @@ h2 {
     text-decoration: underline;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1023px) {
     .login-background {
         display: block;
-        padding: 1.25rem;
+    }
+
+    .login-intro {
+        padding: 2.75rem 2rem 3.5rem;
+    }
+
+    .login-intro h1 {
+        font-size: clamp(2rem, 5.2vw, 2.9rem);
+        margin: .75rem 0 1rem;
+    }
+
+    .intro-copy {
+        font-size: 1rem;
+        max-width: 42rem;
+    }
+
+    .intro-footer {
+        display: none;
+    }
+
+    .login-panel {
+        margin: -2.5rem auto 3rem;
+        width: min(calc(100% - 2.5rem), 28rem) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-background {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        padding: 1.5rem 1.25rem;
     }
 
     .login-intro {
@@ -184,7 +221,7 @@ h2 {
     }
 
     .login-panel {
-        margin: 3rem auto;
+        margin: 0 auto;
         width: 100% !important;
     }
 
@@ -194,6 +231,6 @@ h2 {
 
     .mobile-brand {
         display: flex;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 }
