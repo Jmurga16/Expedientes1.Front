@@ -30,6 +30,6 @@ export class TopbarComponent implements OnInit {
     };
     const sectionKey = Object.keys(sections).find(key => path.startsWith(key));
     this.section = sectionKey ? sections[sectionKey] : 'Inicio';
-    document.title = `NEXO | ${this.section}`;
+    document.title = `TRAZA | ${this.section}`;
   }
 }

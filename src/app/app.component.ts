@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'NEXO | Expedientes';
+  title = 'TRAZA | Gestión de Expedientes y su Proceso';
 }
