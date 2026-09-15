@@ -13,6 +13,9 @@ import { LoadingService } from '../../../../shared/services/loading.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { TokenService } from '../../../../auth/services/token.service';
 
+const PASO_FINAL = 'Finalizado';
+const ESTADO_FINALIZADO = 7;
+
 @Component({
   selector: 'app-demanda-workflow',
   templateUrl: './demanda-workflow.component.html',
@@ -22,6 +25,7 @@ export class DemandaWorkflowComponent implements OnInit {
 
   loading: boolean = false
   saving: boolean = false
+  finalizada: boolean = false
   demandaForm: FormGroup;
   idDemanda?: number
   diagramUrl: string = ""
@@ -87,6 +91,12 @@ export class DemandaWorkflowComponent implements OnInit {
       next: (response: IDemanda) => {
         this.demandaForm.patchValue(response);
         this.diagramUrl = response.urlBpmn
+        this.finalizada = response.paso === PASO_FINAL && response.estado === ESTADO_FINALIZADO;
+
+        if (this.finalizada) {
+          this.demandaForm.disable();
+        }
+
         this.loading = false;
       },
       error: () => {
@@ -126,7 +136,7 @@ export class DemandaWorkflowComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.saving) {
+    if (this.saving || this.finalizada) {
       return;
     }
 
