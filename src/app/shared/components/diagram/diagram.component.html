@@ -12,6 +12,8 @@
 
 <div #ref class="diagram-container" id="bpmn-container" [class.solo-lectura]="readonly"></div>
 
-<div class="diagram-actions">
-    <p-button type="button" (click)="exportDiagram()">Descargar BPMN</p-button>
+<div class="diagram-actions flex gap-3">
+    <p-button type="button" label="Descargar BPMN" icon="pi pi-download" (click)="exportDiagram()"></p-button>
+    <p-button type="button" label="Descargar imagen" icon="pi pi-image" severity="secondary" [outlined]="true"
+        (click)="exportImagen()"></p-button>
 </div>

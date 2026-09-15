@@ -19,6 +19,8 @@ import { FormWorkflowService } from '../../../modules/workflow/common/services/f
 import { IBpmnProcess } from '../../models/bpmn.interface';
 
 const PAUSA_ENTRE_CAMBIOS = 200;
+const ESCALA_IMAGEN = 2;
+const ERROR_IMAGEN = 'No se pudo generar la imagen del diagrama.';
 
 @Component({
   selector: 'app-diagram',
@@ -133,6 +135,44 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy,
         this.notification.error('No se pudo descargar el diagrama.');
       }
     );
+  }
+
+  exportImagen(): void {
+    this.bpmnJS.saveSVG().then(
+      (result) => this.descargarPng(result.svg),
+      () => this.notification.error(ERROR_IMAGEN)
+    );
+  }
+
+  private descargarPng(svg: string): void {
+    const imagen = new Image();
+
+    imagen.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = imagen.naturalWidth * ESCALA_IMAGEN;
+      canvas.height = imagen.naturalHeight * ESCALA_IMAGEN;
+
+      const contexto = canvas.getContext('2d');
+      if (!contexto) {
+        this.notification.error(ERROR_IMAGEN);
+        return;
+      }
+
+      contexto.fillStyle = '#ffffff';
+      contexto.fillRect(0, 0, canvas.width, canvas.height);
+      contexto.drawImage(imagen, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(blob => {
+        if (!blob) {
+          this.notification.error(ERROR_IMAGEN);
+          return;
+        }
+        this.fileService.downloadFile('diagrama.png', blob, 'image/png');
+      }, 'image/png');
+    };
+
+    imagen.onerror = () => this.notification.error(ERROR_IMAGEN);
+    imagen.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   }
 
   updateDiagramFile() {
