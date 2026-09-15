@@ -27,6 +27,12 @@ export class DemandaService {
     return this.http.get<IPaginatedList<IDemandaList>>(`${this._api}`, { params });
   }
 
+  export(search: string): Observable<Blob> {
+    const params = new HttpParams().set('search', search);
+
+    return this.http.get(`${this._api}/export`, { params, responseType: 'blob' });
+  }
+
   getResumen(): Observable<Record<number, number>> {
     return this.http.get<Record<number, number>>(`${this._api}/resumen`);
   }
